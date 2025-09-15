@@ -1,5 +1,6 @@
 import { Button } from "@heroui/react";
 import AnalyticsChart from "../../components/Dashboard/AnalyticsChart";
+import ReportSummary from "../../components/Dashboard/ReportSummary";
 import StatCard from "../../components/Dashboard/StatCard";
 import { LuBookOpenCheck, LuNotebookPen } from "react-icons/lu";
 import { PiExamFill } from "react-icons/pi";
@@ -64,10 +65,20 @@ export default function DashboardPage() {
           </div>
 
           <div>
-            <AnalyticsChart categories={categoriesData} dataSeries={dataSeries} />
+            <AnalyticsChart
+              categories={categoriesData}
+              dataSeries={dataSeries}
+            />
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-5 lg:gap-3">
+            <div className="lg:col-span-3 lg:w-[70%]">table</div>
+
+            <div className="lg:w-[30%]">
+              <ReportSummary />
+            </div>
           </div>
         </div>
-
       </div>
     </>
   );
