@@ -14,6 +14,7 @@ import ChangePasswordPage from "./pages/Auth/ChangePassword";
 import SignUpPage from "./pages/Auth/Signup";
 import GuardianSignup from "./pages/Auth/Guardian";
 import DashboardPage from "./pages/Dashboard";
+import PerformancePage from "./pages/Performance";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       {
         path: SidebarRoutes.dashboard,
         element: <DashboardPage />,
+      },
+      {
+        path: SidebarRoutes.performance,
+        element: <PerformancePage />,
       },
     ],
   },
