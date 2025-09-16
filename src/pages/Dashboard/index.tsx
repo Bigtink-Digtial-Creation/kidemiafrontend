@@ -2,6 +2,7 @@ import { Button } from "@heroui/react";
 import AnalyticsChart from "../../components/Dashboard/AnalyticsChart";
 import ReportSummary from "../../components/Dashboard/ReportSummary";
 import StatCard from "../../components/Dashboard/StatCard";
+import AssesstmentHistory from "../../components/Dashboard/AssesstmentHistory";
 import { LuBookOpenCheck, LuNotebookPen } from "react-icons/lu";
 import { PiExamFill } from "react-icons/pi";
 import { FaSpellCheck } from "react-icons/fa";
@@ -72,7 +73,9 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex flex-col lg:flex-row gap-5 lg:gap-3">
-            <div className="lg:col-span-3 lg:w-[70%]">table</div>
+            <div className="lg:col-span-3 lg:w-[70%]">
+              <AssesstmentHistory />
+            </div>
 
             <div className="lg:w-[30%]">
               <ReportSummary />

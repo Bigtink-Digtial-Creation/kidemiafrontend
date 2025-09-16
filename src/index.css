@@ -18,4 +18,8 @@
   --color-kidemia-biege:#F1E2C3;
   --color-kidemia-black2:#000000;
   --color-kidemia-black3:#10101080,
+  --color-kidemia-completed:"#EAFFF5"
+  --color-kidemia-failed:"#FFEAEB",
+  --color-kidemia-pending:"#EAE68B"
+
 }
