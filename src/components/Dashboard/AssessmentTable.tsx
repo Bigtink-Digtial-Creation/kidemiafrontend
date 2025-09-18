@@ -7,21 +7,27 @@ import {
   TableCell,
   Chip,
 } from "@heroui/react";
-import { mockTableData, type TableRowI } from "../../staticData";
-
-const statusTheme: Record<
-  TableRowI["status"],
-  "success" | "warning" | "danger"
-> = {
-  completed: "success", // Maps to Chip's color prop
-  pending: "warning",
-  failed: "danger",
-};
+import { mockTableData } from "../../staticData";
+import { statusTheme } from "../../utils";
+import { Link } from "react-router";
+import { SidebarRoutes } from "../../routes";
 
 export default function AssessmentTable() {
   return (
     <div>
-      <Table aria-label="Example static collection table">
+      <Table
+        aria-label="assestment table"
+        bottomContent={
+          <div className="flex justify-end py-2">
+            <Link
+              to={SidebarRoutes.performance}
+              className="text-sm text-kidemia-primary font-medium hover:underline"
+            >
+              View More
+            </Link>
+          </div>
+        }
+      >
         <TableHeader>
           <TableColumn className="w-12">S/N</TableColumn>
           <TableColumn>Title</TableColumn>
@@ -29,10 +35,9 @@ export default function AssessmentTable() {
           <TableColumn>Status</TableColumn>
           <TableColumn>Comment</TableColumn>
           <TableColumn>Date Created</TableColumn>
-          <TableColumn>Action</TableColumn>
         </TableHeader>
 
-        <TableBody>
+        <TableBody emptyContent="No available data">
           {mockTableData.map((mock) => (
             <TableRow key={mock.sn}>
               <TableCell>{mock.sn}</TableCell>
@@ -49,9 +54,6 @@ export default function AssessmentTable() {
               </TableCell>
               <TableCell>{mock.comment}</TableCell>
               <TableCell>{mock.dateCreated}</TableCell>
-              <TableCell className="text-xs text-kidemia-secondary hover:underline cursor-pointer">
-                View Result
-              </TableCell>
             </TableRow>
           ))}
         </TableBody>
