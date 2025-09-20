@@ -16,6 +16,11 @@ export const SidebarRoutes = {
   performance: "/dashboard/performance",
 };
 
+export const TestRoutes = {
+  takeTest: "/take-a-test",
+  testSubjects: "/take-a-test/subjects",
+};
 export type HomeRoutes = (typeof HomeRoutes)[keyof typeof HomeRoutes];
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
 export type SidebarRoutes = (typeof SidebarRoutes)[keyof typeof SidebarRoutes];
+export type TestRoutes = (typeof TestRoutes)[keyof typeof TestRoutes];
