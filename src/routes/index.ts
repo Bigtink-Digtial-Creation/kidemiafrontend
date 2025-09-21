@@ -16,6 +16,15 @@ export const SidebarRoutes = {
   performance: "/dashboard/performance",
 };
 
+export const TestRoutes = {
+  takeTest: "/take-a-test",
+  testSubjects: "/take-a-test/subjects",
+  subjectTopics: "/take-a-test/subjects/:id",
+  testIntructions: "/take-a-test/instructions",
+  questions: "/take-a-test/questions",
+  results: "/take-a-test/results",
+};
 export type HomeRoutes = (typeof HomeRoutes)[keyof typeof HomeRoutes];
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
 export type SidebarRoutes = (typeof SidebarRoutes)[keyof typeof SidebarRoutes];
+export type TestRoutes = (typeof TestRoutes)[keyof typeof TestRoutes];

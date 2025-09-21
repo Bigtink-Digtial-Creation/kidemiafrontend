@@ -1,56 +1,10 @@
-import type { ApexOptions } from "apexcharts";
 import ReactApexChart from "react-apexcharts";
 import { Link } from "react-router";
 import { SidebarRoutes } from "../../routes";
 import { Divider } from "@heroui/react";
+import { options, value } from "../../staticData";
 
 export default function ReportSummary() {
-  const value = 45;
-
-  const options: ApexOptions = {
-    chart: {
-      type: "radialBar",
-      sparkline: { enabled: true },
-    },
-    plotOptions: {
-      radialBar: {
-        hollow: {
-          size: "70%",
-        },
-        track: {
-          background: "transparent",
-          strokeWidth: "100%",
-        },
-        dataLabels: {
-          name: {
-            show: false,
-          },
-          value: {
-            fontSize: "32px",
-            fontWeight: 600,
-            color: "#BF4C20",
-            offsetY: 0,
-            formatter: (val) => `${val}%`,
-          },
-        },
-        startAngle: -180,
-        endAngle: 180,
-      },
-    },
-    fill: {
-      type: "gradient",
-      gradient: {
-        shade: "dark",
-        type: "horizontal",
-        gradientToColors: ["#ff7b00"],
-        stops: [0, 100],
-      },
-    },
-    colors: ["#e55b00"],
-    stroke: {
-      lineCap: "round",
-    },
-  };
   return (
     <div className="p-5 border border-kidemia-grey/15 rounded-2xl bg-transparent flex flex-col">
       <div className="pb-3">

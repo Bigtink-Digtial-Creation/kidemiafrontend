@@ -4,7 +4,7 @@ export const statusTheme: Record<
   TableRowI["status"],
   "success" | "warning" | "danger"
 > = {
-  completed: "success", 
+  completed: "success",
   pending: "warning",
   failed: "danger",
 };

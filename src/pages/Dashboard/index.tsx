@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import { Button } from "@heroui/react";
 import AnalyticsChart from "../../components/Dashboard/AnalyticsChart";
 import ReportSummary from "../../components/Dashboard/ReportSummary";
@@ -8,8 +9,10 @@ import { PiExamFill } from "react-icons/pi";
 import { FaSpellCheck } from "react-icons/fa";
 import { MdTimer } from "react-icons/md";
 import { categoriesData, dataSeries } from "../../staticData";
+import { TestRoutes } from "../../routes";
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   return (
     <>
       <div className="space-y-8">
@@ -21,6 +24,7 @@ export default function DashboardPage() {
               size="md"
               radius="sm"
               type="button"
+              onPress={() => navigate(TestRoutes.takeTest)}
             >
               Take a Test
             </Button>
