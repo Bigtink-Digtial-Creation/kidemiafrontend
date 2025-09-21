@@ -6,7 +6,7 @@ export default function TestLayout() {
   const navigate = useNavigate();
   return (
     <section className="min-h-screen flex flex-col items-center justify-center bg-kidemia-biege space-y-6 px-6">
-      <div className="absolute top-2 left-3 px-4">
+      <div className="absolute top-2 left-0 px-4">
         <Button
           variant="light"
           className="bg-kidemia-biege text-kidemia-secondary font-semibold"

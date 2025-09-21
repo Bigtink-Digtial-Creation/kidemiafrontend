@@ -20,6 +20,8 @@ import TakeTestPage from "./pages/TakeTest";
 import TestSubjectsPage from "./pages/TakeTest/TestSubjects";
 import TestTopicsPage from "./pages/TakeTest/TestTopics";
 import TestInstrusctionsPage from "./pages/TakeTest/TestInstrusctions";
+import QuestionsPage from "./pages/TakeTest/Questions";
+import ResultPage from "./pages/TakeTest/Result";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -86,6 +88,14 @@ export const router = createBrowserRouter([
       {
         path: TestRoutes.testIntructions,
         element: <TestInstrusctionsPage />,
+      },
+      {
+        path: TestRoutes.questions,
+        element: <QuestionsPage />,
+      },
+      {
+        path: TestRoutes.results,
+        element: <ResultPage />,
       },
     ],
   },
