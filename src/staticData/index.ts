@@ -5,6 +5,7 @@ import { FaBook } from "react-icons/fa";
 import { GiBrain } from "react-icons/gi";
 import { GoBeaker } from "react-icons/go";
 import { MdOutlineRocketLaunch } from "react-icons/md";
+import type { ApexOptions } from "apexcharts";
 
 export interface TableRowI {
   sn: number;
@@ -176,3 +177,50 @@ export const topicsData = [
   { id: 19, value: "Art History: Renaissance" },
   { id: 20, value: "Political Science Basics" },
 ];
+
+export const value = 45;
+
+export const options: ApexOptions = {
+  chart: {
+    type: "radialBar",
+    sparkline: { enabled: true },
+  },
+  plotOptions: {
+    radialBar: {
+      hollow: {
+        size: "70%",
+      },
+      track: {
+        background: "transparent",
+        strokeWidth: "100%",
+      },
+      dataLabels: {
+        name: {
+          show: false,
+        },
+        value: {
+          fontSize: "32px",
+          fontWeight: 600,
+          color: "#BF4C20",
+          offsetY: 0,
+          formatter: (val) => `${val}%`,
+        },
+      },
+      startAngle: -180,
+      endAngle: 180,
+    },
+  },
+  fill: {
+    type: "gradient",
+    gradient: {
+      shade: "dark",
+      type: "horizontal",
+      gradientToColors: ["#ff7b00"],
+      stops: [0, 100],
+    },
+  },
+  colors: ["#e55b00"],
+  stroke: {
+    lineCap: "round",
+  },
+};

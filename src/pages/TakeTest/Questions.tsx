@@ -1,7 +1,10 @@
+import { useNavigate } from "react-router";
 import { Button, Pagination } from "@heroui/react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { TestRoutes } from "../../routes";
 
 export default function QuestionsPage() {
+  const navigate = useNavigate();
   return (
     <section className="py-4 space-y-12 md:px-12 w-full max-w-4xl">
       <div className="absolute top-0 right-0 px-8 pt-2.5">
@@ -15,7 +18,7 @@ export default function QuestionsPage() {
             size="md"
             radius="sm"
             type="button"
-            // onPress={() => navigate(TestRoutes.testSubjects)}
+            onPress={() => navigate(TestRoutes.results)}
           >
             Submit
           </Button>
