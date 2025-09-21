@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import CustomCheckbox from "../../components/Cards/CustomCheckbox";
 import { Button, CheckboxGroup } from "@heroui/react";
 import { topicsData } from "../../staticData";
+import { TestRoutes } from "../../routes";
 
 export default function TestTopicsPage() {
   const [groupSelected, setGroupSelected] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   console.log(groupSelected);
 
@@ -40,6 +43,8 @@ export default function TestTopicsPage() {
           size="lg"
           className="bg-kidemia-secondary text-kidemia-white font-semibold w-1/4"
           radius="sm"
+          isDisabled={groupSelected.length === 0}
+          onPress={() => navigate(TestRoutes.testIntructions)}
         >
           Continue
         </Button>

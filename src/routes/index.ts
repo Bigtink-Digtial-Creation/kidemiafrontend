@@ -20,6 +20,7 @@ export const TestRoutes = {
   takeTest: "/take-a-test",
   testSubjects: "/take-a-test/subjects",
   subjectTopics: "/take-a-test/subjects/:id",
+  testIntructions: "/take-a-test/instructions",
 };
 export type HomeRoutes = (typeof HomeRoutes)[keyof typeof HomeRoutes];
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];

@@ -19,6 +19,7 @@ import PerformancePage from "./pages/Performance";
 import TakeTestPage from "./pages/TakeTest";
 import TestSubjectsPage from "./pages/TakeTest/TestSubjects";
 import TestTopicsPage from "./pages/TakeTest/TestTopics";
+import TestInstrusctionsPage from "./pages/TakeTest/TestInstrusctions";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -81,6 +82,10 @@ export const router = createBrowserRouter([
       {
         path: TestRoutes.subjectTopics,
         element: <TestTopicsPage />,
+      },
+      {
+        path: TestRoutes.testIntructions,
+        element: <TestInstrusctionsPage />,
       },
     ],
   },
