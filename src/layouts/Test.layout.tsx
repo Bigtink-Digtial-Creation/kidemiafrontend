@@ -1,7 +1,6 @@
 import { Outlet, useNavigate } from "react-router";
 import { Button, Image } from "@heroui/react";
 import { MdArrowBackIosNew } from "react-icons/md";
-import { SidebarRoutes } from "../routes";
 
 export default function TestLayout() {
   const navigate = useNavigate();
@@ -13,7 +12,7 @@ export default function TestLayout() {
           className="bg-kidemia-biege text-kidemia-secondary font-semibold"
           startContent={<MdArrowBackIosNew className="text-sm" />}
           type="button"
-          onPress={() => navigate(SidebarRoutes.dashboard)}
+          onPress={() => navigate(-1)}
         >
           Go Back
         </Button>

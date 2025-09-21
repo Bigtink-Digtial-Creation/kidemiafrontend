@@ -19,6 +19,7 @@ export const SidebarRoutes = {
 export const TestRoutes = {
   takeTest: "/take-a-test",
   testSubjects: "/take-a-test/subjects",
+  subjectTopics: "/take-a-test/subjects/:id",
 };
 export type HomeRoutes = (typeof HomeRoutes)[keyof typeof HomeRoutes];
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];

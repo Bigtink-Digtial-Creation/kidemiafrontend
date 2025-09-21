@@ -1,4 +1,6 @@
 import { TbClock12 } from "react-icons/tb";
+import SubjectCard from "../../components/Cards/SubjectCard";
+import { subjectsData } from "../../staticData";
 
 export default function TestSubjectsPage() {
   return (
@@ -13,9 +15,16 @@ export default function TestSubjectsPage() {
         </div>
       </div>
 
-      <div className="py-6">
-        cards here
+      <div className="py-6 grid grid-cols-2 md:grid-cols-5 gap-4">
+        {subjectsData.map((sub) => (
+          <SubjectCard
+            key={sub.title}
+            icon={sub.icon}
+            title={sub.title}
+            topics={sub.topics}
+          />
+        ))}
       </div>
     </section>
-  )
+  );
 }
