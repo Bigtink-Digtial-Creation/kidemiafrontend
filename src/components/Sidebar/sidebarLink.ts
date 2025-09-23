@@ -1,7 +1,7 @@
 import type { IconType } from "react-icons";
 import { UserRole } from "../../utils/enums";
 import { SidebarRoutes } from "../../routes";
-import { MdOutlineDashboard } from "react-icons/md";
+import { MdManageHistory, MdOutlineDashboard } from "react-icons/md";
 import { CgPerformance } from "react-icons/cg";
 
 export type SidebarLinkT = {
@@ -23,5 +23,11 @@ export const sidebarLinks: SidebarLinkT[] = [
     icon: CgPerformance,
     allowedRoles: [UserRole.SCHOOL, UserRole.STUDENT, UserRole.GUARDIAN],
     pathname: SidebarRoutes.performance,
+  },
+  {
+    title: "History",
+    icon: MdManageHistory,
+    allowedRoles: [UserRole.SCHOOL, UserRole.STUDENT, UserRole.GUARDIAN],
+    pathname: SidebarRoutes.history,
   },
 ];
