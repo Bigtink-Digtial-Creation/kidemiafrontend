@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Button, Divider, Image, ScrollShadow, useDisclosure } from "@heroui/react";
+import {
+  Button,
+  Divider,
+  Image,
+  ScrollShadow,
+  useDisclosure,
+} from "@heroui/react";
 import { NavLink } from "react-router";
 import { motion } from "framer-motion";
 import { SidebarRoutes } from "../../routes";
@@ -19,7 +25,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const triggerRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
-  const logout = useDisclosure()
+  const logout = useDisclosure();
 
   const closeSidebar = useCallback(
     () => setSidebarOpen(false),
@@ -76,8 +82,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
       )}
       <aside
         ref={sidebarRef}
-        className={`w-2xs absolute left-0 top-0 z-50 flex flex-col items-start justify-start overflow-y-clip bg-[#f5f6fa]/30 shadow-md transition-transform duration-300 ease-linear dark:bg-dark lg:static lg:translate-x-0 h-screen ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+        className={`w-2xs absolute left-0 top-0 z-50 flex flex-col items-start justify-start overflow-y-clip bg-[#f5f6fa]/30 shadow-md transition-transform duration-300 ease-linear dark:bg-dark lg:static lg:translate-x-0 h-screen ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         <div className="w-full flex justify-start">
           <div className="w-full flex  items-center justify-between px-6 py-4">
@@ -152,7 +159,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
                   aria-label="Logout"
                   startContent={<FiLogOut className="text-xl" />}
                   className="group text-base bg-transparent text-kidemia-black2 hover:bg-kidemia-primary hover:text-kidemia-white w-full animate-sidebar-text-show rounded-md py-2 px-4 transition-transform justify-start"
-                  onPress={logout.onOpen}
+                  onPress={() => logout.onOpen()}
                 >
                   Log Out
                 </Button>

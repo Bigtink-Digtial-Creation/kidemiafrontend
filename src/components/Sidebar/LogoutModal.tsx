@@ -1,17 +1,26 @@
-import { addToast, Button, Modal, ModalBody, ModalContent } from '@heroui/react';
-import  { useState } from 'react'
+import {
+  addToast,
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+} from "@heroui/react";
+import { useState } from "react";
 import { AiOutlineLogout } from "react-icons/ai";
-import { useNavigate } from 'react-router';
-import { AuthRoutes } from '../../routes';
+import { useNavigate } from "react-router";
+import { AuthRoutes } from "../../routes";
 
 interface LogoutModalI {
   isOpen: boolean;
   onOpenChange: () => void;
-  onClose:() => void;
-  // onOpen: () => void;
+  onClose: () => void;
 }
 
-export default function LogoutModal({isOpen,onOpenChange, onClose}:LogoutModalI) {
+export default function LogoutModal({
+  isOpen,
+  onOpenChange,
+  onClose,
+}: LogoutModalI) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -21,15 +30,20 @@ export default function LogoutModal({isOpen,onOpenChange, onClose}:LogoutModalI)
       setIsLoading(false);
       onClose();
       addToast({
-        title:"Logout Successful",
-        color:"success"
-      })
+        title: "Logout Successful",
+        color: "success",
+      });
       navigate(AuthRoutes.login);
     }, 2000);
   };
 
   return (
-    <Modal size='md' isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose}>
+    <Modal
+      size="md"
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      onClose={onClose}
+    >
       <ModalContent>
         <ModalBody className="py-6">
           <div className="flex flex-col justify-center items-center space-y-4">
@@ -51,19 +65,18 @@ export default function LogoutModal({isOpen,onOpenChange, onClose}:LogoutModalI)
             <Button
               variant="faded"
               size="md"
-              radius='sm'
+              radius="sm"
               className="bg-kidemia-biege border border-enita-black2 font-medium text-kidemia-primary w-full"
               onPress={onClose}
-              
             >
               No, keep me logged in
             </Button>
             <Button
               color="primary"
               size="md"
-              radius='sm'
+              radius="sm"
               className="bg-kidemia-secondary text-kidemia-white font-medium w-full"
-              onPress={logOut}
+              onPress={() => logOut()}
               isLoading={isLoading}
               isDisabled={isLoading}
             >
@@ -72,6 +85,6 @@ export default function LogoutModal({isOpen,onOpenChange, onClose}:LogoutModalI)
           </div>
         </ModalBody>
       </ModalContent>
-      </Modal>
-  )
+    </Modal>
+  );
 }
