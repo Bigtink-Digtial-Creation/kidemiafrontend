@@ -22,6 +22,7 @@ import TestTopicsPage from "./pages/TakeTest/TestTopics";
 import TestInstrusctionsPage from "./pages/TakeTest/TestInstrusctions";
 import QuestionsPage from "./pages/TakeTest/Questions";
 import ResultPage from "./pages/TakeTest/Result";
+import HistoryPage from "./pages/History";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -67,6 +68,10 @@ export const router = createBrowserRouter([
       {
         path: SidebarRoutes.performance,
         element: <PerformancePage />,
+      },
+      {
+        path: SidebarRoutes.history,
+        element: <HistoryPage />,
       },
     ],
   },

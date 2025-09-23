@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Button, Divider, Image, ScrollShadow } from "@heroui/react";
+import {
+  Button,
+  Divider,
+  Image,
+  ScrollShadow,
+  useDisclosure,
+} from "@heroui/react";
 import { NavLink } from "react-router";
 import { motion } from "framer-motion";
 import { SidebarRoutes } from "../../routes";
@@ -7,6 +13,7 @@ import { FiLogOut, FiSettings } from "react-icons/fi";
 import { sidebarLinks } from "./sidebarLink";
 import SidebarLink from "./SidebarLink";
 import AppLogo from "@/assets/appLogo.png";
+import LogoutModal from "./LogoutModal";
 
 type SidebarProps = {
   sidebarOpen: boolean;
@@ -18,6 +25,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const triggerRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
+  const logout = useDisclosure();
 
   const closeSidebar = useCallback(
     () => setSidebarOpen(false),
@@ -151,6 +159,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
                   aria-label="Logout"
                   startContent={<FiLogOut className="text-xl" />}
                   className="group text-base bg-transparent text-kidemia-black2 hover:bg-kidemia-primary hover:text-kidemia-white w-full animate-sidebar-text-show rounded-md py-2 px-4 transition-transform justify-start"
+                  onPress={() => logout.onOpen()}
                 >
                   Log Out
                 </Button>
@@ -159,6 +168,12 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
           </div>
         </div>
       </aside>
+
+      <LogoutModal
+        isOpen={logout.isOpen}
+        onOpenChange={logout.onOpenChange}
+        onClose={logout.onClose}
+      />
     </>
   );
 }

@@ -14,6 +14,7 @@ export const SidebarRoutes = {
   dashboard: "/dashboard",
   settings: "/dashboard/settings",
   performance: "/dashboard/performance",
+  history: "/dashboard/history",
 };
 
 export const TestRoutes = {
