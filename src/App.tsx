@@ -23,6 +23,7 @@ import TestInstrusctionsPage from "./pages/TakeTest/TestInstrusctions";
 import QuestionsPage from "./pages/TakeTest/Questions";
 import ResultPage from "./pages/TakeTest/Result";
 import HistoryPage from "./pages/History";
+import ProfilePage from "./pages/Profile";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -72,6 +73,10 @@ export const router = createBrowserRouter([
       {
         path: SidebarRoutes.history,
         element: <HistoryPage />,
+      },
+      {
+        path: SidebarRoutes.profile,
+        element: <ProfilePage />,
       },
     ],
   },

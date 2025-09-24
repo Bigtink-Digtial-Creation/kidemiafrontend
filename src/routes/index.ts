@@ -15,6 +15,7 @@ export const SidebarRoutes = {
   settings: "/dashboard/settings",
   performance: "/dashboard/performance",
   history: "/dashboard/history",
+  profile: "/dashboard/profile",
 };
 
 export const TestRoutes = {
