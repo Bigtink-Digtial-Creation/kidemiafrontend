@@ -1,5 +1,9 @@
 export const HomeRoutes = {
   home: "/",
+  about: "/about-us",
+  test: "/test",
+  subjects: "/subjects",
+  contact: "/contact-us",
 };
 
 export const AuthRoutes = {
