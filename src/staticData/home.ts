@@ -3,7 +3,6 @@ import { FaChalkboardTeacher, FaQuestionCircle } from "react-icons/fa";
 import { TbChartInfographic, TbDeviceDesktopAnalytics } from "react-icons/tb";
 import { SiGoogleearthengine } from "react-icons/si";
 
-
 export const offersData = [
   {
     icon: GrTest,

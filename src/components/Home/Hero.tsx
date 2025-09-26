@@ -48,7 +48,9 @@ export default function Hero() {
             max={5}
             className="flex justify-center items-center md:justify-start w-full"
             renderCount={(count) => (
-              <p className="text-sm text-kidemia-grey font-medium ms-2">+{count}k Active Student and Teachers around the Globe. </p>
+              <p className="text-sm text-kidemia-grey font-medium ms-2">
+                +{count}k Active Student and Teachers around the Globe.{" "}
+              </p>
             )}
             total={100}
           >

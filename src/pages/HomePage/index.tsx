@@ -1,5 +1,5 @@
 import HelmetHeader from "../../components/HelmentHeader";
-import { Hero, Offer } from "../../components/Home";
+import { Choose, Hero, Offer } from "../../components/Home";
 
 export default function HomePage() {
   return (
@@ -8,6 +8,7 @@ export default function HomePage() {
       <section>
         <Hero />
         <Offer />
+        <Choose />
       </section>
     </>
   );
