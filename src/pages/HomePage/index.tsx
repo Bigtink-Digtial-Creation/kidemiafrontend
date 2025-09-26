@@ -1,5 +1,5 @@
 import HelmetHeader from "../../components/HelmentHeader";
-import Hero from "../../components/Home/Hero";
+import { Hero, Offer } from "../../components/Home";
 
 export default function HomePage() {
   return (
@@ -7,6 +7,7 @@ export default function HomePage() {
       <HelmetHeader title={"Home"} description={"The Future of Education"} />
       <section>
         <Hero />
+        <Offer />
       </section>
     </>
   );

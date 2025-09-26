@@ -6,7 +6,7 @@ import { FaLongArrowAltRight } from "react-icons/fa";
 export default function Hero() {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen flex flex-col md:flex-row justify-evenly items-center mx-auto py-6- md:py-12- px-4 md:px-16 gap-6 bg-kidemia-biege2">
+    <div className="min-h-screen flex flex-col md:flex-row justify-evenly items-center mx-auto  px-4 md:px-16 gap-6 bg-kidemia-biege/25">
       <div className="md:w-1/2 space-y-4">
         <h1 className="text-kidemia-secondary text-4xl md:text-[80px] font-semibold font-san text-center md:text-start tracking-wide">
           Learn, Monitor, and Teach, All in One Place.

@@ -29,7 +29,7 @@ export default function NavBar() {
       : "text-kidemia-black font-medium";
 
   return (
-    <nav className="fixed z-10 py-3 px-4 md:px-16 bg-kidemia-biege2 w-full shadow-sm flex justify-between items-center">
+    <nav className="fixed z-50 py-3 px-4 md:px-16 bg-kidemia-white w-full shadow-sm flex justify-between items-center">
       <div>
         <Image src="../src/assets/appLogo.png" alt="logo" width={80} />
       </div>
