@@ -1,4 +1,4 @@
-import { Button } from "@heroui/react";
+import { Avatar, AvatarGroup, Button } from "@heroui/react";
 import { useNavigate } from "react-router";
 import { AuthRoutes, HomeRoutes } from "../../routes";
 import { FaLongArrowAltRight } from "react-icons/fa";
@@ -40,6 +40,25 @@ export default function Hero() {
           >
             Learn More
           </Button>
+        </div>
+
+        <div>
+          <AvatarGroup
+            isBordered
+            max={5}
+            className="flex justify-center items-center md:justify-start w-full"
+            renderCount={(count) => (
+              <p className="text-sm text-kidemia-grey font-medium ms-2">+{count}k Active Student and Teachers around the Globe. </p>
+            )}
+            total={100}
+          >
+            <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
+            <Avatar src="https://i.pravatar.cc/150?u=a04258a2462d826712d" />
+            <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
+            <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026302d" />
+            <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026702d" />
+            <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026708c" />
+          </AvatarGroup>
         </div>
       </div>
       <div className="md:w-2/5">
