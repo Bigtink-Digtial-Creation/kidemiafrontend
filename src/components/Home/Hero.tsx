@@ -22,7 +22,7 @@ export default function Hero() {
             className="bg-kidemia-secondary text-kidemia-white font-bold"
             size="md"
             radius="sm"
-            type="submit"
+            type="button"
             onPress={() => navigate(AuthRoutes.signup)}
             endContent={<FaLongArrowAltRight />}
           >
