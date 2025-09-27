@@ -6,11 +6,11 @@ export default function Choose() {
   return (
     <div className="mx-auto py-8 md:py-12 px-4 md:px-24 bg-kidemia-biege/25 space-y-12">
       <div className="space-y-2">
-        <h3 className="text-2xl font-bold  text-kidemia-black">
+        <h3 className="text-2xl font-bold  text-kidemia-black text-center">
           Why <span className="text-kidemia-secondary">Kidemia</span> is The
           Right Choice for You
         </h3>
-        <p className="text-sm md:text-base text-kidemia-grey">
+        <p className="text-sm md:text-base text-kidemia-grey text-center">
           High level tests backed with instant results and seamless
           collaboration between students, guardians and tutors
         </p>
