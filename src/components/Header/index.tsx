@@ -43,12 +43,14 @@ export default function Header(props: HeaderT) {
         <div>
           <div className="flex items-center space-x-6">
             <FaBell className="text-xl cursor-pointer" />
-            <Avatar
-              size="sm"
-              isBordered
-              className="cursor-pointer"
-              src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
-            />
+            <Link to={SidebarRoutes.profile}>
+              <Avatar
+                size="sm"
+                isBordered
+                className="cursor-pointer"
+                src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
+              />
+            </Link>
           </div>
         </div>
       </div>

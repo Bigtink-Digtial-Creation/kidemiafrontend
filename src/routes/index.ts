@@ -1,5 +1,9 @@
 export const HomeRoutes = {
   home: "/",
+  about: "/about-us",
+  test: "/test",
+  subjects: "/subjects",
+  contact: "/contact-us",
 };
 
 export const AuthRoutes = {
@@ -14,6 +18,8 @@ export const SidebarRoutes = {
   dashboard: "/dashboard",
   settings: "/dashboard/settings",
   performance: "/dashboard/performance",
+  history: "/dashboard/history",
+  profile: "/dashboard/profile",
 };
 
 export const TestRoutes = {

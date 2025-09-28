@@ -1,12 +1,26 @@
 import HelmetHeader from "../../components/HelmentHeader";
+import {
+  Choose,
+  Cta,
+  Hero,
+  Numbers,
+  Offer,
+  PopularSubjects,
+  Works,
+} from "../../components/Home";
 
 export default function HomePage() {
   return (
     <>
       <HelmetHeader title={"Home"} description={"The Future of Education"} />
-
-      <section className="flex justify-center items-center text-4xl text-kidemia-primary">
-        Kidemia HomePage
+      <section>
+        <Hero />
+        <Numbers />
+        <Offer />
+        <Works />
+        <Choose />
+        <PopularSubjects />
+        <Cta />
       </section>
     </>
   );

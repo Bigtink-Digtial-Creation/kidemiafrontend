@@ -1,7 +1,5 @@
-import { useState } from "react";
 import {
   Button,
-  Chip,
   Pagination,
   Table,
   TableBody,
@@ -11,19 +9,19 @@ import {
   TableRow,
   useDisclosure,
 } from "@heroui/react";
-import { statusTheme } from "../../utils";
-import PerformanceModal from "./PerformanceModal";
-import { mockTableData } from "../../staticData";
+import { mockResultsData } from "../../staticData";
+import { useState } from "react";
+import HistoryDrawer from "./HistoryDrawer";
 
-export default function PerformanceTable() {
-  const viewDetails = useDisclosure();
+export default function HistoryTable() {
   const [selectedId, setSelectedId] = useState<string>("");
+  const openDrawer = useDisclosure();
 
   return (
     <>
       <div>
         <Table
-          aria-label="performance table"
+          aria-label="history table"
           className="pt-4"
           bottomContent={
             <div className="flex justify-end py-3">
@@ -41,42 +39,31 @@ export default function PerformanceTable() {
         >
           <TableHeader>
             <TableColumn className="w-12">S/N</TableColumn>
-            <TableColumn>Title</TableColumn>
+            <TableColumn>Subject</TableColumn>
             <TableColumn>Average Score (%)</TableColumn>
-            <TableColumn>Status</TableColumn>
-            <TableColumn>Comment</TableColumn>
-            <TableColumn>Date Created</TableColumn>
+            <TableColumn>Remark</TableColumn>
+            <TableColumn>Date Taken</TableColumn>
             <TableColumn>Action</TableColumn>
           </TableHeader>
-
           <TableBody emptyContent={"No available data"}>
-            {mockTableData.map((mock) => (
+            {mockResultsData.map((mock) => (
               <TableRow key={mock.sn}>
                 <TableCell>{mock.sn}</TableCell>
-                <TableCell>{mock.title}</TableCell>
+                <TableCell>{mock.subject}</TableCell>
                 <TableCell>{mock.averageScore}</TableCell>
-                <TableCell>
-                  <Chip
-                    color={statusTheme[mock.status]}
-                    className="text-xs px-3 capitalize"
-                    variant="flat"
-                  >
-                    {mock.status}
-                  </Chip>
-                </TableCell>
-                <TableCell>{mock.comment}</TableCell>
-                <TableCell>{mock.dateCreated}</TableCell>
+                <TableCell>{mock.remark}</TableCell>
+                <TableCell>{mock.dateTaken}</TableCell>
                 <TableCell>
                   <Button
                     size="sm"
                     variant="light"
                     className="bg-transparent text-kidemia-secondary"
                     onPress={() => {
-                      setSelectedId(mock.title);
-                      viewDetails.onOpen();
+                      setSelectedId(mock.subject);
+                      openDrawer.onOpen();
                     }}
                   >
-                    View Result
+                    View More
                   </Button>
                 </TableCell>
               </TableRow>
@@ -86,9 +73,9 @@ export default function PerformanceTable() {
       </div>
 
       {selectedId ? (
-        <PerformanceModal
-          isOpen={viewDetails.isOpen}
-          onOpenChange={viewDetails.onOpenChange}
+        <HistoryDrawer
+          isOpen={openDrawer.isOpen}
+          onOpenChange={openDrawer.onOpenChange}
           id={selectedId}
         />
       ) : null}

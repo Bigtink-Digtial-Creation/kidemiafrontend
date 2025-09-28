@@ -224,3 +224,76 @@ export const options: ApexOptions = {
     lineCap: "round",
   },
 };
+
+export const mockResultsData = [
+  {
+    sn: 1,
+    subject: "Mathematics",
+    averageScore: 78,
+    remark: "Good performance, but room for improvement",
+    dateTaken: "2025-01-12",
+  },
+  {
+    sn: 2,
+    subject: "English Language",
+    averageScore: 85,
+    remark: "Excellent understanding of concepts",
+    dateTaken: "2025-01-18",
+  },
+  {
+    sn: 3,
+    subject: "Biology",
+    averageScore: 62,
+    remark: "Fair, needs more focus on diagrams",
+    dateTaken: "2025-01-21",
+  },
+  {
+    sn: 4,
+    subject: "Chemistry",
+    averageScore: 90,
+    remark: "Outstanding work in practicals and theory",
+    dateTaken: "2025-02-02",
+  },
+  {
+    sn: 5,
+    subject: "Physics",
+    averageScore: 71,
+    remark: "Above average, calculations could improve",
+    dateTaken: "2025-02-05",
+  },
+  {
+    sn: 6,
+    subject: "Geography",
+    averageScore: 68,
+    remark: "Decent effort, revise case studies",
+    dateTaken: "2025-02-10",
+  },
+  {
+    sn: 7,
+    subject: "History",
+    averageScore: 80,
+    remark: "Very good recall and analysis",
+    dateTaken: "2025-02-15",
+  },
+  {
+    sn: 8,
+    subject: "Economics",
+    averageScore: 74,
+    remark: "Solid understanding of principles",
+    dateTaken: "2025-02-18",
+  },
+  {
+    sn: 9,
+    subject: "Government",
+    averageScore: 59,
+    remark: "Needs significant improvement",
+    dateTaken: "2025-02-20",
+  },
+  {
+    sn: 10,
+    subject: "Literature",
+    averageScore: 88,
+    remark: "Excellent critical analysis",
+    dateTaken: "2025-02-22",
+  },
+];
