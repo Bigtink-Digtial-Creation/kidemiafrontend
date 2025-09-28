@@ -10,7 +10,7 @@ export default function StatCard({ icon, title, figure, sub }: StatsCardProps) {
           <div className="w-10 h-10 rounded-full shadow-sm flex items-center justify-center bg-kidemia-biege aspect-square">
             <IconComponent className="text-xl text-kidemia-primary font-bold" />
           </div>
-          <span className="text-sm font-medium text-kidemia-black2">
+          <span className="text-sm font-semibold text-kidemia-black2">
             {title}
           </span>
         </CardHeader>
@@ -18,7 +18,7 @@ export default function StatCard({ icon, title, figure, sub }: StatsCardProps) {
         <CardBody>
           <span className="text-4xl font-bold text-kidemia-black text-center">
             {figure}
-            <sub className="text-sm text-kidemia-success font-light">{sub}</sub>
+            <sub className="text-xs md:text-sm text-kidemia-success font-light whitespace-nowrap">{sub}</sub>
           </span>
         </CardBody>
       </div>

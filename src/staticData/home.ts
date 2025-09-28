@@ -1,7 +1,19 @@
 import { GrTest } from "react-icons/gr";
-import { FaChalkboardTeacher, FaQuestionCircle } from "react-icons/fa";
+import {
+  FaBook,
+  FaCalculator,
+  FaChalkboardTeacher,
+  FaFlask,
+  FaGlobe,
+  FaLaptopCode,
+  FaPaintBrush,
+  FaQuestionCircle,
+} from "react-icons/fa";
 import { TbChartInfographic, TbDeviceDesktopAnalytics } from "react-icons/tb";
 import { SiGoogleearthengine } from "react-icons/si";
+import { MdBiotech, MdHistoryEdu, MdScience } from "react-icons/md";
+import { GiAtom, GiGreekTemple } from "react-icons/gi";
+import { BiMusic } from "react-icons/bi";
 
 export const offersData = [
   {
@@ -95,4 +107,19 @@ export const forTeachers = [
     text: "Track class performance and provide support.",
     description: "Access performance metrics and provide detailed support",
   },
+];
+
+export const topSubjects = [
+  { id: 1, icon: FaBook, title: "English", figure: "85+" },
+  { id: 2, icon: FaCalculator, title: "Mathematics", figure: "92+" },
+  { id: 3, icon: MdScience, title: "Physics", figure: "76+" },
+  { id: 4, icon: FaFlask, title: "Chemistry", figure: "81+" },
+  { id: 5, icon: GiAtom, title: "Biology", figure: "79+" },
+  { id: 6, icon: FaGlobe, title: "Geography", figure: "70+" },
+  { id: 7, icon: MdHistoryEdu, title: "History", figure: "65+" },
+  { id: 8, icon: GiGreekTemple, title: "Civics", figure: "68+" },
+  { id: 9, icon: FaLaptopCode, title: "Computer Science", figure: "88+" },
+  { id: 10, icon: FaPaintBrush, title: "Arts", figure: "74+" },
+  { id: 11, icon: BiMusic, title: "Music", figure: "60+" },
+  { id: 12, icon: MdBiotech, title: "Technology", figure: "83+" },
 ];

@@ -5,6 +5,7 @@ import {
   Hero,
   Numbers,
   Offer,
+  PopularSubjects,
   Works,
 } from "../../components/Home";
 
@@ -18,6 +19,7 @@ export default function HomePage() {
         <Offer />
         <Works />
         <Choose />
+        <PopularSubjects />
         <Cta />
       </section>
     </>
