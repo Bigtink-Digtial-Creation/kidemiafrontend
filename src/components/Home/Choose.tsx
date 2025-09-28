@@ -5,15 +5,14 @@ import ChoiceCard from "../Cards/ChoiceCard";
 export default function Choose() {
   return (
     <div className="mx-auto py-8 md:py-12 px-4 md:px-24 bg-kidemia-biege/25 space-y-12">
-      <div className="space-y-2">
-        <h3 className="text-2xl font-bold  text-kidemia-black text-center">
-          Why <span className="text-kidemia-secondary">Kidemia</span> is The
-          Right Choice for You
-        </h3>
-        <p className="text-sm md:text-base text-kidemia-grey text-center">
+      <div className="flex flex-col justify-center items-center  space-y-2">
+        <div className="bg-kidemia-white shadow-2xl text-kidemia-black border-kidemia-success border-[1px] inline-block px-4 py-1 rounded-full text-sm font-semibold">
+          The Right Choice For You
+        </div>
+        <h3 className="text-2xl md:text-4xl font-bold  text-kidemia-grey/60 text-center tracking-wider max-w-2xl">
           High level tests backed with instant results and seamless
           collaboration between students, guardians and tutors
-        </p>
+        </h3>
       </div>
 
       <div>

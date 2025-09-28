@@ -41,3 +41,58 @@ export const offersData = [
       "Teachers can easily upload questions, create assignments, grade tests, and track student progress. They also receive class-wide insights to identify trends and adjust teaching strategies accordingly.",
   },
 ];
+
+export const forStudents = [
+  {
+    id: "01",
+    text: " Take interactive exams and tests online.",
+    description: "Engage in fun tests and exams",
+  },
+  {
+    id: "02",
+    text: "Receive instant grades and feedback.",
+    description: "Test results dont have to wait for too long again.",
+  },
+  {
+    id: "03",
+    text: " Track your learning progress over time.",
+    description:
+      "Stay at the top of your game by keeping track of your progress",
+  },
+];
+
+export const forGuardian = [
+  {
+    id: "01",
+    text: " Monitor your child's academic performance.",
+    description: "Get daily updates about how your ward is performing.",
+  },
+  {
+    id: "02",
+    text: "View progress reports and grading history.",
+    description: "Access your kid's progress reports and histroy in real time",
+  },
+  {
+    id: "03",
+    text: "Stay connected with teachers for feedback.",
+    description: "Direct access to your ward's teachers and thier feedback",
+  },
+];
+
+export const forTeachers = [
+  {
+    id: "01",
+    text: "Upload and manage test questions with ease.",
+    description: "Access to the best test upload and management system",
+  },
+  {
+    id: "02",
+    text: "Grade student submissions quickly.",
+    description: "Provide students with thier grades instantly",
+  },
+  {
+    id: "03",
+    text: "Track class performance and provide support.",
+    description: "Access performance metrics and provide detailed support",
+  },
+];
