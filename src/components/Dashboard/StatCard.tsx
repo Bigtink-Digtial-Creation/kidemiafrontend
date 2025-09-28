@@ -18,7 +18,9 @@ export default function StatCard({ icon, title, figure, sub }: StatsCardProps) {
         <CardBody>
           <span className="text-4xl font-bold text-kidemia-black text-center">
             {figure}
-            <sub className="text-xs md:text-sm text-kidemia-success font-light whitespace-nowrap">{sub}</sub>
+            <sub className="text-xs md:text-sm text-kidemia-success font-light whitespace-nowrap">
+              {sub}
+            </sub>
           </span>
         </CardBody>
       </div>

@@ -14,6 +14,7 @@ import { SiGoogleearthengine } from "react-icons/si";
 import { MdBiotech, MdHistoryEdu, MdScience } from "react-icons/md";
 import { GiAtom, GiGreekTemple } from "react-icons/gi";
 import { BiMusic } from "react-icons/bi";
+import { HomeRoutes } from "../routes";
 
 export const offersData = [
   {
@@ -122,4 +123,31 @@ export const topSubjects = [
   { id: 10, icon: FaPaintBrush, title: "Arts", figure: "74+" },
   { id: 11, icon: BiMusic, title: "Music", figure: "60+" },
   { id: 12, icon: MdBiotech, title: "Technology", figure: "83+" },
+];
+
+export const footerData = [
+  {
+    title: "Organization",
+    links: [
+      { label: "About Us", href: HomeRoutes.about },
+      { label: "Contact Us", href: HomeRoutes.contact },
+      { label: "Subjects", href: HomeRoutes.subjects },
+      { label: "Tests", href: HomeRoutes.test },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Terms & Conditions", href: "#" },
+      { label: "Privacy Policy", href: "#" },
+      { label: "Cookie Policy", href: "#" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "Blog", href: "#" },
+      { label: "Publications", href: "#" },
+    ],
+  },
 ];

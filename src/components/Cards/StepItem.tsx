@@ -88,7 +88,7 @@ export const StepItem = ({
         whileInView="visible"
         viewport={{ once: true }}
       >
-        <h3 className="font-bold text-xl text-kidemia-primary">{text}</h3>
+        <h3 className="font-bold text-xl text-kidemia-secondary">{text}</h3>
         <p className="text-base text-kidemia-grey">{description}</p>
       </motion.div>
     </div>

@@ -1,5 +1,5 @@
-import StatCard from '../Dashboard/StatCard'
-import { topSubjects } from '../../staticData/home'
+import StatCard from "../Dashboard/StatCard";
+import { topSubjects } from "../../staticData/home";
 
 export default function PopularSubjects() {
   return (
@@ -13,17 +13,18 @@ export default function PopularSubjects() {
         </h3>
       </div>
 
-      <div className='py-8 grid grid-cols-2 md:grid-cols-6 gap-4 md:px-24'>
+      <div className="py-8 grid grid-cols-2 md:grid-cols-6 gap-4 md:px-24">
         {topSubjects.map((subject) => (
           <div key={subject.id}>
             <StatCard
               icon={subject.icon}
               title={subject.title}
               figure={subject.figure}
-              sub='Exams & Tests Taken' />
+              sub="Exams & Tests Taken"
+            />
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }
