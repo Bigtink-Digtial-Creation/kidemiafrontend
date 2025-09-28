@@ -10,6 +10,7 @@ import {
 import { Link, useLocation } from "react-router";
 import { AuthRoutes, HomeRoutes } from "../../routes";
 import { IoMdMenu } from "react-icons/io";
+import AppLogo from "@/assets/appLogo.png";
 
 export default function NavBar() {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -31,7 +32,7 @@ export default function NavBar() {
   return (
     <nav className="fixed z-50 py-3 px-4 md:px-16 bg-kidemia-white w-full shadow-sm flex justify-between items-center">
       <div>
-        <Image src="../src/assets/appLogo.png" alt="logo" width={80} />
+        <Image src={AppLogo} alt="logo" width={80} />
       </div>
 
       <div className="hidden md:flex items-center justify-between space-x-7">

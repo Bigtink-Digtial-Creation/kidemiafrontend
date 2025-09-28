@@ -2,6 +2,7 @@ import { Avatar, AvatarGroup, Button } from "@heroui/react";
 import { useNavigate } from "react-router";
 import { AuthRoutes, HomeRoutes } from "../../routes";
 import { FaLongArrowAltRight } from "react-icons/fa";
+import hero from "../../assets/images/hero.svg";
 
 export default function Hero() {
   const navigate = useNavigate();
@@ -64,11 +65,7 @@ export default function Hero() {
         </div>
       </div>
       <div className="md:w-2/5">
-        <img
-          src="src/assets/images/hero.svg"
-          alt="hero-image"
-          className="w-full object-cover"
-        />
+        <img src={hero} alt="hero-image" className="w-full object-cover" />
       </div>
     </div>
   );
