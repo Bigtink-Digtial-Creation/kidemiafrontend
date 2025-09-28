@@ -11,6 +11,8 @@ import {
   logoVariants,
   socialIconVariants,
 } from "./variants";
+import bgImage from "../../assets/images/map-bg.svg";
+import logo from "../../assets/kidemia.svg";
 
 const iconClasses = "text-kidemia-white text-base";
 
@@ -21,7 +23,7 @@ export default function Footer() {
     <footer className="relative overflow-hidden">
       <div
         className="relative bg-cover bg-center h-full text-white"
-        style={{ backgroundImage: `url("/src/assets/images/map-bg.svg")` }}
+        style={{ backgroundImage: `url(${bgImage})` }}
       >
         <div className="absolute inset-0 bg-black/75" />
 
@@ -43,7 +45,7 @@ export default function Footer() {
                 whileTap={{ scale: 0.95 }}
                 className="col-span-1 cursor-pointer"
               >
-                <Image src="src/assets/kidemia.svg" alt="logo" />
+                <Image src={logo} alt="logo" />
               </motion.div>
 
               {footerData.map((section, idx) => (

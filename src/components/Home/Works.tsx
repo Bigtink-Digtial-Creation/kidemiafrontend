@@ -1,5 +1,8 @@
 import { forGuardian, forStudents, forTeachers } from "../../staticData/home";
 import { StepItem } from "../Cards/StepItem";
+import parents from "../../assets/images/parents.svg";
+import student from "../../assets/images/student.svg";
+import teacher from "../../assets/images/teacher.svg";
 
 export default function Works() {
   return (
@@ -37,7 +40,7 @@ export default function Works() {
           </div>
           <div className="order-first md:order-last w-full md:w-1/2 aspect-[4/3]">
             <img
-              src="src/assets/images/student.svg"
+              src={student}
               alt="student"
               className="w-full h-full object-cover"
             />
@@ -48,8 +51,8 @@ export default function Works() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 justify-items-center items-center">
           <div className="w-full md:w-1/2 aspect-[4/3]">
             <img
-              src="src/assets/images/parents.svg"
-              alt="student"
+              src={parents}
+              alt="parents"
               className="w-full h-full object-cover"
             />
           </div>
@@ -94,7 +97,7 @@ export default function Works() {
           </div>
           <div className="order-first md:order-last w-full md:w-1/2 aspect-[4/3]">
             <img
-              src="src/assets/images/teacher.svg"
+              src={teacher}
               alt="teacher"
               className="w-full h-full object-cover"
             />
