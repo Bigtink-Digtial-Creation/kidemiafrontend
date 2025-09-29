@@ -11,7 +11,7 @@ export default function Choose() {
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true }}
+      viewport={{ once: true, amount: 0.3 }}
     >
       <motion.div
         className="flex flex-col justify-center items-center space-y-2"

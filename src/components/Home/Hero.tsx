@@ -14,7 +14,7 @@ export default function Hero() {
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true }}
+      viewport={{ once: true, amount: 0.3 }}
     >
       <motion.div className="md:w-1/2 space-y-4" variants={itemVariants}>
         <h1 className="text-kidemia-secondary text-4xl md:text-[80px] font-semibold font-san text-center md:text-start tracking-wide">

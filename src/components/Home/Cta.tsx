@@ -25,7 +25,7 @@ export default function Cta() {
         gap-8 md:gap-12 overflow-hidden"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true }}
+        viewport={{ once: true, amount: 0.3 }}
         variants={containerVariants}
         whileHover={{ scale: 1.02 }}
         transition={{ type: "spring", stiffness: 120 }}
