@@ -1,8 +1,26 @@
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { testimonials } from "../../staticData/home";
 import TestimonialCard from "../Cards/TestimonialCard";
 
 export default function Testimonial() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
   return (
     <div className="mx-auto py-8 md:py-12 px-4 md:px-24 bg-kidemia-biege2">
       <div className="flex flex-col justify-center items-center space-y-3">
@@ -16,22 +34,23 @@ export default function Testimonial() {
 
       <div className="py-12">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
           className="max-w-6xl mx-auto px-6"
         >
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((t, index) => (
-              <TestimonialCard
-                key={t.id}
-                name={t.name}
-                role={t.role}
-                image={t.image}
-                text={t.text}
-                index={index}
-              />
+              <motion.div key={t.id} variants={itemVariants}>
+                <TestimonialCard
+                  name={t.name}
+                  role={t.role}
+                  image={t.image}
+                  text={t.text}
+                  index={index}
+                />
+              </motion.div>
             ))}
           </div>
         </motion.div>

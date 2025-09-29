@@ -1,24 +1,34 @@
+import { motion } from "framer-motion";
 import { Avatar, AvatarGroup, Button } from "@heroui/react";
 import { useNavigate } from "react-router";
 import { AuthRoutes, HomeRoutes } from "../../routes";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import hero from "../../assets/images/hero.svg";
+import { containerVariants, itemVariants } from "./homeVariants";
 
 export default function Hero() {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen flex flex-col md:flex-row justify-evenly items-center mx-auto py-24 px-4 md:px-16 gap-6 bg-kidemia-biege/25">
-      <div className="md:w-1/2 space-y-4">
+    <motion.div
+      className="min-h-screen flex flex-col md:flex-row justify-evenly items-center mx-auto py-24 px-4 md:px-16 gap-6 bg-kidemia-biege/25"
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+    >
+      <motion.div className="md:w-1/2 space-y-4" variants={itemVariants}>
         <h1 className="text-kidemia-secondary text-4xl md:text-[80px] font-semibold font-san text-center md:text-start tracking-wide">
           Learn, Monitor, and Teach, All in One Place.
         </h1>
-
         <p className="text-base px-6 md:px-0 text-kidemia-grey text-center md:text-justify tracking-wide">
           A modern education platform that connects students, guardians, and
           teachers for better learning outcomes.
         </p>
 
-        <div className="py-4 flex justify-center md:justify-start items-center gap-3 md:gap-6">
+        <motion.div
+          className="py-4 flex justify-center md:justify-start items-center gap-3 md:gap-6"
+          variants={itemVariants}
+        >
           <Button
             className="bg-kidemia-secondary text-kidemia-white font-bold"
             size="md"
@@ -29,7 +39,6 @@ export default function Hero() {
           >
             Get Started
           </Button>
-
           <Button
             className="bg-kidemia-biege border border-enita-black2 font-bold text-kidemia-primary"
             variant="faded"
@@ -41,16 +50,15 @@ export default function Hero() {
           >
             Learn More
           </Button>
-        </div>
-
-        <div>
+        </motion.div>
+        <motion.div variants={itemVariants}>
           <AvatarGroup
             isBordered
             max={5}
             className="flex justify-center items-center md:justify-start w-full"
             renderCount={(count) => (
               <p className="text-sm text-kidemia-grey font-medium ms-2">
-                +{count}k Active Student and Teachers around the Globe.{" "}
+                +{count}k Active Student and Teachers around the Globe.
               </p>
             )}
             total={100}
@@ -62,11 +70,12 @@ export default function Hero() {
             <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026702d" />
             <Avatar src="https://i.pravatar.cc/150?u=a04258114e29026708c" />
           </AvatarGroup>
-        </div>
-      </div>
-      <div className="md:w-2/5">
+        </motion.div>
+      </motion.div>
+
+      <motion.div className="md:w-2/5" variants={itemVariants}>
         <img src={hero} alt="hero-image" className="w-full object-cover" />
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
