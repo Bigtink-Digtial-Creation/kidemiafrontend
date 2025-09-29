@@ -186,3 +186,48 @@ export const schoolLogos = [
     src: "https://i.pinimg.com/1200x/bf/f0/d3/bff0d3bc0d69d95f03ff23f8882a5920.jpg",
   },
 ];
+
+export const testimonials = [
+  {
+    id: 1,
+    name: "Christine Jackson",
+    role: "Student",
+    image: "https://randomuser.me/api/portraits/women/44.jpg",
+    text: "If you're not using testimonials, you're missing out on a golden opportunity to turn visitors and potential buyers into actual customers.",
+  },
+  {
+    id: 2,
+    name: "Yasmine Garcia",
+    role: "Parent",
+    image: "https://randomuser.me/api/portraits/women/65.jpg",
+    text: "If you're not using testimonials, you're missing out on a golden opportunity to turn visitors and potential buyers into actual customers.",
+  },
+  {
+    id: 3,
+    name: "Sakura Palastri",
+    role: "Student",
+    image: "https://randomuser.me/api/portraits/women/30.jpg",
+    text: "If you're not using testimonials, you're missing out on a golden opportunity to turn visitors and potential buyers into actual customers.",
+  },
+  {
+    id: 4,
+    name: "Bác. Lõ Lính",
+    role: "Teacher",
+    image: "https://randomuser.me/api/portraits/men/35.jpg",
+    text: "If you're not using testimonials, you're missing out on a golden opportunity to turn visitors and potential buyers into actual customers.",
+  },
+  {
+    id: 5,
+    name: "Ibrahim Mahmud",
+    role: "Student",
+    image: "https://randomuser.me/api/portraits/men/52.jpg",
+    text: "If you're not using testimonials, you're missing out on a golden opportunity to turn visitors and potential buyers into actual customers.",
+  },
+  {
+    id: 6,
+    name: "Margaret Taylor",
+    role: "Parent",
+    image: "https://randomuser.me/api/portraits/women/24.jpg",
+    text: "If you're not using testimonials, you're missing out on a golden opportunity to turn visitors and potential buyers into actual customers.",
+  },
+];

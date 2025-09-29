@@ -1,9 +1,9 @@
-import { Image } from '@heroui/react';
+import { Image } from "@heroui/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/autoplay";
-import { schoolLogos } from '../../staticData/home';
+import { schoolLogos } from "../../staticData/home";
 
 export default function Partners() {
   return (
@@ -16,7 +16,7 @@ export default function Partners() {
           Partnering Educational Institutions
         </h3>
       </div>
-      <div className='py-12'>
+      <div className="py-12">
         <Swiper
           modules={[Autoplay]}
           spaceBetween={10}
@@ -49,13 +49,9 @@ export default function Partners() {
                 />
               </div>
             </SwiperSlide>
-            
           ))}
-
-          
         </Swiper>
-
       </div>
     </div>
-  )
+  );
 }

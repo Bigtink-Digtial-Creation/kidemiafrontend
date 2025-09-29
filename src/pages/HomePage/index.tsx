@@ -7,6 +7,7 @@ import {
   Offer,
   Partners,
   PopularSubjects,
+  Testimonial,
   Works,
 } from "../../components/Home";
 
@@ -22,6 +23,7 @@ export default function HomePage() {
         <Choose />
         <Partners />
         <PopularSubjects />
+        <Testimonial />
         <Cta />
       </section>
     </>
