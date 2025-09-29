@@ -3,7 +3,8 @@ import Cta from "./Cta";
 import Hero from "./Hero";
 import Numbers from "./Numbers";
 import Offer from "./Offer";
+import Partners from "./Partners";
 import PopularSubjects from "./PopularSubjects";
 import Works from "./Works";
 
-export { Hero, Offer, Choose, Works, Cta, Numbers, PopularSubjects };
+export { Hero, Offer, Choose, Works, Cta, Numbers, PopularSubjects, Partners };

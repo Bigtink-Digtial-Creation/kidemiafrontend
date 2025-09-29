@@ -151,3 +151,38 @@ export const footerData = [
     ],
   },
 ];
+
+export const schoolLogos = [
+  {
+    id: "1",
+    src: "https://i.pinimg.com/1200x/81/f8/ab/81f8abb2bbe4f4b31b7e0b6d8a1f1dde.jpg",
+  },
+  {
+    id: "2",
+    src: "https://i.pinimg.com/736x/7d/9b/93/7d9b936804fe7eac6962b64ee902d390.jpg",
+  },
+  {
+    id: "3",
+    src: "https://i.pinimg.com/1200x/a2/a2/2c/a2a22cb2b5cc8a4115731282c63b5e83.jpg",
+  },
+  {
+    id: "4",
+    src: "https://i.pinimg.com/736x/44/c4/1f/44c41f1567290c720d6cff7fe3cf587a.jpg",
+  },
+  {
+    id: "5",
+    src: "https://i.pinimg.com/736x/ec/ce/9f/ecce9f34b9cf3bc867d301e43c326db3.jpg",
+  },
+  {
+    id: "6",
+    src: "https://i.pinimg.com/736x/53/04/78/5304781f92c5b42ca6b34331424a18df.jpg",
+  },
+  {
+    id: "7",
+    src: "https://i.pinimg.com/736x/b0/d7/8d/b0d78d099de03e6ab296c2af2debc96b.jpg",
+  },
+  {
+    id: "8",
+    src: "https://i.pinimg.com/1200x/bf/f0/d3/bff0d3bc0d69d95f03ff23f8882a5920.jpg",
+  },
+];
