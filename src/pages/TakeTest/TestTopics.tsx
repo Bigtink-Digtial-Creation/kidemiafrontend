@@ -31,7 +31,6 @@ export default function TestTopicsPage() {
             }
           }}
           orientation="horizontal"
-
         >
           {topicsData.map((topics) => (
             <div key={topics.id}>
