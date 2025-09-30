@@ -48,7 +48,7 @@ export default function NavBar() {
       </div>
 
       <div className="hidden md:flex space-x-6">
-        <Link to={AuthRoutes.login}>
+        <Link to={AuthRoutes.signup}>
           <Button
             className="bg-kidemia-biege border border-enita-black2 font-bold text-kidemia-primary w-full"
             variant="faded"
@@ -59,7 +59,7 @@ export default function NavBar() {
             Sign Up
           </Button>
         </Link>
-        <Link to={AuthRoutes.signup}>
+        <Link to={AuthRoutes.login}>
           <Button
             className="bg-kidemia-secondary text-kidemia-white font-bold w-full"
             size="sm"

@@ -17,10 +17,11 @@ export default function TestLayout() {
           Go Back
         </Button>
       </div>
-      <div className="flex justify-center">
-        <Image src="../src/assets/appLogo.png" alt="logo" width={150} />
-      </div>
-      <div className="py-4 flex justify-center items-center w-full max-w-8xl mx-auto">
+
+      <div className="min-h-screen py-4 flex flex-col justify-center items-center w-full max-w-8xl mx-auto overflow-y-hidden">
+        <div className="flex justify-center">
+          <Image src="../src/assets/appLogo.png" alt="logo" width={150} />
+        </div>
         <Outlet />
       </div>
     </section>
