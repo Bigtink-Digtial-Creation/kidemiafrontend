@@ -25,8 +25,13 @@ export default function TestTopicsPage() {
             base: "w-full",
           }}
           value={groupSelected}
-          onChange={setGroupSelected}
+          onChange={(values) => {
+            if (values.length <= 5) {
+              setGroupSelected(values);
+            }
+          }}
           orientation="horizontal"
+
         >
           {topicsData.map((topics) => (
             <div key={topics.id}>
@@ -43,7 +48,7 @@ export default function TestTopicsPage() {
           size="lg"
           className="bg-kidemia-secondary text-kidemia-white font-semibold w-1/4"
           radius="sm"
-          isDisabled={groupSelected.length === 0}
+          isDisabled={groupSelected.length !== 5}
           onPress={() => navigate(TestRoutes.testIntructions)}
         >
           Continue
