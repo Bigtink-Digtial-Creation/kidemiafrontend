@@ -35,17 +35,17 @@ export default function Partners() {
               slidesPerView: 2,
             },
             1024: {
-              slidesPerView: 4,
+              slidesPerView: 6,
             },
           }}
         >
           {schoolLogos.map((school) => (
             <SwiperSlide key={school.id}>
-              <div className="relative flex justify-center items-center h-64 w-[350px] lg:w-[300px]">
+              <div className="relative flex justify-center items-center h-64 w-[350px] lg:w-[200px]">
                 <Image
                   src={school.src}
                   alt="parnters"
-                  className="object-contain"
+                  className="object-contain h-[150px]"
                 />
               </div>
             </SwiperSlide>
