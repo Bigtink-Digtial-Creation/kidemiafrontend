@@ -302,17 +302,14 @@ export const questions = [
   {
     question: "Where is the Medulla Oblongata located?",
     options: ["a. Brainstem", "b. Heart", "c. Lungs", "d. Liver", "e. Kidney"],
-    answer: "a",
   },
   {
     question: "Which planet is known as the Red Planet?",
     options: ["a. Venus", "b. Mars", "c. Jupiter", "d. Saturn", "e. Mercury"],
-    answer: "b",
   },
   {
     question: "What is the capital of Japan?",
     options: ["a. Tokyo", "b. Kyoto", "c. Osaka", "d. Nagoya", "e. Sapporo"],
-    answer: "a",
   },
   {
     question: "What gas do plants absorb during photosynthesis?",
@@ -323,7 +320,6 @@ export const questions = [
       "d. Helium",
       "e. Hydrogen",
     ],
-    answer: "c",
   },
   {
     question: "Who wrote 'Romeo and Juliet'?",
@@ -334,7 +330,6 @@ export const questions = [
       "d. Mark Twain",
       "e. Jane Austen",
     ],
-    answer: "c",
   },
   {
     question: "What is the largest mammal?",
@@ -345,17 +340,14 @@ export const questions = [
       "d. Orca",
       "e. Hippopotamus",
     ],
-    answer: "b",
   },
   {
     question: "Which element has the chemical symbol 'O'?",
     options: ["a. Oxygen", "b. Gold", "c. Osmium", "d. Iron", "e. Zinc"],
-    answer: "a",
   },
   {
     question: "How many continents are there?",
     options: ["a. 5", "b. 6", "c. 7", "d. 8", "e. 9"],
-    answer: "c",
   },
   {
     question: "Who painted the Mona Lisa?",
@@ -366,11 +358,9 @@ export const questions = [
       "d. Claude Monet",
       "e. Michelangelo",
     ],
-    answer: "c",
   },
   {
     question: "Which is the smallest prime number?",
     options: ["a. 0", "b. 1", "c. 2", "d. 3", "e. 5"],
-    answer: "c",
   },
 ];
