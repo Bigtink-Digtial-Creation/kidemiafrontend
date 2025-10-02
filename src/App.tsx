@@ -24,6 +24,7 @@ import QuestionsPage from "./pages/TakeTest/Questions";
 import ResultPage from "./pages/TakeTest/Result";
 import HistoryPage from "./pages/History";
 import ProfilePage from "./pages/Profile";
+import SettingsPage from "./pages/Settings";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -77,6 +78,10 @@ export const router = createBrowserRouter([
       {
         path: SidebarRoutes.profile,
         element: <ProfilePage />,
+      },
+      {
+        path: SidebarRoutes.settings,
+        element: <SettingsPage />,
       },
     ],
   },
