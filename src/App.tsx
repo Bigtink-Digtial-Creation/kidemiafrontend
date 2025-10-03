@@ -7,13 +7,18 @@ import AuthLayout from "./layouts/Auth.layout";
 import DashboardLayout from "./layouts/Dashboard.layout";
 import TestLayout from "./layouts/Test.layout";
 
-//pages
+// home pages
 import HomePage from "./pages/HomePage";
+import ContactUs from "./pages/HomePage/ContactUs";
+
+// auth pages
 import LoginPage from "./pages/Auth/Login";
 import ForgotPasswordPage from "./pages/Auth/ForgotPassword";
 import ChangePasswordPage from "./pages/Auth/ChangePassword";
 import SignUpPage from "./pages/Auth/Signup";
 import GuardianSignup from "./pages/Auth/Guardian";
+
+// dashboard pages
 import DashboardPage from "./pages/Dashboard";
 import PerformancePage from "./pages/Performance";
 import TakeTestPage from "./pages/TakeTest";
@@ -32,7 +37,13 @@ export const router = createBrowserRouter([
   {
     element: <HomeLayout />,
     errorElement: <ErrorPage />,
-    children: [{ path: HomeRoutes.home, element: <HomePage /> }],
+    children: [
+      { path: HomeRoutes.home, element: <HomePage /> },
+      {
+        path: HomeRoutes.contact,
+        element: <ContactUs />,
+      },
+    ],
   },
   {
     element: <AuthLayout />,
