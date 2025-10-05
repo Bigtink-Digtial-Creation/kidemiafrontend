@@ -5,11 +5,17 @@ import { useForm } from "react-hook-form";
 import { MdOutlineEmail } from "react-icons/md";
 import { signupFormData, signupInfoStep } from "../../store/auth.atom";
 import { StepFourSchema } from "../../schema/auth.schema";
+import { loggedinUserAtom, storedAuthTokenAtom } from "../../store/user.atom";
 
 export default function StepFour() {
   const setStep = useSetAtom(signupInfoStep);
   const [formData, setFormData] = useAtom(signupFormData);
   const role = useAtomValue(signupFormData).stepTwo?.role || "";
+  const finalFormData = useAtomValue(signupFormData)
+  const setStoredToken = useSetAtom(storedAuthTokenAtom)
+  const setLoggedInUser = useSetAtom(loggedinUserAtom)
+
+
 
   const {
     register,
@@ -23,7 +29,9 @@ export default function StepFour() {
   });
 
   const onSubmit = (data: StepFourSchema) => {
+    console.log({ finalFormData });
     console.log(data);
+
     setFormData((prev) => ({
       ...prev,
       stepFour: data,

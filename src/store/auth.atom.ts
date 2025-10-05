@@ -6,6 +6,8 @@ export const signupInfoStep = atom<SignUpInfoT>("STEPONE");
 
 export const signupFormData = atom({
   stepOne: {
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
     confirmPassword: "",

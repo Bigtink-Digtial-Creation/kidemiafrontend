@@ -6,7 +6,7 @@ import { useAtom, useSetAtom } from "jotai";
 import { signupFormData, signupInfoStep } from "../../store/auth.atom";
 import { Button, Form, Input } from "@heroui/react";
 import { MdOutlineEmail } from "react-icons/md";
-import { BiScan } from "react-icons/bi";
+import { BiScan, BiUser } from "react-icons/bi";
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { AuthRoutes } from "../../routes";
@@ -42,6 +42,34 @@ export default function StepOne() {
   return (
     <div className="space-y-4">
       <Form className="py-4 space-y-2" onSubmit={handleSubmit(onSubmit)}>
+        <div className="pb-2 w-full flex items-center gap-4">
+          <Input
+            variant="flat"
+            size="lg"
+            radius="sm"
+            startContent={
+              <BiUser className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
+            }
+            placeholder="Your Firstname"
+            type="text"
+            {...register("first_name")}
+            isInvalid={!!errors?.first_name?.message}
+            errorMessage={errors?.first_name?.message}
+          />
+          <Input
+            variant="flat"
+            size="lg"
+            radius="sm"
+            startContent={
+              <BiUser className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
+            }
+            placeholder="Your Lastname"
+            type="text"
+            {...register("last_name")}
+            isInvalid={!!errors?.last_name?.message}
+            errorMessage={errors?.last_name?.message}
+          />
+        </div>
         <div className="pb-2 w-full">
           <Input
             variant="flat"
