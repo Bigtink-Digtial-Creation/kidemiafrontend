@@ -23,7 +23,6 @@ export default function StepTwo() {
   });
 
   const onSubmit = (data: StepTwoSchema) => {
-    console.log(data);
     setFormData((prev) => ({
       ...prev,
       stepTwo: data,

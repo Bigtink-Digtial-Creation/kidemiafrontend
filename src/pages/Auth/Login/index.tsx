@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { useSetAtom } from "jotai";
 import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
-import { Button, Form, Input } from "@heroui/react";
+import { addToast, Button, Form, Input, Switch } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema } from "../../../schema/auth.schema";
 import { MdOutlineEmail } from "react-icons/md";
@@ -9,11 +10,21 @@ import { FaEyeSlash, FaRegEye } from "react-icons/fa";
 import { BiScan } from "react-icons/bi";
 import { FcGoogle } from "react-icons/fc";
 import { AuthRoutes, SidebarRoutes } from "../../../routes";
+import { useMutation } from "@tanstack/react-query";
+import type { LoginRequest } from "../../../sdk/generated";
+import { ApiSDK } from "../../../sdk";
+import {
+  loggedinUserAtom,
+  storedAuthTokenAtom,
+} from "../../../store/user.atom";
+import { apiErrorParser } from "../../../utils/errorParser";
 
 export default function LoginPage() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
   const navigate = useNavigate();
+  const setStoredToken = useSetAtom(storedAuthTokenAtom);
+  const setLoggedInUser = useSetAtom(loggedinUserAtom);
 
   const {
     register,
@@ -23,9 +34,34 @@ export default function LoginPage() {
     resolver: zodResolver(LoginSchema),
   });
 
+  const loginMutation = useMutation({
+    mutationFn: (formData: LoginRequest) =>
+      ApiSDK.AuthenticationService.loginApiV1AuthLoginPost(formData),
+    onSuccess(data) {
+      if (data) {
+        const token = data.access_token;
+        ApiSDK.OpenAPI.TOKEN = token;
+        setStoredToken(token);
+        setLoggedInUser(data);
+        navigate(SidebarRoutes.dashboard, { replace: true });
+        addToast({
+          title: "Login Successful",
+          color: "success",
+        });
+      }
+    },
+    onError(error) {
+      const parsedError = apiErrorParser(error);
+      addToast({
+        title: "An Error Occured",
+        description: parsedError.message,
+        color: "danger",
+      });
+    },
+  });
+
   const onSubmit = (data: LoginSchema) => {
-    console.log(data);
-    navigate(SidebarRoutes.dashboard);
+    loginMutation.mutate(data);
   };
 
   return (
@@ -35,7 +71,7 @@ export default function LoginPage() {
           Welcome Back
         </h2>
         <p className="text-lg text-kidemia-black2 text-center font-medium">
-          Login to continue
+          SignIn to continue
         </p>
       </div>
 
@@ -53,6 +89,7 @@ export default function LoginPage() {
             {...register("email")}
             isInvalid={!!errors?.email?.message}
             errorMessage={errors?.email?.message}
+            isDisabled={loginMutation.isPending}
           />
         </div>
 
@@ -83,9 +120,21 @@ export default function LoginPage() {
             {...register("password")}
             isInvalid={!!errors?.password?.message}
             errorMessage={errors?.password?.message}
+            isDisabled={loginMutation.isPending}
           />
 
-          <div>
+          <div className="flex items-center justify-between pt-1">
+            <Switch
+              size="sm"
+              color="warning"
+              {...register("remember_me")}
+              classNames={{
+                label: "text-kidemia-secondary text-sm font-medium",
+              }}
+              isDisabled={loginMutation.isPending}
+            >
+              Remember me
+            </Switch>
             <Link
               to={AuthRoutes.forgotPassword}
               className="text-kidemia-secondary text-sm font-medium hover:underline"
@@ -102,8 +151,10 @@ export default function LoginPage() {
             size="lg"
             className="bg-kidemia-secondary text-kidemia-white font-semibold w-full"
             radius="sm"
+            isDisabled={loginMutation.isPending}
+            isLoading={loginMutation.isPending}
           >
-            Login
+            SignIn
           </Button>
         </div>
       </Form>

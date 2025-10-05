@@ -1,0 +1,831 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Kidemia API",
+    "description": "Kidemia API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Register a new user",
+        "description": "Register a new user account.\n\n- **email**: Valid email address\n- **password**: Min 8 characters with uppercase, lowercase, and number\n- **first_name**: User's first name\n- **last_name**: User's last name\n- **user_type**: Type of user (student, guardian, institution_admin, platform_admin)",
+        "operationId": "register_api_v1_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RegisterResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Login to get access token",
+        "description": "Authenticate user and get access tokens.\n\n- **email**: User's email address\n- **password**: User's password\n- **remember_me**: Keep user logged in for longer",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LoginResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Refresh access token",
+        "description": "Get a new access token using refresh token.\n\n- **refresh_token**: Valid refresh token",
+        "operationId": "refresh_token_api_v1_auth_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RefreshTokenRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TokenResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Logout user",
+        "description": "Logout user by revoking refresh token.\n\n- **refresh_token**: Refresh token to revoke",
+        "operationId": "logout_api_v1_auth_logout_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RefreshTokenRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MessageResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout-all": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Logout from all devices",
+        "description": "Logout user from all devices by revoking all refresh tokens.",
+        "operationId": "logout_all_devices_api_v1_auth_logout_all_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "HTTPBearer": [] }]
+      }
+    },
+    "/api/v1/auth/change-password": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Change user password",
+        "description": "Change current user's password.\n\n- **current_password**: Current password\n- **new_password**: New password (min 8 chars with requirements)",
+        "operationId": "change_password_api_v1_auth_change_password_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ChangePasswordRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MessageResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "HTTPBearer": [] }]
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Get current user profile",
+        "description": "Get current authenticated user's profile.",
+        "operationId": "get_current_user_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "HTTPBearer": [] }]
+      }
+    },
+    "/api/v1/auth/forgot-password": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Request password reset",
+        "description": "Request password reset link via email.\n\n- **email**: User's email address",
+        "operationId": "forgot_password_api_v1_auth_forgot_password_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ForgotPasswordRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MessageResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/reset-password": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Reset password with token",
+        "description": "Reset password using reset token.\n\n- **token**: Password reset token from email\n- **new_password**: New password",
+        "operationId": "reset_password_api_v1_auth_reset_password_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ResetPasswordRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MessageResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/verify-email": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Verify email address",
+        "description": "Verify user's email address.\n\n- **token**: Email verification token",
+        "operationId": "verify_email_api_v1_auth_verify_email_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/VerifyEmailRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MessageResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/resend-verification": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Resend verification email",
+        "description": "Resend email verification link.",
+        "operationId": "resend_verification_api_v1_auth_resend_verification_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MessageResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "HTTPBearer": [] }]
+      }
+    },
+    "/": {
+      "get": {
+        "tags": ["Root"],
+        "summary": "Root",
+        "description": "Root endpoint",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health Check",
+        "description": "Health check endpoint",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChangePasswordRequest": {
+        "properties": {
+          "current_password": { "type": "string", "title": "Current Password" },
+          "new_password": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 8,
+            "title": "New Password"
+          }
+        },
+        "type": "object",
+        "required": ["current_password", "new_password"],
+        "title": "ChangePasswordRequest",
+        "description": "Schema for password change request",
+        "example": {}
+      },
+      "ForgotPasswordRequest": {
+        "properties": {
+          "email": { "type": "string", "format": "email", "title": "Email" }
+        },
+        "type": "object",
+        "required": ["email"],
+        "title": "ForgotPasswordRequest",
+        "description": "Schema for forgot password request",
+        "example": {}
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LoginRequest": {
+        "properties": {
+          "email": { "type": "string", "format": "email", "title": "Email" },
+          "password": { "type": "string", "minLength": 1, "title": "Password" },
+          "remember_me": {
+            "type": "boolean",
+            "title": "Remember Me",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": ["email", "password"],
+        "title": "LoginRequest",
+        "description": "Schema for login request",
+        "example": {}
+      },
+      "LoginResponse": {
+        "properties": {
+          "access_token": { "type": "string", "title": "Access Token" },
+          "refresh_token": { "type": "string", "title": "Refresh Token" },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "expires_in": { "type": "integer", "title": "Expires In" },
+          "user": { "$ref": "#/components/schemas/UserResponse" }
+        },
+        "type": "object",
+        "required": ["access_token", "refresh_token", "expires_in", "user"],
+        "title": "LoginResponse",
+        "description": "Schema for login response",
+        "example": {}
+      },
+      "MessageResponse": {
+        "properties": { "message": { "type": "string", "title": "Message" } },
+        "type": "object",
+        "required": ["message"],
+        "title": "MessageResponse",
+        "description": "Simple message response",
+        "example": {}
+      },
+      "PermissionResponse": {
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "display_name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Display Name"
+          },
+          "description": {
+            "anyOf": [
+              { "type": "string", "maxLength": 500 },
+              { "type": "null" }
+            ],
+            "title": "Description"
+          },
+          "resource": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Resource"
+          },
+          "action": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Action"
+          }
+        },
+        "type": "object",
+        "required": [
+          "created_at",
+          "updated_at",
+          "id",
+          "name",
+          "display_name",
+          "resource",
+          "action"
+        ],
+        "title": "PermissionResponse",
+        "description": "Schema for permission response",
+        "example": {}
+      },
+      "RefreshTokenRequest": {
+        "properties": {
+          "refresh_token": { "type": "string", "title": "Refresh Token" }
+        },
+        "type": "object",
+        "required": ["refresh_token"],
+        "title": "RefreshTokenRequest",
+        "description": "Schema for refresh token request",
+        "example": {}
+      },
+      "RegisterRequest": {
+        "properties": {
+          "email": { "type": "string", "format": "email", "title": "Email" },
+          "first_name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "First Name"
+          },
+          "last_name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Last Name"
+          },
+          "middle_name": {
+            "anyOf": [
+              { "type": "string", "maxLength": 100 },
+              { "type": "null" }
+            ],
+            "title": "Middle Name"
+          },
+          "phone_number": {
+            "anyOf": [
+              { "type": "string", "maxLength": 20 },
+              { "type": "null" }
+            ],
+            "title": "Phone Number"
+          },
+          "date_of_birth": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Date Of Birth"
+          },
+          "user_type": { "$ref": "#/components/schemas/UserType" },
+          "password": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 8,
+            "title": "Password"
+          },
+          "username": {
+            "anyOf": [
+              { "type": "string", "maxLength": 100, "minLength": 3 },
+              { "type": "null" }
+            ],
+            "title": "Username"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "first_name",
+          "last_name",
+          "user_type",
+          "password"
+        ],
+        "title": "RegisterRequest",
+        "description": "Schema for registration request",
+        "example": {}
+      },
+      "RegisterResponse": {
+        "properties": {
+          "message": { "type": "string", "title": "Message" },
+          "user": { "$ref": "#/components/schemas/UserResponse" }
+        },
+        "type": "object",
+        "required": ["message", "user"],
+        "title": "RegisterResponse",
+        "description": "Schema for registration response",
+        "example": {}
+      },
+      "ResetPasswordRequest": {
+        "properties": {
+          "token": { "type": "string", "title": "Token" },
+          "new_password": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 8,
+            "title": "New Password"
+          }
+        },
+        "type": "object",
+        "required": ["token", "new_password"],
+        "title": "ResetPasswordRequest",
+        "description": "Schema for password reset request",
+        "example": {}
+      },
+      "RoleResponse": {
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "display_name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Display Name"
+          },
+          "description": {
+            "anyOf": [
+              { "type": "string", "maxLength": 500 },
+              { "type": "null" }
+            ],
+            "title": "Description"
+          },
+          "role_type": { "$ref": "#/components/schemas/RoleType" },
+          "is_system": { "type": "boolean", "title": "Is System" },
+          "permissions": {
+            "items": { "$ref": "#/components/schemas/PermissionResponse" },
+            "type": "array",
+            "title": "Permissions",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "created_at",
+          "updated_at",
+          "id",
+          "name",
+          "display_name",
+          "role_type",
+          "is_system"
+        ],
+        "title": "RoleResponse",
+        "description": "Schema for role response",
+        "example": {}
+      },
+      "RoleType": {
+        "type": "string",
+        "enum": ["system", "institution", "custom"],
+        "title": "RoleType",
+        "description": "Categories of roles"
+      },
+      "SuccessResponse": {
+        "properties": {
+          "success": { "type": "boolean", "title": "Success", "default": true },
+          "message": { "type": "string", "title": "Message" },
+          "data": {
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": ["message"],
+        "title": "SuccessResponse",
+        "description": "Standard success response",
+        "example": {}
+      },
+      "TokenResponse": {
+        "properties": {
+          "access_token": { "type": "string", "title": "Access Token" },
+          "refresh_token": { "type": "string", "title": "Refresh Token" },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "expires_in": { "type": "integer", "title": "Expires In" }
+        },
+        "type": "object",
+        "required": ["access_token", "refresh_token", "expires_in"],
+        "title": "TokenResponse",
+        "description": "Schema for token response",
+        "example": {}
+      },
+      "UserResponse": {
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "email": { "type": "string", "format": "email", "title": "Email" },
+          "first_name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "First Name"
+          },
+          "last_name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Last Name"
+          },
+          "middle_name": {
+            "anyOf": [
+              { "type": "string", "maxLength": 100 },
+              { "type": "null" }
+            ],
+            "title": "Middle Name"
+          },
+          "phone_number": {
+            "anyOf": [
+              { "type": "string", "maxLength": 20 },
+              { "type": "null" }
+            ],
+            "title": "Phone Number"
+          },
+          "date_of_birth": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Date Of Birth"
+          },
+          "user_type": { "$ref": "#/components/schemas/UserType" },
+          "username": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Username"
+          },
+          "is_active": { "type": "boolean", "title": "Is Active" },
+          "is_verified": { "type": "boolean", "title": "Is Verified" },
+          "is_email_verified": {
+            "type": "boolean",
+            "title": "Is Email Verified"
+          },
+          "profile_picture_url": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Profile Picture Url"
+          },
+          "bio": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Bio"
+          },
+          "language": { "type": "string", "title": "Language" },
+          "timezone": { "type": "string", "title": "Timezone" },
+          "last_login": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Last Login"
+          },
+          "roles": {
+            "items": { "$ref": "#/components/schemas/RoleResponse" },
+            "type": "array",
+            "title": "Roles",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "created_at",
+          "updated_at",
+          "id",
+          "email",
+          "first_name",
+          "last_name",
+          "user_type",
+          "username",
+          "is_active",
+          "is_verified",
+          "is_email_verified",
+          "profile_picture_url",
+          "bio",
+          "language",
+          "timezone",
+          "last_login"
+        ],
+        "title": "UserResponse",
+        "description": "Schema for user response",
+        "example": {}
+      },
+      "UserType": {
+        "type": "string",
+        "enum": ["student", "guardian", "institution_admin", "platform_admin"],
+        "title": "UserType",
+        "description": "Types of users in the system"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      },
+      "VerifyEmailRequest": {
+        "properties": { "token": { "type": "string", "title": "Token" } },
+        "type": "object",
+        "required": ["token"],
+        "title": "VerifyEmailRequest",
+        "description": "Schema for email verification request",
+        "example": {}
+      }
+    },
+    "securitySchemes": { "HTTPBearer": { "type": "http", "scheme": "bearer" } }
+  }
+}

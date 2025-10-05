@@ -1,16 +1,21 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Form, Input } from "@heroui/react";
+import { addToast, Button, Form, Input } from "@heroui/react";
 import { BiScan } from "react-icons/bi";
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
 import { AuthRoutes } from "../../../routes";
 import { ChangePasswordSchema } from "../../../schema/auth.schema";
+import { useMutation } from "@tanstack/react-query";
+import type { ChangePasswordRequest } from "../../../sdk/generated";
+import { ApiSDK } from "../../../sdk";
+import { apiErrorParser } from "../../../utils/errorParser";
 
 export default function ChangePasswordPage() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -20,8 +25,29 @@ export default function ChangePasswordPage() {
     resolver: zodResolver(ChangePasswordSchema),
   });
 
+  const changePasswordMutation = useMutation({
+    mutationFn: (formData: ChangePasswordRequest) =>
+      ApiSDK.AuthenticationService.changePasswordApiV1AuthChangePasswordPost(
+        formData,
+      ),
+    onSuccess(data) {
+      addToast({
+        title: data?.message,
+        color: "success",
+      });
+      navigate(AuthRoutes.login);
+    },
+    onError(error) {
+      const parsedError = apiErrorParser(error);
+      addToast({
+        title: "An Error Occured",
+        description: parsedError.message,
+        color: "danger",
+      });
+    },
+  });
   const onSubmit = (data: ChangePasswordSchema) => {
-    console.log(data);
+    changePasswordMutation.mutate(data);
   };
 
   return (
@@ -55,14 +81,15 @@ export default function ChangePasswordPage() {
                 )}
               </button>
             }
-            placeholder="New Password"
+            placeholder="Current Password"
             type={isVisible ? "text" : "password"}
             variant="flat"
             size="lg"
             radius="sm"
-            {...register("newPassword")}
-            isInvalid={!!errors?.newPassword?.message}
-            errorMessage={errors?.newPassword?.message}
+            {...register("current_password")}
+            isInvalid={!!errors?.current_password?.message}
+            errorMessage={errors?.current_password?.message}
+            isDisabled={changePasswordMutation.isPending}
           />
         </div>
 
@@ -85,14 +112,15 @@ export default function ChangePasswordPage() {
                 )}
               </button>
             }
-            placeholder="Confirm Password"
+            placeholder="New Password"
             type={isVisible ? "text" : "password"}
             variant="flat"
             size="lg"
             radius="sm"
-            {...register("confirmPassword")}
-            isInvalid={!!errors?.confirmPassword?.message}
-            errorMessage={errors?.confirmPassword?.message}
+            {...register("new_password")}
+            isInvalid={!!errors?.new_password?.message}
+            errorMessage={errors?.new_password?.message}
+            isDisabled={changePasswordMutation.isPending}
           />
         </div>
 
@@ -103,6 +131,8 @@ export default function ChangePasswordPage() {
             size="lg"
             className="bg-kidemia-secondary text-kidemia-white font-semibold w-full"
             radius="sm"
+            isDisabled={changePasswordMutation.isPending}
+            isLoading={changePasswordMutation.isPending}
           >
             Continue
           </Button>

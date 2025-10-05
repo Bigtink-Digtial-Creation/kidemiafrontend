@@ -34,7 +34,6 @@ export default function StepThree() {
   });
 
   const onSubmit = (data: StepThreeSchema) => {
-    console.log(data);
     setFormData((prev) => ({
       ...prev,
       stepThree: data,
