@@ -57,7 +57,6 @@ export default function LoginPage() {
 
   const onSubmit = (data: LoginSchema) => {
     loginMutation.mutate(data)
-    console.log(data);
   };
 
   return (
@@ -120,7 +119,6 @@ export default function LoginPage() {
           />
 
           <div className="flex items-center justify-between pt-1">
-            {/* ✅ Remember Me Switch */}
             <Switch
               size="sm"
               color="warning"
