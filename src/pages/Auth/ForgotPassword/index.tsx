@@ -1,12 +1,17 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
-import { Button, Form, Input } from "@heroui/react";
+import { addToast, Button, Form, Input } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MdOutlineEmail } from "react-icons/md";
 import { ForgotPasswordSchema } from "../../../schema/auth.schema";
 import { AuthRoutes } from "../../../routes";
+import { useMutation } from "@tanstack/react-query";
+import type { ForgotPasswordRequest } from "../../../sdk/generated";
+import { ApiSDK } from "../../../sdk";
+import { apiErrorParser } from "../../../utils/errorParser";
 
 export default function ForgotPasswordPage() {
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -15,8 +20,25 @@ export default function ForgotPasswordPage() {
     resolver: zodResolver(ForgotPasswordSchema),
   });
 
+  const forgotPasswordMutation = useMutation({
+    mutationFn: (formData: ForgotPasswordRequest) => ApiSDK.AuthenticationService.forgotPasswordApiV1AuthForgotPasswordPost(formData),
+    onSuccess(data) {
+      addToast({
+        title: data?.message,
+        color: "success"
+      })
+      navigate(AuthRoutes.login)
+    },
+    onError(error) {
+      const parsedError = apiErrorParser(error)
+      addToast({
+        title: "An Error Occured",
+        description: parsedError.message
+      })
+    }
+  })
   const onSubmit = (data: ForgotPasswordSchema) => {
-    console.log(data);
+    forgotPasswordMutation.mutate(data)
   };
 
   return (
@@ -44,6 +66,7 @@ export default function ForgotPasswordPage() {
             {...register("email")}
             isInvalid={!!errors?.email?.message}
             errorMessage={errors?.email?.message}
+            isDisabled={forgotPasswordMutation.isPending}
           />
         </div>
 
@@ -54,6 +77,8 @@ export default function ForgotPasswordPage() {
             size="lg"
             className="bg-kidemia-secondary text-kidemia-white font-semibold w-full"
             radius="sm"
+            isDisabled={forgotPasswordMutation.isPending}
+            isLoading={forgotPasswordMutation.isPending}
           >
             Continue
           </Button>
