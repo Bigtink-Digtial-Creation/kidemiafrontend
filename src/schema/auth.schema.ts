@@ -12,19 +12,20 @@ export const ForgotPasswordSchema = z.object({
   email: z.email({ message: "Enter a valid email address" }),
 });
 
-export const ChangePasswordSchema = z
-  .object({
-    newPassword: z
-      .string({ message: "New Password is required" })
-      .min(8, { message: "Password is required" }),
-    confirmPassword: z
-      .string({ message: "Confirm Password is required" })
-      .min(8, { message: "Password is required" }),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords must match",
-    path: ["confirmPassword"],
-  });
+export const ChangePasswordSchema = z.object({
+  current_password: z
+    .string({ message: "Current Password is required" })
+    .min(8, { message: "Current Password is required" }),
+  new_password: z
+    .string({ message: "New Password is required" })
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/,
+      {
+        message:
+          "New Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",
+      },
+    ),
+});
 
 export const StepOneSchema = z
   .object({

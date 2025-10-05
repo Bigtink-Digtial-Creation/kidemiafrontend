@@ -11,7 +11,7 @@ import { ApiSDK } from "../../../sdk";
 import { apiErrorParser } from "../../../utils/errorParser";
 
 export default function ForgotPasswordPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -21,24 +21,28 @@ export default function ForgotPasswordPage() {
   });
 
   const forgotPasswordMutation = useMutation({
-    mutationFn: (formData: ForgotPasswordRequest) => ApiSDK.AuthenticationService.forgotPasswordApiV1AuthForgotPasswordPost(formData),
+    mutationFn: (formData: ForgotPasswordRequest) =>
+      ApiSDK.AuthenticationService.forgotPasswordApiV1AuthForgotPasswordPost(
+        formData,
+      ),
     onSuccess(data) {
       addToast({
         title: data?.message,
-        color: "success"
-      })
-      navigate(AuthRoutes.login)
+        color: "success",
+      });
+      navigate(AuthRoutes.login);
     },
     onError(error) {
-      const parsedError = apiErrorParser(error)
+      const parsedError = apiErrorParser(error);
       addToast({
         title: "An Error Occured",
-        description: parsedError.message
-      })
-    }
-  })
+        description: parsedError.message,
+        color: "danger",
+      });
+    },
+  });
   const onSubmit = (data: ForgotPasswordSchema) => {
-    forgotPasswordMutation.mutate(data)
+    forgotPasswordMutation.mutate(data);
   };
 
   return (

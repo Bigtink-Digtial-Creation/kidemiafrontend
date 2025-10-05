@@ -47,6 +47,7 @@ export default function StepFour() {
       addToast({
         title: "An Error Occured",
         description: parsedError.message,
+        color: "danger",
       });
     },
   });

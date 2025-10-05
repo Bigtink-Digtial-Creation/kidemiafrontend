@@ -13,15 +13,18 @@ import { AuthRoutes, SidebarRoutes } from "../../../routes";
 import { useMutation } from "@tanstack/react-query";
 import type { LoginRequest } from "../../../sdk/generated";
 import { ApiSDK } from "../../../sdk";
-import { loggedinUserAtom, storedAuthTokenAtom } from "../../../store/user.atom";
+import {
+  loggedinUserAtom,
+  storedAuthTokenAtom,
+} from "../../../store/user.atom";
 import { apiErrorParser } from "../../../utils/errorParser";
 
 export default function LoginPage() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
   const navigate = useNavigate();
-  const setStoredToken = useSetAtom(storedAuthTokenAtom)
-  const setLoggedInUser = useSetAtom(loggedinUserAtom)
+  const setStoredToken = useSetAtom(storedAuthTokenAtom);
+  const setLoggedInUser = useSetAtom(loggedinUserAtom);
 
   const {
     register,
@@ -32,31 +35,33 @@ export default function LoginPage() {
   });
 
   const loginMutation = useMutation({
-    mutationFn: (formData: LoginRequest) => ApiSDK.AuthenticationService.loginApiV1AuthLoginPost(formData),
+    mutationFn: (formData: LoginRequest) =>
+      ApiSDK.AuthenticationService.loginApiV1AuthLoginPost(formData),
     onSuccess(data) {
       if (data) {
         const token = data.access_token;
-        ApiSDK.OpenAPI.TOKEN = token
-        setStoredToken(token)
-        setLoggedInUser(data)
+        ApiSDK.OpenAPI.TOKEN = token;
+        setStoredToken(token);
+        setLoggedInUser(data);
         navigate(SidebarRoutes.dashboard, { replace: true });
         addToast({
           title: "Login Successful",
-          color: "success"
-        })
+          color: "success",
+        });
       }
     },
     onError(error) {
-      const parsedError = apiErrorParser(error)
+      const parsedError = apiErrorParser(error);
       addToast({
         title: "An Error Occured",
-        description: parsedError.message
-      })
-    }
-  })
+        description: parsedError.message,
+        color: "danger",
+      });
+    },
+  });
 
   const onSubmit = (data: LoginSchema) => {
-    loginMutation.mutate(data)
+    loginMutation.mutate(data);
   };
 
   return (
