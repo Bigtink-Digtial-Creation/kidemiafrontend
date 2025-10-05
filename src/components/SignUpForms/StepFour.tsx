@@ -1,21 +1,23 @@
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { Button, Form, Input } from "@heroui/react";
+import { addToast, Button, Form, Input } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { MdOutlineEmail } from "react-icons/md";
 import { signupFormData, signupInfoStep } from "../../store/auth.atom";
 import { StepFourSchema } from "../../schema/auth.schema";
-import { loggedinUserAtom, storedAuthTokenAtom } from "../../store/user.atom";
+import { useMutation } from "@tanstack/react-query";
+import type { RegisterRequest, UserType } from "../../sdk/generated";
+import { ApiSDK } from "../../sdk";
+import { useNavigate } from "react-router";
+import { AuthRoutes } from "../../routes";
+import { apiErrorParser } from "../../utils/errorParser";
 
 export default function StepFour() {
   const setStep = useSetAtom(signupInfoStep);
   const [formData, setFormData] = useAtom(signupFormData);
   const role = useAtomValue(signupFormData).stepTwo?.role || "";
-  const finalFormData = useAtomValue(signupFormData)
-  const setStoredToken = useSetAtom(storedAuthTokenAtom)
-  const setLoggedInUser = useSetAtom(loggedinUserAtom)
-
-
+  const finalFormData = useAtomValue(signupFormData);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -28,6 +30,27 @@ export default function StepFour() {
     },
   });
 
+  const signupMutation = useMutation({
+    mutationFn: (formData: RegisterRequest) =>
+      ApiSDK.AuthenticationService.registerApiV1AuthRegisterPost(formData),
+    onSuccess(data) {
+      if (data) {
+        navigate(AuthRoutes.login);
+        addToast({
+          title: data?.message,
+          color: "success",
+        });
+      }
+    },
+    onError(error) {
+      const parsedError = apiErrorParser(error);
+      addToast({
+        title: "An Error Occured",
+        description: parsedError.message,
+      });
+    },
+  });
+
   const onSubmit = (data: StepFourSchema) => {
     console.log({ finalFormData });
     console.log(data);
@@ -36,7 +59,26 @@ export default function StepFour() {
       ...prev,
       stepFour: data,
     }));
-    //navigate to next step
+
+    const updatedFormData = {
+      ...finalFormData,
+      stepFour: data,
+    };
+
+    const {
+      stepOne: { email, password, first_name, last_name },
+      stepTwo: { role },
+    } = updatedFormData;
+
+    const payload = {
+      email,
+      password,
+      first_name,
+      last_name,
+      user_type: role as UserType,
+    };
+
+    signupMutation.mutate(payload);
   };
 
   const heading =
@@ -76,6 +118,7 @@ export default function StepFour() {
                 {...register("guardianOrAdminEmail")}
                 isInvalid={!!errors?.guardianOrAdminEmail?.message}
                 errorMessage={errors?.guardianOrAdminEmail?.message}
+                isDisabled={signupMutation.isPending}
               />
             </div>
           ) : (
@@ -92,6 +135,7 @@ export default function StepFour() {
                 {...register("guardianOrAdminEmail")}
                 isInvalid={!!errors?.guardianOrAdminEmail?.message}
                 errorMessage={errors?.guardianOrAdminEmail?.message}
+                isDisabled={signupMutation.isPending}
               />
             </div>
           )}
@@ -104,6 +148,7 @@ export default function StepFour() {
               radius="sm"
               type="button"
               onPress={() => setStep("STEPTHREE")}
+              isDisabled={signupMutation.isPending}
             >
               Back
             </Button>
@@ -112,6 +157,8 @@ export default function StepFour() {
               size="md"
               radius="sm"
               type="submit"
+              isDisabled={signupMutation.isPending}
+              isLoading={signupMutation.isPending}
             >
               Continue
             </Button>

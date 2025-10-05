@@ -41,7 +41,7 @@ export const StepOneSchema = z
         {
           message:
             "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",
-        }
+        },
       ),
     confirmPassword: z
       .string({ message: "Confirm Password is required" })
