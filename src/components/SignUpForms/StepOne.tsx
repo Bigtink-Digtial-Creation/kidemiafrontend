@@ -31,7 +31,6 @@ export default function StepOne() {
   });
 
   const onSubmit = (data: StepOneSchema) => {
-    console.log(data);
     setFormData((prev) => ({
       ...prev,
       stepOne: data,

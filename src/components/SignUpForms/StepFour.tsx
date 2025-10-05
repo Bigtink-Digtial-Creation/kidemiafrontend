@@ -52,9 +52,6 @@ export default function StepFour() {
   });
 
   const onSubmit = (data: StepFourSchema) => {
-    console.log({ finalFormData });
-    console.log(data);
-
     setFormData((prev) => ({
       ...prev,
       stepFour: data,
