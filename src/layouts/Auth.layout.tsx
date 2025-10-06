@@ -3,14 +3,14 @@ import { Outlet } from "react-router";
 import { useAuthRedirect } from "../hooks/use-auth-redirect";
 
 export default function AuthLayout() {
-  const { authToken } = useAuthRedirect(false)
+  const { authToken } = useAuthRedirect(false);
 
   if (authToken) {
     return (
       <div className="h-screen flex items-center justify-center">
         <Spinner size="lg" color="warning" />
       </div>
-    )
+    );
   }
   return (
     <section className="min-h-screen flex items-center justify-center bg-kidemia-biege">

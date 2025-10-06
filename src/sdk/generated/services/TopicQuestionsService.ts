@@ -2,21 +2,21 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { BulkQuestionImportRequest } from '../models/BulkQuestionImportRequest';
-import type { BulkQuestionImportResponse } from '../models/BulkQuestionImportResponse';
-import type { DifficultyLevel } from '../models/DifficultyLevel';
-import type { MessageResponse } from '../models/MessageResponse';
-import type { QuestionCreate } from '../models/QuestionCreate';
-import type { QuestionListResponse } from '../models/QuestionListResponse';
-import type { QuestionPublicResponse } from '../models/QuestionPublicResponse';
-import type { QuestionResponse } from '../models/QuestionResponse';
-import type { QuestionReviewRequest } from '../models/QuestionReviewRequest';
-import type { QuestionStatus } from '../models/QuestionStatus';
-import type { QuestionType } from '../models/QuestionType';
-import type { QuestionUpdate } from '../models/QuestionUpdate';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { BulkQuestionImportRequest } from "../models/BulkQuestionImportRequest";
+import type { BulkQuestionImportResponse } from "../models/BulkQuestionImportResponse";
+import type { DifficultyLevel } from "../models/DifficultyLevel";
+import type { MessageResponse } from "../models/MessageResponse";
+import type { QuestionCreate } from "../models/QuestionCreate";
+import type { QuestionListResponse } from "../models/QuestionListResponse";
+import type { QuestionPublicResponse } from "../models/QuestionPublicResponse";
+import type { QuestionResponse } from "../models/QuestionResponse";
+import type { QuestionReviewRequest } from "../models/QuestionReviewRequest";
+import type { QuestionStatus } from "../models/QuestionStatus";
+import type { QuestionType } from "../models/QuestionType";
+import type { QuestionUpdate } from "../models/QuestionUpdate";
+import type { CancelablePromise } from "../core/CancelablePromise";
+import { OpenAPI } from "../core/OpenAPI";
+import { request as __request } from "../core/request";
 export class TopicQuestionsService {
   /**
    * Create a new question
@@ -31,10 +31,10 @@ export class TopicQuestionsService {
     requestBody: QuestionCreate,
   ): CancelablePromise<QuestionResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/questions/',
+      method: "POST",
+      url: "/api/v1/questions/",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -62,27 +62,27 @@ export class TopicQuestionsService {
    * @throws ApiError
    */
   public static getQuestionsApiV1QuestionsGet(
-    subjectId?: (string | null),
-    topicId?: (string | null),
-    difficultyLevel?: (DifficultyLevel | null),
-    questionType?: (QuestionType | null),
-    status?: (QuestionStatus | null),
-    search?: (string | null),
+    subjectId?: string | null,
+    topicId?: string | null,
+    difficultyLevel?: DifficultyLevel | null,
+    questionType?: QuestionType | null,
+    status?: QuestionStatus | null,
+    search?: string | null,
     skip?: number,
     limit: number = 20,
   ): CancelablePromise<QuestionListResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/questions/',
+      method: "GET",
+      url: "/api/v1/questions/",
       query: {
-        'subject_id': subjectId,
-        'topic_id': topicId,
-        'difficulty_level': difficultyLevel,
-        'question_type': questionType,
-        'status': status,
-        'search': search,
-        'skip': skip,
-        'limit': limit,
+        subject_id: subjectId,
+        topic_id: topicId,
+        difficulty_level: difficultyLevel,
+        question_type: questionType,
+        status: status,
+        search: search,
+        skip: skip,
+        limit: limit,
       },
       errors: {
         422: `Validation Error`,
@@ -108,20 +108,20 @@ export class TopicQuestionsService {
    */
   public static getRandomQuestionsApiV1QuestionsRandomGet(
     count: number,
-    subjectId?: (string | null),
-    topicId?: (string | null),
-    difficulty?: (DifficultyLevel | null),
-    questionType?: (QuestionType | null),
+    subjectId?: string | null,
+    topicId?: string | null,
+    difficulty?: DifficultyLevel | null,
+    questionType?: QuestionType | null,
   ): CancelablePromise<Array<QuestionPublicResponse>> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/questions/random',
+      method: "GET",
+      url: "/api/v1/questions/random",
       query: {
-        'count': count,
-        'subject_id': subjectId,
-        'topic_id': topicId,
-        'difficulty': difficulty,
-        'question_type': questionType,
+        count: count,
+        subject_id: subjectId,
+        topic_id: topicId,
+        difficulty: difficulty,
+        question_type: questionType,
       },
       errors: {
         422: `Validation Error`,
@@ -143,13 +143,13 @@ export class TopicQuestionsService {
     includeAnswers: boolean = true,
   ): CancelablePromise<QuestionResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/questions/{question_id}',
+      method: "GET",
+      url: "/api/v1/questions/{question_id}",
       path: {
-        'question_id': questionId,
+        question_id: questionId,
       },
       query: {
-        'include_answers': includeAnswers,
+        include_answers: includeAnswers,
       },
       errors: {
         422: `Validation Error`,
@@ -171,13 +171,13 @@ export class TopicQuestionsService {
     requestBody: QuestionUpdate,
   ): CancelablePromise<QuestionResponse> {
     return __request(OpenAPI, {
-      method: 'PUT',
-      url: '/api/v1/questions/{question_id}',
+      method: "PUT",
+      url: "/api/v1/questions/{question_id}",
       path: {
-        'question_id': questionId,
+        question_id: questionId,
       },
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -196,10 +196,10 @@ export class TopicQuestionsService {
     questionId: string,
   ): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: 'DELETE',
-      url: '/api/v1/questions/{question_id}',
+      method: "DELETE",
+      url: "/api/v1/questions/{question_id}",
       path: {
-        'question_id': questionId,
+        question_id: questionId,
       },
       errors: {
         422: `Validation Error`,
@@ -219,10 +219,10 @@ export class TopicQuestionsService {
     questionId: string,
   ): CancelablePromise<QuestionResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/questions/{question_id}/submit-review',
+      method: "POST",
+      url: "/api/v1/questions/{question_id}/submit-review",
       path: {
-        'question_id': questionId,
+        question_id: questionId,
       },
       errors: {
         422: `Validation Error`,
@@ -244,13 +244,13 @@ export class TopicQuestionsService {
     requestBody: QuestionReviewRequest,
   ): CancelablePromise<QuestionResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/questions/{question_id}/review',
+      method: "POST",
+      url: "/api/v1/questions/{question_id}/review",
       path: {
-        'question_id': questionId,
+        question_id: questionId,
       },
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -269,10 +269,10 @@ export class TopicQuestionsService {
     requestBody: BulkQuestionImportRequest,
   ): CancelablePromise<BulkQuestionImportResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/questions/bulk-import',
+      method: "POST",
+      url: "/api/v1/questions/bulk-import",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },

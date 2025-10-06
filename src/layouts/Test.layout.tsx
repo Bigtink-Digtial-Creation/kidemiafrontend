@@ -5,15 +5,14 @@ import { useAuthRedirect } from "../hooks/use-auth-redirect";
 
 export default function TestLayout() {
   const navigate = useNavigate();
-  const { loggedInUser, authToken } = useAuthRedirect(true)
-
+  const { loggedInUser, authToken } = useAuthRedirect(true);
 
   if (!loggedInUser || !authToken) {
     return (
       <div className="h-screen flex justify-center items-center">
         <Spinner size="lg" color="warning" />
       </div>
-    )
+    );
   }
   return (
     <section className="min-h-screen flex flex-col items-center justify-center bg-kidemia-biege space-y-6 px-6">
