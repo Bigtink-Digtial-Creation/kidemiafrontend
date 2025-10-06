@@ -3,10 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Types of users in the system
+ * Schema for updating a permission
  */
-export type UserType =
-  | "student"
-  | "guardian"
-  | "institution_admin"
-  | "platform_admin";
+export type PermissionUpdate = {
+  display_name?: string | null;
+  description?: string | null;
+};

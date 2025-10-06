@@ -4,9 +4,9 @@
 /* eslint-disable */
 import type { UserType } from "./UserType";
 /**
- * Schema for registration request
+ * Schema for creating a user
  */
-export type RegisterRequest = {
+export type UserCreate = {
   email: string;
   first_name: string;
   last_name: string;

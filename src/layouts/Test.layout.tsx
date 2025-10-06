@@ -1,9 +1,19 @@
 import { Outlet, useNavigate } from "react-router";
-import { Button, Image } from "@heroui/react";
+import { Button, Image, Spinner } from "@heroui/react";
 import { MdArrowBackIosNew } from "react-icons/md";
+import { useAuthRedirect } from "../hooks/use-auth-redirect";
 
 export default function TestLayout() {
   const navigate = useNavigate();
+  const { loggedInUser, authToken } = useAuthRedirect(true);
+
+  if (!loggedInUser || !authToken) {
+    return (
+      <div className="h-screen flex justify-center items-center">
+        <Spinner size="lg" color="warning" />
+      </div>
+    );
+  }
   return (
     <section className="min-h-screen flex flex-col items-center justify-center bg-kidemia-biege space-y-6 px-6">
       <div className="absolute top-2 left-0 px-4">

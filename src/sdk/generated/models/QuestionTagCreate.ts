@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Schema for login request
+ * Schema for creating question tag
  */
-export type LoginRequest = {
-  email: string;
-  password: string;
-  remember_me?: boolean;
+export type QuestionTagCreate = {
+  name: string;
+  description?: string | null;
+  color?: string | null;
 };

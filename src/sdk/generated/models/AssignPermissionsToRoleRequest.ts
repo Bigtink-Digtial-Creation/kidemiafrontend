@@ -3,10 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Types of users in the system
+ * Schema for assigning permissions to role
  */
-export type UserType =
-  | "student"
-  | "guardian"
-  | "institution_admin"
-  | "platform_admin";
+export type AssignPermissionsToRoleRequest = {
+  permission_ids: Array<string>;
+};

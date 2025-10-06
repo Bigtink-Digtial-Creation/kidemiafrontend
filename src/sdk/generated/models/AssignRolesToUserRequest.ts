@@ -3,10 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Types of users in the system
+ * Schema for assigning roles to user
  */
-export type UserType =
-  | "student"
-  | "guardian"
-  | "institution_admin"
-  | "platform_admin";
+export type AssignRolesToUserRequest = {
+  role_ids: Array<string>;
+};

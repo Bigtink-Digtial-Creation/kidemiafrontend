@@ -3,10 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Types of users in the system
+ * Question status
  */
-export type UserType =
-  | "student"
-  | "guardian"
-  | "institution_admin"
-  | "platform_admin";
+export type QuestionStatus =
+  | "draft"
+  | "review"
+  | "approved"
+  | "rejected"
+  | "archived";
