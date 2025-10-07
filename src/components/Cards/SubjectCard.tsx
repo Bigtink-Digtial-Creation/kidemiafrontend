@@ -1,33 +1,67 @@
 import { Link } from "react-router";
-import type { IconType } from "react-icons";
+import { useSetAtom } from "jotai";
 import { TestRoutes } from "../../routes";
+import { Avatar } from "@heroui/react";
+import { getNameIntials, hexToRgba } from "../../utils";
+import { selectedSubjectTitleAtom } from "../../store/test.atom";
 
 interface SubjectCardI {
-  icon: IconType;
+  id: string;
+  icon_url: string;
   title: string;
-  topics: string;
+  topics_count: number;
+  questions_count: number;
+  code: string;
+  description: string;
+  color_code: string;
 }
 
 export default function SubjectCard({
-  icon: Icon,
+  id,
+  icon_url,
   title,
-  topics,
+  topics_count,
+  questions_count,
+  code,
+  description,
+  color_code,
 }: SubjectCardI) {
-  const subjectId = title.toLowerCase().replace(/\s+/g, "-");
+  const subjectPath = TestRoutes.subjectTopics.replace(":id", id);
+  const setSelectedTitle = useSetAtom(selectedSubjectTitleAtom);
 
-  const subjectPath = TestRoutes.subjectTopics.replace(":id", subjectId);
+  const handleClick = () => {
+    setSelectedTitle(title);
+  };
 
   return (
     <Link
       to={subjectPath}
-      className="px-4 py-8 rounded-2xl shadow-sm bg-kidemia-white/40 cursor-pointer flex flex-col justify-center items-center space-y-4 hover:shadow-xl hover:bg-kidemia-white"
+      onClick={handleClick}
+      className={`px-4 py-8 rounded-2xl shadow-sm  cursor-pointer flex flex-col justify-center items-center space-y-4 hover:shadow-xl`}
+      style={{ backgroundColor: hexToRgba(color_code || "#F9F9F9", 0.15) }}
     >
       <div>
-        <Icon className="text-3xl text-kidemia-secondary font-bold" />
+        <Avatar
+          src={icon_url}
+          className="bg-kidemia-white/40 text-kidemia-black text-lg uppercase font-bold"
+          showFallback
+          name={getNameIntials(title) as string}
+        />
       </div>
       <div className="space-y-3 flex items-center flex-col">
-        <h3 className="text-xl font-medium text-kidemia-primary">{title}</h3>
-        <p className="text-md  text-kidemia-grey">{topics}</p>
+        <h3 className="text-xl font-medium text-kidemia-black">{title}</h3>
+        <div className="space-y-1.5">
+          <h6 className="text-md text-kidemia-black text-center">{code}</h6>
+          <p className="text-sm text-center text-kidemia-black">
+            {description}
+          </p>
+        </div>
+        <div className="flex justify-evenly items-center gap-4 w-full">
+          <p className="text-sm  text-kidemia-black">{topics_count} topics</p>
+          <p className="text-sm  text-kidemia-black">
+            {questions_count} questions
+          </p>
+        </div>
       </div>
     </Link>
   );
