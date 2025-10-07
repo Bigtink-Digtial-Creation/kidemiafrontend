@@ -43,7 +43,7 @@ export default function TestTopicsPage() {
   );
 
   return (
-    <section className="py-4 space-y-12 md:px-12">
+    <section className="py-4 space-y-12 md:px-12 w-full">
       <div className="space-y-3">
         <h2 className="text-2xl text-kidemia-black font-semibold text-center">
           Choose up to 5 {subjectTitle ? subjectTitle : ""} topics that interest
@@ -55,7 +55,7 @@ export default function TestTopicsPage() {
         </p>
       </div>
 
-      <div>
+      <div className="w-full overflow-x-hidden">
         <CheckboxGroup
           classNames={{
             base: "w-full",
@@ -102,12 +102,12 @@ export default function TestTopicsPage() {
         </div>
       )}
 
-      <div className="flex justify-end">
+      <div className="flex md:justify-end">
         <Button
           type="button"
           variant="solid"
           size="lg"
-          className="bg-kidemia-secondary text-kidemia-white font-semibold w-1/4"
+          className="bg-kidemia-secondary text-kidemia-white font-semibold w-full md:w-1/4"
           radius="sm"
           isDisabled={groupSelected.length !== 5}
           onPress={() => navigate(TestRoutes.testIntructions)}

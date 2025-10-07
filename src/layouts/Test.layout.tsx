@@ -15,7 +15,7 @@ export default function TestLayout() {
     );
   }
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center bg-kidemia-biege space-y-6 px-6">
+    <section className="min-h-screen flex flex-col items-center justify-center bg-kidemia-biege space-y-6 px-3 md:px-6">
       <div className="absolute top-2 left-0 px-4">
         <Button
           variant="light"

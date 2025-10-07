@@ -44,7 +44,7 @@ export default function CustomCheckbox({
         base: cn(
           "inline-flex w-full max-w-md bg-[#fdf7ef] m-0",
           "hover:bg-kidemia-biege/50 transition-all duration-300",
-          "items-center justify-start cursor-pointer rounded-2xl gap-2 px-5 py-4",
+          "items-center justify-start cursor-pointer rounded-2xl gap-1 px-3 py-4",
           "border border-transparent shadow-sm hover:shadow-md",
           "data-[selected=true]:border-kidemia-secondary data-[selected=true]:bg-white",
         ),
