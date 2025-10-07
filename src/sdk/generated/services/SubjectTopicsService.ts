@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
+
 import type { MessageResponse } from "../models/MessageResponse";
 import type { TopicCreate } from "../models/TopicCreate";
 import type { TopicListResponse } from "../models/TopicListResponse";
@@ -13,9 +13,26 @@ import { request as __request } from "../core/request";
 export class SubjectTopicsService {
   /**
    * Create a new topic
-   * Create a new topic.
+   * Create a new Topic
    *
-   * Requires `content:create` permission.
+   * Parameters:
+   * - subject_id (string <uuid>, required): The Subject Id this topic belongs to.
+   * - name (string, required, 1..200 chars): The name of the topic.
+   * - code (string, required, 1..20 chars): Short code/identifier for the topic.
+   * - description (string | null): A description of the topic.
+   * - content (string | null): Rich content or body text for the topic.
+   * - video_url (string | null): Optional video resource link.
+   * - document_url (string | null): Optional document resource link.
+   * - parent_id (string <uuid> | null): If this topic has a parent topic, supply its id.
+   * - order (integer >= 0, default=0): The order of the topic in listings.
+   * - estimated_time_minutes (integer | null): Estimated time (in minutes) to complete this topic.
+   * - difficulty_level (string | null): Difficulty level of the topic. Enum: "easy", "medium", "hard", "expert".
+   * - is_active (boolean, default=true): Whether the topic is active.
+   *
+   * Responses:
+   * - 201 Created: Returns the created Topic object.
+   * - 400 Bad Request: Invalid input data.
+   * - 404 Not Found: Subject or parent topic not found.
    * @param requestBody
    * @returns TopicResponse Successful Response
    * @throws ApiError
@@ -26,6 +43,49 @@ export class SubjectTopicsService {
     return __request(OpenAPI, {
       method: "POST",
       url: "/api/v1/topics/",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Bulk create multiple topics
+   * Bulk Create Topics
+   *
+   * Create multiple topics in a single request.
+   *
+   * Parameters:
+   * - topics_data (array of TopicCreate): A list of topics to create.
+   * Each topic must include:
+   * - subject_id (string <uuid>, required)
+   * - name (string, required)
+   * - code (string, required)
+   * - description (string | null)
+   * - content (string | null)
+   * - video_url (string | null)
+   * - document_url (string | null)
+   * - parent_id (string <uuid> | null)
+   * - order (integer >= 0, default=0)
+   * - estimated_time_minutes (integer | null)
+   * - difficulty_level (string | null) Enum: "easy", "medium", "hard", "expert"
+   * - is_active (boolean, default=true)
+   *
+   * Responses:
+   * - 201 Created: Returns a list of successfully created topics.
+   * - 400 Bad Request: If any topic input is invalid.
+   * - 404 Not Found: If a subject or parent topic is missing.
+   * @param requestBody
+   * @returns TopicResponse Successful Response
+   * @throws ApiError
+   */
+  public static bulkCreateTopicsApiV1TopicsBulkPost(
+    requestBody: Array<TopicCreate>,
+  ): CancelablePromise<Array<TopicResponse>> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/topics/bulk",
       body: requestBody,
       mediaType: "application/json",
       errors: {

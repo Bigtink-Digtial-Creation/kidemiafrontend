@@ -104,8 +104,6 @@ export default function TestSubjectsPage() {
             icon_url={sub.icon_url || ""}
             title={sub.name}
             topics_count={sub.topics_count || 0}
-            questions_count={sub.questions_count || 0}
-            code={sub.code}
             description={sub.description || ""}
             color_code={sub.color_code || ""}
           />

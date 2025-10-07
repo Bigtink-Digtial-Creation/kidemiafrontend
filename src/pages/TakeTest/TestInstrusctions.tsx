@@ -30,8 +30,7 @@ export default function TestInstrusctionsPage() {
                 key={topic.id}
                 className="text-sm text-kidemia-black list-decimal list-inside"
               >
-                {topic.name} ({topic.code}) — {topic.questions_count}{" "}
-                {topic.questions_count > 1 ? "questions" : "question"}
+                {topic.name}
               </li>
             ))}
           </ul>

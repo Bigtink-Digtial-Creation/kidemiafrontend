@@ -2,12 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 
-import type { QuestionResponse } from "./QuestionResponse";
+import type { SubjectResponse } from "./SubjectResponse";
 /**
- * Paginated question list response
+ * Paginated subject list response
  */
-export type QuestionListResponse = {
-  items: Array<QuestionResponse>;
+export type SubjectListResponse = {
+  items: Array<SubjectResponse>;
   total: number;
   page: number;
   page_size: number;

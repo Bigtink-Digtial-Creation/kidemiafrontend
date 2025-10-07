@@ -1854,11 +1854,7 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/SubjectResponse" },
-                  "title": "Response Get Subjects Api V1 Subjects  Get"
-                }
+                "schema": { "$ref": "#/components/schemas/SubjectListResponse" }
               }
             }
           },
@@ -2102,7 +2098,7 @@
       "post": {
         "tags": ["Subject Topics"],
         "summary": "Create a new topic",
-        "description": "Create a new topic.\n\nRequires `content:create` permission.",
+        "description": "Create a new Topic\n\nParameters:\n- subject_id (string <uuid>, required): The Subject Id this topic belongs to.\n- name (string, required, 1..200 chars): The name of the topic.\n- code (string, required, 1..20 chars): Short code/identifier for the topic.\n- description (string | null): A description of the topic.\n- content (string | null): Rich content or body text for the topic.\n- video_url (string | null): Optional video resource link.\n- document_url (string | null): Optional document resource link.\n- parent_id (string <uuid> | null): If this topic has a parent topic, supply its id.\n- order (integer >= 0, default=0): The order of the topic in listings.\n- estimated_time_minutes (integer | null): Estimated time (in minutes) to complete this topic.\n- difficulty_level (string | null): Difficulty level of the topic. Enum: \"easy\", \"medium\", \"hard\", \"expert\".\n- is_active (boolean, default=true): Whether the topic is active.\n\nResponses:\n- 201 Created: Returns the created Topic object.\n- 400 Bad Request: Invalid input data.\n- 404 Not Found: Subject or parent topic not found.",
         "operationId": "create_topic_api_v1_topics__post",
         "requestBody": {
           "content": {
@@ -2118,6 +2114,49 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/TopicResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "HTTPBearer": [] }]
+      }
+    },
+    "/api/v1/topics/bulk": {
+      "post": {
+        "tags": ["Subject Topics"],
+        "summary": "Bulk create multiple topics",
+        "description": "Bulk Create Topics\n\nCreate multiple topics in a single request.\n\nParameters:\n- topics_data (array of TopicCreate): A list of topics to create.\n  Each topic must include:\n    - subject_id (string <uuid>, required)\n    - name (string, required)\n    - code (string, required)\n    - description (string | null)\n    - content (string | null)\n    - video_url (string | null)\n    - document_url (string | null)\n    - parent_id (string <uuid> | null)\n    - order (integer >= 0, default=0)\n    - estimated_time_minutes (integer | null)\n    - difficulty_level (string | null) Enum: \"easy\", \"medium\", \"hard\", \"expert\"\n    - is_active (boolean, default=true)\n\nResponses:\n- 201 Created: Returns a list of successfully created topics.\n- 400 Bad Request: If any topic input is invalid.\n- 404 Not Found: If a subject or parent topic is missing.",
+        "operationId": "bulk_create_topics_api_v1_topics_bulk_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": { "$ref": "#/components/schemas/TopicCreate" },
+                "type": "array",
+                "title": "Topics Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/TopicResponse" },
+                  "type": "array",
+                  "title": "Response Bulk Create Topics Api V1 Topics Bulk Post"
+                }
               }
             }
           },
@@ -2387,11 +2426,53 @@
         }
       }
     },
+    "/api/v1/questions/bulk-questions": {
+      "post": {
+        "tags": ["Topic Questions"],
+        "summary": "Create bulk questions",
+        "operationId": "create_bulk_question_api_v1_questions_bulk_questions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": { "$ref": "#/components/schemas/QuestionCreate" },
+                "type": "array",
+                "title": "Question Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/QuestionResponse" },
+                  "type": "array",
+                  "title": "Response Create Bulk Question Api V1 Questions Bulk Questions Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "HTTPBearer": [] }]
+      }
+    },
     "/api/v1/questions/": {
       "post": {
         "tags": ["Topic Questions"],
         "summary": "Create a new question",
-        "description": "Create a new question with options.\n\nRequires `content:create` permission.",
+        "description": "Create a new question.\n\nParameters:\n------------------------\n- subject_id : string <uuid> (required)\n- topic_id : string <uuid> (required)\n- question_text : string (required, non-empty)\n- question_type : string (required, enum)\n    - multiple_choice\n    - true_false\n    - fill_in_blank\n    - essay\n    - matching\n    - ordering\n- difficulty_level : string (required, enum)\n    - easy\n    - medium\n    - hard\n    - expert\n- explanation : string | null (optional)\n- image_url : string | null (optional)\n- audio_url : string | null (optional)\n- video_url : string | null (optional)\n- points : integer (default=1, range [1..100])\n- time_limit_seconds : integer | null (optional)\n- options : Array[object] (required, >= 2 items)\n- tag_ids : Array[string <uuid>] | null (optional)\n\nResponses:\n----------\n- 201 Created : Question successfully created\n- 400 Bad Request : Invalid input\n- 401 Unauthorized : Authentication required\n- 403 Forbidden : Not enough permissions",
         "operationId": "create_question_api_v1_questions__post",
         "security": [{ "HTTPBearer": [] }],
         "requestBody": {
@@ -2527,6 +2608,61 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/QuestionListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/questions/by-topics": {
+      "post": {
+        "tags": ["Topic Questions"],
+        "summary": "Get questions grouped by multiple topics",
+        "description": "Get questions grouped by multiple topics.\n\n- **topic_ids**: List of topic UUIDs\n- **limit**: Max questions per topic",
+        "operationId": "get_questions_by_topics_api_v1_questions_by_topics_post",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "type": "string", "format": "uuid" },
+                "title": "Topic Ids"
+              },
+              "example": ["uuid1", "uuid2", "uuid3"]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopicQuestionListResponse"
                 }
               }
             }
@@ -3637,6 +3773,34 @@
         "description": "Schema for question option response",
         "example": {}
       },
+      "QuestionOptionResponseTrim": {
+        "properties": {
+          "option_text": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Option Text"
+          },
+          "option_order": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Option Order"
+          },
+          "is_correct": {
+            "type": "boolean",
+            "title": "Is Correct",
+            "default": false
+          },
+          "explanation": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Explanation"
+          }
+        },
+        "type": "object",
+        "required": ["option_text", "option_order"],
+        "title": "QuestionOptionResponseTrim",
+        "description": "Base question option schema",
+        "example": {}
+      },
       "QuestionPublicResponse": {
         "properties": {
           "id": { "type": "string", "format": "uuid", "title": "Id" },
@@ -3810,6 +3974,36 @@
         ],
         "title": "QuestionResponse",
         "description": "Schema for full question response (with answers)",
+        "example": {}
+      },
+      "QuestionResponseTrim": {
+        "properties": {
+          "question_text": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Question Text"
+          },
+          "question_type": { "$ref": "#/components/schemas/QuestionType" },
+          "difficulty_level": {
+            "$ref": "#/components/schemas/DifficultyLevel"
+          },
+          "explanation": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Explanation"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/QuestionOptionResponseTrim"
+            },
+            "type": "array",
+            "title": "Options",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": ["question_text", "question_type", "difficulty_level"],
+        "title": "QuestionResponseTrim",
+        "description": "Schema for trim question response (with answers)",
         "example": {}
       },
       "QuestionReviewRequest": {
@@ -4302,6 +4496,23 @@
         "description": "Schema for creating a subject",
         "example": {}
       },
+      "SubjectListResponse": {
+        "properties": {
+          "items": {
+            "items": { "$ref": "#/components/schemas/SubjectResponse" },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": { "type": "integer", "title": "Total" },
+          "page": { "type": "integer", "title": "Page" },
+          "page_size": { "type": "integer", "title": "Page Size" }
+        },
+        "type": "object",
+        "required": ["items", "total", "page", "page_size"],
+        "title": "SubjectListResponse",
+        "description": "Paginated subject list response",
+        "example": {}
+      },
       "SubjectResponse": {
         "properties": {
           "created_at": {
@@ -4562,6 +4773,33 @@
         "required": ["items", "total", "page", "page_size"],
         "title": "TopicListResponse",
         "description": "Paginated topic list response",
+        "example": {}
+      },
+      "TopicQuestionListResponse": {
+        "properties": {
+          "topics": {
+            "items": { "$ref": "#/components/schemas/TopicQuestionsResponse" },
+            "type": "array",
+            "title": "Topics"
+          }
+        },
+        "type": "object",
+        "required": ["topics"],
+        "title": "TopicQuestionListResponse",
+        "example": {}
+      },
+      "TopicQuestionsResponse": {
+        "properties": {
+          "topic_name": { "type": "string", "title": "Topic Name" },
+          "questions": {
+            "items": { "$ref": "#/components/schemas/QuestionResponseTrim" },
+            "type": "array",
+            "title": "Questions"
+          }
+        },
+        "type": "object",
+        "required": ["topic_name", "questions"],
+        "title": "TopicQuestionsResponse",
         "example": {}
       },
       "TopicResponse": {

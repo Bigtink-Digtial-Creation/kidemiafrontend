@@ -1,9 +1,10 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
+
 import type { MessageResponse } from "../models/MessageResponse";
 import type { SubjectCreate } from "../models/SubjectCreate";
+import type { SubjectListResponse } from "../models/SubjectListResponse";
 import type { SubjectResponse } from "../models/SubjectResponse";
 import type { SubjectUpdate } from "../models/SubjectUpdate";
 import type { CancelablePromise } from "../core/CancelablePromise";
@@ -42,14 +43,14 @@ export class SubjectsService {
    * @param skip
    * @param limit
    * @param activeOnly
-   * @returns SubjectResponse Successful Response
+   * @returns SubjectListResponse Successful Response
    * @throws ApiError
    */
   public static getSubjectsApiV1SubjectsGet(
     skip?: number,
     limit: number = 20,
     activeOnly: boolean = false,
-  ): CancelablePromise<Array<SubjectResponse>> {
+  ): CancelablePromise<SubjectListResponse> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/api/v1/subjects/",

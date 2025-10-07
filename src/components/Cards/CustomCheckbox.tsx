@@ -4,9 +4,7 @@ interface CustomCheckboxProps {
   value: string;
   name: string;
   description: string;
-  code: string;
   estimated_time_minutes: number;
-  questions_count: number;
   difficulty_level: string;
 }
 
@@ -14,9 +12,7 @@ export default function CustomCheckbox({
   value,
   name,
   description,
-  code,
   estimated_time_minutes,
-  questions_count,
   difficulty_level,
 }: CustomCheckboxProps) {
   const getChipColor = () => {
@@ -33,8 +29,6 @@ export default function CustomCheckbox({
         return "default";
     }
   };
-
-  const questionLabel = questions_count === 1 ? "question" : "questions";
 
   return (
     <Checkbox
@@ -55,19 +49,16 @@ export default function CustomCheckbox({
       <div className="w-full flex justify-between items-start gap-3">
         <div className="space-y-1.5">
           <p className="text-kidemia-black3 text-md font-semibold capitalize whitespace-nowrap">
-            {name} <span className="text-sm text-kidemia-grey">({code})</span>
+            {name}
           </p>
           <p className="text-sm text-kidemia-black3/80 line-clamp-2">
             {description}
           </p>
         </div>
 
-        <div className="flex flex-col items-end space-y-1">
-          <p className="text-xs text-kidemia-black/80">
-            {estimated_time_minutes} mins
-          </p>
+        <div className="flex flex-col items-end space-y-2">
           <p className="text-xs text-kidemia-black/80 whitespace-nowrap">
-            {questions_count} {questionLabel}
+            {estimated_time_minutes} mins
           </p>
           <Chip
             size="sm"
