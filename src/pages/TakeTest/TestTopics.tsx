@@ -6,17 +6,17 @@ import { Button, CheckboxGroup, Pagination, Spinner } from "@heroui/react";
 import { TestRoutes } from "../../routes";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
+import { useAtomValue } from "jotai";
+import { selectedSubjectTitleAtom } from "../../store/test.atom";
 
 export default function TestTopicsPage() {
   const [groupSelected, setGroupSelected] = useState<string[]>([]);
   const [page, setPage] = useState<number>(1);
+  const subjectTitle = useAtomValue(selectedSubjectTitleAtom);
   const itemsPerPage = 10;
 
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-
-  console.log(id);
-
   console.log(groupSelected);
 
   const { data: topicData, isLoading } = useQuery({
@@ -27,8 +27,6 @@ export default function TestTopicsPage() {
       ),
     enabled: !!id,
   });
-
-  console.log({ topicData });
 
   if (isLoading) {
     return (
@@ -48,7 +46,8 @@ export default function TestTopicsPage() {
     <section className="py-4 space-y-12 md:px-12">
       <div className="space-y-3">
         <h2 className="text-2xl text-kidemia-black font-semibold text-center">
-          Choose up to 5 topics that interest you the most
+          Choose up to 5 {subjectTitle ? subjectTitle : ""} topics that interest
+          you the most
         </h2>
         <p className="text-base text-kidemia-grey text-center font-medium max-w-2xl mx-auto">
           Pick the areas you feel most confident in or would like to challenge

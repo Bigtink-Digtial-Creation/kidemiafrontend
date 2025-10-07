@@ -1,7 +1,9 @@
 import { Link } from "react-router";
+import { useSetAtom } from "jotai";
 import { TestRoutes } from "../../routes";
 import { Avatar } from "@heroui/react";
 import { getNameIntials, hexToRgba } from "../../utils";
+import { selectedSubjectTitleAtom } from "../../store/test.atom";
 
 interface SubjectCardI {
   id: string;
@@ -25,10 +27,16 @@ export default function SubjectCard({
   color_code,
 }: SubjectCardI) {
   const subjectPath = TestRoutes.subjectTopics.replace(":id", id);
+  const setSelectedTitle = useSetAtom(selectedSubjectTitleAtom);
+
+  const handleClick = () => {
+    setSelectedTitle(title);
+  };
 
   return (
     <Link
       to={subjectPath}
+      onClick={handleClick}
       className={`px-4 py-8 rounded-2xl shadow-sm  cursor-pointer flex flex-col justify-center items-center space-y-4 hover:shadow-xl`}
       style={{ backgroundColor: hexToRgba(color_code || "#F9F9F9", 0.15) }}
     >
