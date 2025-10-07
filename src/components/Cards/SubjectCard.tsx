@@ -10,8 +10,6 @@ interface SubjectCardI {
   icon_url: string;
   title: string;
   topics_count: number;
-  questions_count: number;
-  code: string;
   description: string;
   color_code: string;
 }
@@ -21,8 +19,6 @@ export default function SubjectCard({
   icon_url,
   title,
   topics_count,
-  questions_count,
-  code,
   description,
   color_code,
 }: SubjectCardI) {
@@ -50,16 +46,10 @@ export default function SubjectCard({
       </div>
       <div className="space-y-3 flex items-center flex-col">
         <h3 className="text-xl font-medium text-kidemia-black">{title}</h3>
-        <div className="space-y-1.5">
-          <h6 className="text-md text-kidemia-black text-center">{code}</h6>
+        <p className="text-sm text-center text-kidemia-black">{description}</p>
+        <div className="w-full">
           <p className="text-sm text-center text-kidemia-black">
-            {description}
-          </p>
-        </div>
-        <div className="flex justify-evenly items-center gap-4 w-full">
-          <p className="text-sm  text-kidemia-black">{topics_count} topics</p>
-          <p className="text-sm  text-kidemia-black">
-            {questions_count} questions
+            {topics_count} topics
           </p>
         </div>
       </div>

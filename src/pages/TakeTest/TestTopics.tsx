@@ -94,9 +94,7 @@ export default function TestTopicsPage() {
                 value={topics.id}
                 name={topics.name}
                 description={topics.description || "No description"}
-                code={topics.code}
                 estimated_time_minutes={topics.estimated_time_minutes || 0}
-                questions_count={topics.questions_count || 0}
                 difficulty_level={topics.difficulty_level || ""}
               />
             </div>
