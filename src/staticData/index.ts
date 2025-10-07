@@ -274,4 +274,3 @@ export const mockResultsData = [
     dateTaken: "2025-02-22",
   },
 ];
-

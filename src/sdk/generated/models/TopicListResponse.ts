@@ -1,8 +1,8 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
-import type { TopicResponse } from './TopicResponse';
+
+import type { TopicResponse } from "./TopicResponse";
 /**
  * Paginated topic list response
  */
@@ -12,4 +12,3 @@ export type TopicListResponse = {
   page: number;
   page_size: number;
 };
-

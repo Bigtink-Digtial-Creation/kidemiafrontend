@@ -1,8 +1,8 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
-import type { UserResponse } from './UserResponse';
+
+import type { UserResponse } from "./UserResponse";
 /**
  * Schema for login response
  */
@@ -13,4 +13,3 @@ export type LoginResponse = {
   expires_in: number;
   user: UserResponse;
 };
-

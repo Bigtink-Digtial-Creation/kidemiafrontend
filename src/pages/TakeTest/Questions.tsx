@@ -16,7 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 
-type AnswerOption = string
+type AnswerOption = string;
 
 type SelectedAnswers = {
   [key: number]: AnswerOption;
@@ -26,15 +26,18 @@ export default function QuestionsPage() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswers>({});
 
-  const selectedTopics = useAtomValue(selectedTopicsAtom)
-  const topicIds = selectedTopics.map((topic) => topic.id)
+  const selectedTopics = useAtomValue(selectedTopicsAtom);
+  const topicIds = selectedTopics.map((topic) => topic.id);
   console.log({ topicIds });
 
   const { data: questionsData, isLoading } = useQuery({
     queryKey: [QueryKeys.allQuestions, topicIds],
-    queryFn: () => ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(topicIds),
-    enabled: topicIds.length > 0
-  })
+    queryFn: () =>
+      ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(
+        topicIds,
+      ),
+    enabled: topicIds.length > 0,
+  });
 
   console.log({ questionsData });
   // flatten and memoize questions for easy navigations
@@ -44,7 +47,7 @@ export default function QuestionsPage() {
       topic.questions.map((q: any) => ({
         ...q,
         topic_name: topic.topic_name,
-      }))
+      })),
     );
   }, [questionsData]);
 
