@@ -6,18 +6,22 @@ import { Button, CheckboxGroup, Pagination, Spinner } from "@heroui/react";
 import { TestRoutes } from "../../routes";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
-import { useAtomValue } from "jotai";
-import { selectedSubjectTitleAtom } from "../../store/test.atom";
+import { useAtom, useAtomValue } from "jotai";
+import {
+  selectedSubjectTitleAtom,
+  selectedTopicsAtom,
+} from "../../store/test.atom";
 
 export default function TestTopicsPage() {
-  const [groupSelected, setGroupSelected] = useState<string[]>([]);
+  const [selectedTopics, setSelectedTopics] = useAtom(selectedTopicsAtom);
   const [page, setPage] = useState<number>(1);
   const subjectTitle = useAtomValue(selectedSubjectTitleAtom);
   const itemsPerPage = 10;
 
+  console.log({ selectedTopics });
+
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  console.log(groupSelected);
 
   const { data: topicData, isLoading } = useQuery({
     queryKey: [QueryKeys.allTopics, id],
@@ -42,12 +46,32 @@ export default function TestTopicsPage() {
     page * itemsPerPage,
   );
 
+  const handleSelectionChange = (values: string[]) => {
+    if (values.length <= 5) {
+      // Update selectedTopics atom with full topic data for selected IDs
+      const updated =
+        topicData?.items
+          ?.filter((topic) => values.includes(topic.id))
+          .map((topic) => ({
+            id: topic.id,
+            name: topic.name,
+            description: topic.description || "No description",
+            code: topic.code,
+            estimated_time_minutes: topic.estimated_time_minutes || 0,
+            questions_count: topic.questions_count || 0,
+            difficulty_level: topic.difficulty_level || "",
+          })) ?? [];
+
+      setSelectedTopics(updated);
+    }
+  };
+
   return (
     <section className="py-4 space-y-12 md:px-12 w-full">
       <div className="space-y-3">
         <h2 className="text-2xl text-kidemia-black font-semibold text-center">
-          Choose up to 5 {subjectTitle ? subjectTitle : ""} topics that interest
-          you the most
+          Choose up to 5 {subjectTitle ? subjectTitle : ""} Topics that Interest
+          You the Most
         </h2>
         <p className="text-base text-kidemia-grey text-center font-medium max-w-2xl mx-auto">
           Pick the areas you feel most confident in or would like to challenge
@@ -60,12 +84,8 @@ export default function TestTopicsPage() {
           classNames={{
             base: "w-full",
           }}
-          value={groupSelected}
-          onChange={(values) => {
-            if (values.length <= 5) {
-              setGroupSelected(values);
-            }
-          }}
+          value={selectedTopics.map((t) => t.id)}
+          onChange={handleSelectionChange}
           orientation="horizontal"
         >
           {paginatedTopics?.map((topics) => (
@@ -109,7 +129,8 @@ export default function TestTopicsPage() {
           size="lg"
           className="bg-kidemia-secondary text-kidemia-white font-semibold w-full md:w-1/4"
           radius="sm"
-          isDisabled={groupSelected.length !== 5}
+          // isDisabled={groupSelected.length !== 5}
+          isDisabled={selectedTopics.length !== 5}
           onPress={() => navigate(TestRoutes.testIntructions)}
         >
           Continue

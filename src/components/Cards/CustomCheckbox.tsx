@@ -54,7 +54,7 @@ export default function CustomCheckbox({
     >
       <div className="w-full flex justify-between items-start gap-3">
         <div className="space-y-1.5">
-          <p className="text-kidemia-black3 text-base md:text-lg font-semibold capitalize whitespace-nowrap">
+          <p className="text-kidemia-black3 text-md font-semibold capitalize whitespace-nowrap">
             {name} <span className="text-sm text-kidemia-grey">({code})</span>
           </p>
           <p className="text-sm text-kidemia-black3/80 line-clamp-2">
