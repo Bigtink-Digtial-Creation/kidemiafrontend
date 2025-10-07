@@ -7,5 +7,6 @@
  */
 export type QuestionReviewRequest = {
   approved: boolean;
-  feedback?: string | null;
+  feedback?: (string | null);
 };
+

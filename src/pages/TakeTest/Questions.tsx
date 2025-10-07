@@ -1,17 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Button,
   Pagination,
   Radio,
   RadioGroup,
+  Spinner,
   useDisclosure,
 } from "@heroui/react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { questions } from "../../staticData";
 import ResultWaiting from "./Modal/ResultWaiting";
+import { useAtomValue } from "jotai";
+import { selectedTopicsAtom } from "../../store/test.atom";
+import { useQuery } from "@tanstack/react-query";
+import { QueryKeys } from "../../utils/queryKeys";
+import { ApiSDK } from "../../sdk";
 
-type AnswerOption = "a" | "b" | "c" | "d" | "e";
+type AnswerOption = string
 
 type SelectedAnswers = {
   [key: number]: AnswerOption;
@@ -20,11 +25,34 @@ type SelectedAnswers = {
 export default function QuestionsPage() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswers>({});
-  const currentQuestion = questions[currentIndex];
+
+  const selectedTopics = useAtomValue(selectedTopicsAtom)
+  const topicIds = selectedTopics.map((topic) => topic.id)
+  console.log({ topicIds });
+
+  const { data: questionsData, isLoading } = useQuery({
+    queryKey: [QueryKeys.allQuestions, topicIds],
+    queryFn: () => ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(topicIds),
+    enabled: topicIds.length > 0
+  })
+
+  console.log({ questionsData });
+  // flatten and memoize questions for easy navigations
+  const allQuestions = useMemo(() => {
+    if (!questionsData?.topics) return [];
+    return questionsData.topics.flatMap((topic: any) =>
+      topic.questions.map((q: any) => ({
+        ...q,
+        topic_name: topic.topic_name,
+      }))
+    );
+  }, [questionsData]);
+
+  const currentQuestion = allQuestions[currentIndex];
 
   const resultModal = useDisclosure();
 
-  const handleAnswerSelect = (value: AnswerOption | any) => {
+  const handleAnswerSelect = (value: AnswerOption) => {
     setSelectedAnswers((prev) => ({
       ...prev,
       [currentIndex]: value,
@@ -32,7 +60,7 @@ export default function QuestionsPage() {
   };
 
   const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
+    if (currentIndex < allQuestions.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     }
   };
@@ -47,6 +75,14 @@ export default function QuestionsPage() {
     resultModal.onOpen();
   };
 
+  if (isLoading || !currentQuestion) {
+    return (
+      <div className="h-screen flex justify-center items-center">
+        <Spinner size="lg" color="warning" />
+      </div>
+    );
+  }
+
   return (
     <section className="py-4 space-y-12 md:px-12 w-full max-w-4xl">
       <div className="absolute top-0 right-0 px-8 pt-2.5">
@@ -57,13 +93,19 @@ export default function QuestionsPage() {
         </div>
       </div>
 
+      <div className="pt-2">
+        <h3 className="text-lg font-semibold text-kidemia-primary text-center">
+          Topic: {currentQuestion.topic_name}
+        </h3>
+      </div>
+
       <div className="py-4">
         <div className="space-y-3">
           <h2 className="text-xl text-kidemia-black font-semibold">
             Question {currentIndex + 1}
           </h2>
           <p className="text-lg text-kidemia-grey font-medium">
-            {currentQuestion.question}
+            {currentQuestion.question_text}
           </p>
         </div>
 
@@ -75,14 +117,15 @@ export default function QuestionsPage() {
               wrapper: "space-y-6",
             }}
           >
-            {currentQuestion.options.map((option, idx) => (
+            {currentQuestion.options.map((option: any, idx: number) => (
               <Radio
                 key={idx}
-                value={option.charAt(0)}
+                // value={option.charAt(0)}
+                value={option.option_text}
                 className="text-kidemia-grey font-medium"
                 color="warning"
               >
-                {option}
+                {option.option_text}
               </Radio>
             ))}
           </RadioGroup>
@@ -103,7 +146,7 @@ export default function QuestionsPage() {
           Previous
         </Button>
 
-        {currentIndex === questions.length - 1 ? (
+        {currentIndex === allQuestions.length - 1 ? (
           <Button
             className="bg-kidemia-secondary text-kidemia-white font-medium w-full"
             size="md"
@@ -133,7 +176,7 @@ export default function QuestionsPage() {
         <Pagination
           radius="sm"
           page={currentIndex + 1}
-          total={questions.length}
+          total={allQuestions.length}
           classNames={{
             cursor: "border-1 bg-transparent text-kidemia-primary",
             item: "bg-transparent shadow-none cursor-pointer",

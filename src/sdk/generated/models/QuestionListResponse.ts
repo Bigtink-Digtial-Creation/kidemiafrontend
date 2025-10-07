@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { QuestionResponse } from "./QuestionResponse";
+import type { QuestionResponse } from './QuestionResponse';
 /**
  * Paginated question list response
  */
@@ -12,3 +12,4 @@ export type QuestionListResponse = {
   page: number;
   page_size: number;
 };
+

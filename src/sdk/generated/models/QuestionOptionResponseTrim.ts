@@ -3,13 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Public question option response (without correct answers)
+ * Base question option schema
  */
-export type QuestionOptionPublicResponse = {
-  id: string;
+export type QuestionOptionResponseTrim = {
   option_text: string;
   option_order: number;
-  image_url?: (string | null);
-  match_pair_id?: (string | null);
+  is_correct?: boolean;
+  explanation?: (string | null);
 };
 

@@ -2,20 +2,37 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { MessageResponse } from "../models/MessageResponse";
-import type { TopicCreate } from "../models/TopicCreate";
-import type { TopicListResponse } from "../models/TopicListResponse";
-import type { TopicResponse } from "../models/TopicResponse";
-import type { TopicUpdate } from "../models/TopicUpdate";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { MessageResponse } from '../models/MessageResponse';
+import type { TopicCreate } from '../models/TopicCreate';
+import type { TopicListResponse } from '../models/TopicListResponse';
+import type { TopicResponse } from '../models/TopicResponse';
+import type { TopicUpdate } from '../models/TopicUpdate';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class SubjectTopicsService {
   /**
    * Create a new topic
-   * Create a new topic.
+   * Create a new Topic
    *
-   * Requires `content:create` permission.
+   * Parameters:
+   * - subject_id (string <uuid>, required): The Subject Id this topic belongs to.
+   * - name (string, required, 1..200 chars): The name of the topic.
+   * - code (string, required, 1..20 chars): Short code/identifier for the topic.
+   * - description (string | null): A description of the topic.
+   * - content (string | null): Rich content or body text for the topic.
+   * - video_url (string | null): Optional video resource link.
+   * - document_url (string | null): Optional document resource link.
+   * - parent_id (string <uuid> | null): If this topic has a parent topic, supply its id.
+   * - order (integer >= 0, default=0): The order of the topic in listings.
+   * - estimated_time_minutes (integer | null): Estimated time (in minutes) to complete this topic.
+   * - difficulty_level (string | null): Difficulty level of the topic. Enum: "easy", "medium", "hard", "expert".
+   * - is_active (boolean, default=true): Whether the topic is active.
+   *
+   * Responses:
+   * - 201 Created: Returns the created Topic object.
+   * - 400 Bad Request: Invalid input data.
+   * - 404 Not Found: Subject or parent topic not found.
    * @param requestBody
    * @returns TopicResponse Successful Response
    * @throws ApiError
@@ -24,10 +41,53 @@ export class SubjectTopicsService {
     requestBody: TopicCreate,
   ): CancelablePromise<TopicResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/topics/",
+      method: 'POST',
+      url: '/api/v1/topics/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Bulk create multiple topics
+   * Bulk Create Topics
+   *
+   * Create multiple topics in a single request.
+   *
+   * Parameters:
+   * - topics_data (array of TopicCreate): A list of topics to create.
+   * Each topic must include:
+   * - subject_id (string <uuid>, required)
+   * - name (string, required)
+   * - code (string, required)
+   * - description (string | null)
+   * - content (string | null)
+   * - video_url (string | null)
+   * - document_url (string | null)
+   * - parent_id (string <uuid> | null)
+   * - order (integer >= 0, default=0)
+   * - estimated_time_minutes (integer | null)
+   * - difficulty_level (string | null) Enum: "easy", "medium", "hard", "expert"
+   * - is_active (boolean, default=true)
+   *
+   * Responses:
+   * - 201 Created: Returns a list of successfully created topics.
+   * - 400 Bad Request: If any topic input is invalid.
+   * - 404 Not Found: If a subject or parent topic is missing.
+   * @param requestBody
+   * @returns TopicResponse Successful Response
+   * @throws ApiError
+   */
+  public static bulkCreateTopicsApiV1TopicsBulkPost(
+    requestBody: Array<TopicCreate>,
+  ): CancelablePromise<Array<TopicResponse>> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/topics/bulk',
+      body: requestBody,
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -48,14 +108,14 @@ export class SubjectTopicsService {
     limit: number = 20,
   ): CancelablePromise<TopicListResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/topics/subject/{subject_id}",
+      method: 'GET',
+      url: '/api/v1/topics/subject/{subject_id}',
       path: {
-        subject_id: subjectId,
+        'subject_id': subjectId,
       },
       query: {
-        skip: skip,
-        limit: limit,
+        'skip': skip,
+        'limit': limit,
       },
       errors: {
         422: `Validation Error`,
@@ -74,18 +134,18 @@ export class SubjectTopicsService {
    */
   public static searchTopicsApiV1TopicsSearchGet(
     q: string,
-    subjectId?: string | null,
+    subjectId?: (string | null),
     skip?: number,
     limit: number = 20,
   ): CancelablePromise<Array<TopicResponse>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/topics/search",
+      method: 'GET',
+      url: '/api/v1/topics/search',
       query: {
-        q: q,
-        subject_id: subjectId,
-        skip: skip,
-        limit: limit,
+        'q': q,
+        'subject_id': subjectId,
+        'skip': skip,
+        'limit': limit,
       },
       errors: {
         422: `Validation Error`,
@@ -103,10 +163,10 @@ export class SubjectTopicsService {
     topicId: string,
   ): CancelablePromise<TopicResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/topics/{topic_id}",
+      method: 'GET',
+      url: '/api/v1/topics/{topic_id}',
       path: {
-        topic_id: topicId,
+        'topic_id': topicId,
       },
       errors: {
         422: `Validation Error`,
@@ -128,13 +188,13 @@ export class SubjectTopicsService {
     requestBody: TopicUpdate,
   ): CancelablePromise<TopicResponse> {
     return __request(OpenAPI, {
-      method: "PUT",
-      url: "/api/v1/topics/{topic_id}",
+      method: 'PUT',
+      url: '/api/v1/topics/{topic_id}',
       path: {
-        topic_id: topicId,
+        'topic_id': topicId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -153,10 +213,10 @@ export class SubjectTopicsService {
     topicId: string,
   ): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/v1/topics/{topic_id}",
+      method: 'DELETE',
+      url: '/api/v1/topics/{topic_id}',
       path: {
-        topic_id: topicId,
+        'topic_id': topicId,
       },
       errors: {
         422: `Validation Error`,

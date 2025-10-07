@@ -8,3 +8,4 @@
 export type AssignPermissionsToRoleRequest = {
   permission_ids: Array<string>;
 };
+

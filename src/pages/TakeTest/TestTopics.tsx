@@ -18,8 +18,6 @@ export default function TestTopicsPage() {
   const subjectTitle = useAtomValue(selectedSubjectTitleAtom);
   const itemsPerPage = 10;
 
-  console.log({ selectedTopics });
-
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
@@ -127,7 +125,6 @@ export default function TestTopicsPage() {
           size="lg"
           className="bg-kidemia-secondary text-kidemia-white font-semibold w-full md:w-1/4"
           radius="sm"
-          // isDisabled={groupSelected.length !== 5}
           isDisabled={selectedTopics.length !== 5}
           onPress={() => navigate(TestRoutes.testIntructions)}
         >
