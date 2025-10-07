@@ -10,3 +10,4 @@ export type LoginRequest = {
   password: string;
   remember_me?: boolean;
 };
+

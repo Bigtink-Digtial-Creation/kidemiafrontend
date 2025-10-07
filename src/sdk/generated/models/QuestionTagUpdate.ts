@@ -6,7 +6,8 @@
  * Schema for updating question tag
  */
 export type QuestionTagUpdate = {
-  name?: string | null;
-  description?: string | null;
-  color?: string | null;
+  name?: (string | null);
+  description?: (string | null);
+  color?: (string | null);
 };
+
