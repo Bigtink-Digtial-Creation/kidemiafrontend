@@ -48,7 +48,6 @@ export default function ProfilePage() {
   const [avatarUrl, setAvatarUrl] = useState<string>(
     user?.profile_picture_url as string,
   );
-  console.log({ user }, "lol");
 
   const fullName = [user?.first_name, user?.last_name]
     .filter(Boolean)

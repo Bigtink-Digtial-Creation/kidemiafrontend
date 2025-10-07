@@ -6,13 +6,21 @@ export default function TakeTestPage() {
   const navigate = useNavigate();
   return (
     <section className="py-4 space-y-12 md:px-12">
-      <div className="space-y-3">
+      <div className="space-y-4">
         <h2 className="text-3xl text-kidemia-black font-semibold text-center">
-          Test Yourself
+          Welcome To Kidemia Test Section
         </h2>
-        <p className="text-lg text-kidemia-grey text-center font-medium">
-          The test comprises of 20 questions to be answered in 20 mins
-        </p>
+        <div className="max-w-xl space-y-1.5">
+          <p className="text-lg text-kidemia-grey text-center font-medium tracking-wider">
+            This is your opportunity to put your knowledge and skills to the
+            test. Stay focused, do your best, and show what you've learned. We
+            believe in you!
+          </p>
+          <p className="text-lg text-kidemia-grey text-center font-medium tracking-wider">
+            When you're ready, click <span className="font-bold">Continue</span>{" "}
+            to begin.
+          </p>
+        </div>
       </div>
 
       <div className="flex items-center space-x-6 py-6">
