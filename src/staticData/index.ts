@@ -155,29 +155,6 @@ export const subjectsData = [
   },
 ];
 
-export const topicsData = [
-  { id: 1, value: "Algebra Basics" },
-  { id: 2, value: "World War II" },
-  { id: 3, value: "Photosynthesis" },
-  { id: 4, value: "Computer Networks" },
-  { id: 5, value: "Shakespearean Literature" },
-  { id: 6, value: "Trigonometry" },
-  { id: 7, value: "Periodic Table" },
-  { id: 8, value: "Human Anatomy" },
-  { id: 9, value: "Economics: Supply & Demand" },
-  { id: 10, value: "Environmental Conservation" },
-  { id: 11, value: "Calculus Derivatives" },
-  { id: 12, value: "Astronomy: Solar System" },
-  { id: 13, value: "Programming Fundamentals" },
-  { id: 14, value: "Ancient Civilizations" },
-  { id: 15, value: "Genetics & DNA" },
-  { id: 16, value: "Probability & Statistics" },
-  { id: 17, value: "Chemistry Reactions" },
-  { id: 18, value: "Geography: Climate Zones" },
-  { id: 19, value: "Art History: Renaissance" },
-  { id: 20, value: "Political Science Basics" },
-];
-
 export const value = 45;
 
 export const options: ApexOptions = {
