@@ -28,7 +28,6 @@ export default function QuestionsPage() {
 
   const selectedTopics = useAtomValue(selectedTopicsAtom);
   const topicIds = selectedTopics.map((topic) => topic.id);
-  console.log({ topicIds });
 
   const { data: questionsData, isLoading } = useQuery({
     queryKey: [QueryKeys.allQuestions, topicIds],
@@ -39,7 +38,6 @@ export default function QuestionsPage() {
     enabled: topicIds.length > 0,
   });
 
-  console.log({ questionsData });
   // flatten and memoize questions for easy navigations
   const allQuestions = useMemo(() => {
     if (!questionsData?.topics) return [];
