@@ -1,33 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
+  addToast,
   Button,
   Pagination,
   Radio,
   RadioGroup,
   Spinner,
-  useDisclosure,
 } from "@heroui/react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import ResultWaiting from "./Modal/ResultWaiting";
-import { useAtomValue } from "jotai";
-import { selectedTopicsAtom } from "../../store/test.atom";
+import { useAtom, useAtomValue } from "jotai";
+import { selectedAnswersAtom, selectedTopicsAtom } from "../../store/test.atom";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
+import { useNavigate } from "react-router";
+import { SidebarRoutes, TestRoutes } from "../../routes";
+import { formatTime } from "../../utils";
 
 type AnswerOption = string;
 
-type SelectedAnswers = {
-  [key: number]: AnswerOption;
-};
-
 export default function QuestionsPage() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswers>({});
+  const [selectedAnswers, setSelectedAnswers] = useAtom(selectedAnswersAtom);
+  const [timeLeft, setTimeLeft] = useState<number>(10 * 60);
 
   const selectedTopics = useAtomValue(selectedTopicsAtom);
   const topicIds = selectedTopics.map((topic) => topic.id);
+
+  const navigate = useNavigate();
 
   const { data: questionsData, isLoading } = useQuery({
     queryKey: [QueryKeys.allQuestions, topicIds],
@@ -51,7 +52,28 @@ export default function QuestionsPage() {
 
   const currentQuestion = allQuestions[currentIndex];
 
-  const resultModal = useDisclosure();
+  //Start countdown once questions finish loading
+  useEffect(() => {
+    if (!isLoading && allQuestions.length > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            addToast({
+              title: "Attention",
+              description: "Test time is over!",
+              color: "danger",
+            });
+            navigate(SidebarRoutes.dashboard);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [isLoading, allQuestions.length, navigate]);
 
   const handleAnswerSelect = (value: AnswerOption) => {
     setSelectedAnswers((prev) => ({
@@ -73,7 +95,7 @@ export default function QuestionsPage() {
   };
 
   const handleSubmit = () => {
-    resultModal.onOpen();
+    navigate(TestRoutes.review);
   };
 
   if (isLoading || !currentQuestion) {
@@ -89,7 +111,7 @@ export default function QuestionsPage() {
       <div className="absolute top-0 right-0 px-8 pt-2.5">
         <div className="flex justify-between flex-col md:flex-row items-center gap-2 space-x-6">
           <p className="text-md text-kidemia-black font-medium">
-            Time Left: 10mins: 54 Secs
+            Time Left: {formatTime(timeLeft)}
           </p>
         </div>
       </div>
@@ -121,7 +143,6 @@ export default function QuestionsPage() {
             {currentQuestion.options.map((option: any, idx: number) => (
               <Radio
                 key={idx}
-                // value={option.charAt(0)}
                 value={option.option_text}
                 className="text-kidemia-grey font-medium"
                 color="warning"
@@ -185,11 +206,6 @@ export default function QuestionsPage() {
           onChange={(page) => setCurrentIndex(page - 1)}
         />
       </div>
-
-      <ResultWaiting
-        isOpen={resultModal.isOpen}
-        onClose={resultModal.onClose}
-      />
     </section>
   );
 }

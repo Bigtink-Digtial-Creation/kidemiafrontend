@@ -1,4 +1,5 @@
 import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
 export type SelectedTopic = {
   id: string;
@@ -13,3 +14,8 @@ export type SelectedTopic = {
 export const selectedSubjectTitleAtom = atom<string | null>(null);
 
 export const selectedTopicsAtom = atom<SelectedTopic[]>([]);
+
+export const selectedAnswersAtom = atomWithStorage<{ [key: number]: string }>(
+  "selectedAnswers",
+  {},
+);

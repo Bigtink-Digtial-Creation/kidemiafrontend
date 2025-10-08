@@ -29,3 +29,11 @@ export const hexToRgba = (hex: string, alpha = 0.15) => {
   const b = parseInt(hex.slice(5, 7), 16);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
+
+export const formatTime = (seconds: number) => {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m.toString().padStart(2, "0")}m : ${s
+    .toString()
+    .padStart(2, "0")}s`;
+};

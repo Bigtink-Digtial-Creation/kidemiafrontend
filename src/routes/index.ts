@@ -29,6 +29,7 @@ export const TestRoutes = {
   testIntructions: "/take-a-test/instructions",
   questions: "/take-a-test/questions",
   results: "/take-a-test/results",
+  review: "/take-a-test/review-submission",
 };
 export type HomeRoutes = (typeof HomeRoutes)[keyof typeof HomeRoutes];
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
