@@ -27,6 +27,7 @@ import TestTopicsPage from "./pages/TakeTest/TestTopics";
 import TestInstrusctionsPage from "./pages/TakeTest/TestInstrusctions";
 import QuestionsPage from "./pages/TakeTest/Questions";
 import ResultPage from "./pages/TakeTest/Result";
+import ReviewSubmission from "./pages/TakeTest/ReviewSubmission";
 import HistoryPage from "./pages/History";
 import ProfilePage from "./pages/Profile";
 import SettingsPage from "./pages/Settings";
@@ -122,6 +123,10 @@ export const router = createBrowserRouter([
       {
         path: TestRoutes.results,
         element: <ResultPage />,
+      },
+      {
+        path: TestRoutes.review,
+        element: <ReviewSubmission />,
       },
     ],
   },
