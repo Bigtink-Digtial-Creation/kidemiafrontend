@@ -10,6 +10,7 @@ import TestLayout from "./layouts/Test.layout";
 // home pages
 import HomePage from "./pages/HomePage";
 import ContactUs from "./pages/HomePage/ContactUs";
+import AboutUs from "./pages/HomePage/AboutUs";
 
 // auth pages
 import LoginPage from "./pages/Auth/Login";
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
       {
         path: HomeRoutes.contact,
         element: <ContactUs />,
+      },
+      {
+        path: HomeRoutes.about,
+        element: <AboutUs />,
       },
     ],
   },

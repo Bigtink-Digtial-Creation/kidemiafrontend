@@ -28,7 +28,7 @@ export default function ContactUs() {
           Write To Us
         </div>
 
-        <h3 className="text-2xl md:text-4xl font-bold text-center text-kidemia-grey/60 tracking-wider- max-w-2xl">
+        <h3 className="text-2xl md:text-4xl font-bold text-center text-kidemia-grey/60  max-w-2xl">
           Have questions, feedback, or need assistance? We'd love to hear from
           you. Reach out to our team and we'll get back to you as soon as
           possible.
