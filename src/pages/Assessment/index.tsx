@@ -1,4 +1,4 @@
-import { BreadcrumbItem, Breadcrumbs, Button, Chip, Spinner } from '@heroui/react'
+import { BreadcrumbItem, Breadcrumbs, Button, Chip, Pagination, Spinner } from '@heroui/react'
 import { SidebarRoutes } from '../../routes'
 import { PiExamBold } from 'react-icons/pi'
 import { MdOutlineDashboard } from 'react-icons/md'
@@ -6,15 +6,26 @@ import { useQuery } from '@tanstack/react-query'
 import { QueryKeys } from '../../utils/queryKeys'
 import { ApiSDK } from '../../sdk'
 import AssessmentCard from '../../components/Cards/AssessmentCard'
+import { useMemo, useState } from 'react'
 
 export default function AssessmentPage() {
+  const [page, setPage] = useState<number>(1);
+  const pageSize = 10;
 
   const { data: assessmentData, isLoading } = useQuery({
     queryKey: [QueryKeys.allAssessment],
-    queryFn: () => ApiSDK.AssessmentsService.getAssessmentsApiV1AssessmentsGet(),
+    queryFn: () => ApiSDK.AssessmentsService.getAssessmentsApiV1AssessmentsGet("exam"),
   })
 
-  const assessment = assessmentData?.items || []
+  const assessment = useMemo(() => assessmentData?.items || [], [assessmentData]);
+
+  const totalPages = Math.ceil(assessment.length / pageSize);
+
+  const currentPageData = useMemo(() => {
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return assessment.slice(startIndex, endIndex);
+  }, [assessment, page, pageSize]);
 
   console.log({ assessmentData });
 
@@ -74,24 +85,38 @@ export default function AssessmentPage() {
               <p className='text-center text-kidemia-grey italic'>No Available Assessment</p>
             </div>
           ) : (
+              <div>
+
               <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
-              {assessment.map((asst) => (
-                <AssessmentCard
-                  key={asst.id}
-                  title={asst.title}
-                  code={asst.code}
-                  timeMins={asst.duration_minutes}
-                  questionsNo={asst.total_questions}
-                  attemptsNo={asst.total_attempts}
-                  priceNo={asst.price}
-                  avgScore={asst.average_score} />
-              ))}
+                  {currentPageData?.map((asst) => (
+                    <AssessmentCard
+                      key={asst.id}
+                      id={asst.id}
+                      title={asst.title}
+                      code={asst.code}
+                      timeMins={asst.duration_minutes}
+                      questionsNo={asst.total_questions}
+                      attemptsNo={asst.total_attempts}
+                      priceNo={asst.price}
+                      avgScore={asst.average_score} />
+                  ))}
+                </div>
+                <div className='flex justify-end'>
+                  <Pagination
+                    radius="sm"
+                    page={page}
+                    total={totalPages}
+                    onChange={setPage}
+                    showControls
+                    classNames={{
+                      cursor: "border-1 bg-transparent text-kidemia-primary",
+                      item: "bg-transparent shadow-none cursor-pointer",
+                    }}
+                  />
+                </div>
             </div>
           )}
-
         </div>
-
-
       </div>
     </div>
   )

@@ -32,7 +32,15 @@ export const TestRoutes = {
   results: "/take-a-test/results",
   review: "/take-a-test/review-submission",
 };
+
+export const AssessmentRoutes = {
+  assesmentIntructions: "/assessment/intructions/:id",
+};
+
 export type HomeRoutes = (typeof HomeRoutes)[keyof typeof HomeRoutes];
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
 export type SidebarRoutes = (typeof SidebarRoutes)[keyof typeof SidebarRoutes];
 export type TestRoutes = (typeof TestRoutes)[keyof typeof TestRoutes];
+export type AssessmentRoutes =
+  (typeof AssessmentRoutes)[keyof typeof AssessmentRoutes];
+

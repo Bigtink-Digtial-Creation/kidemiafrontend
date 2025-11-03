@@ -12,6 +12,8 @@ export type SelectedTopic = {
 };
 
 export const selectedSubjectTitleAtom = atom<string | null>(null);
+export const selectedSubjectIdeAtom = atom<string | null>(null);
+
 
 export const selectedTopicsAtom = atom<SelectedTopic[]>([]);
 

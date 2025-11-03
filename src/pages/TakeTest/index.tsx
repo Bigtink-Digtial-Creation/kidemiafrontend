@@ -1,12 +1,29 @@
-import { Button } from "@heroui/react";
+import { BreadcrumbItem, Breadcrumbs, Button } from "@heroui/react";
 import { useNavigate } from "react-router";
 import { SidebarRoutes, TestRoutes } from "../../routes";
 
 export default function TakeTestPage() {
   const navigate = useNavigate();
   return (
+    <>
     <section className="py-4 space-y-12 md:px-12">
-      <div className="space-y-4">
+        <div className="absolute top-4 left-0 px-4">
+          <div>
+            <Breadcrumbs variant="light" color="foreground">
+              <BreadcrumbItem
+                href={SidebarRoutes.dashboard}
+              >
+                Dashboard
+              </BreadcrumbItem>
+              <BreadcrumbItem
+                color="warning"
+              >
+                Take a Test
+              </BreadcrumbItem>
+            </Breadcrumbs>
+          </div>
+        </div>
+        <div className="space-y-4">
         <h2 className="text-3xl text-kidemia-black font-semibold text-center">
           Welcome To Kidemia Test Section
         </h2>
@@ -21,9 +38,7 @@ export default function TakeTestPage() {
             to begin.
           </p>
         </div>
-      </div>
-
-      <div className="flex items-center space-x-6 py-6">
+        </div><div className="flex items-center space-x-6 py-6">
         <Button
           className="bg-kidemia-biege border border-enita-black2 font-medium text-kidemia-primary w-full"
           variant="faded"
@@ -46,5 +61,6 @@ export default function TakeTestPage() {
         </Button>
       </div>
     </section>
+    </>
   );
 }

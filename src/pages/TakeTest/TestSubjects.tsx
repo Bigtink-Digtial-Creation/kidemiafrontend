@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Spinner, Pagination } from "@heroui/react";
+import { Spinner, Pagination, Breadcrumbs, BreadcrumbItem } from "@heroui/react";
 import SubjectCard from "../../components/Cards/SubjectCard";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import type { SubjectResponse } from "../../sdk/generated"; // ✅ UPDATED: import type
+import { SidebarRoutes, TestRoutes } from "../../routes";
 
 export default function TestSubjectsPage() {
   const [page, setPage] = useState(1);
@@ -66,6 +67,28 @@ export default function TestSubjectsPage() {
   if (subjectsArray.length === 0) {
     return (
       <section className="py-4 space-y-6 md:px-12">
+        <div className="absolute top-4 left-0 px-4">
+          <div>
+            <Breadcrumbs variant="light" color="foreground">
+              <BreadcrumbItem
+                href={SidebarRoutes.dashboard}
+              >
+                Dashboard
+              </BreadcrumbItem>
+              <BreadcrumbItem
+                href={TestRoutes.takeTest}
+              >
+                Take a Test
+              </BreadcrumbItem>
+              <BreadcrumbItem
+                href={TestRoutes.takeTest}
+                color="warning"
+              >
+                Pick a Subject
+              </BreadcrumbItem>
+            </Breadcrumbs>
+          </div>
+        </div>
         <div className="space-y-3 text-center">
           <h2 className="text-2xl md:text-3xl text-kidemia-black font-semibold">
             Welcome! Let's Get Started
@@ -85,6 +108,27 @@ export default function TestSubjectsPage() {
 
   return (
     <section className="py-4 space-y-6 md:px-12">
+      <div className="absolute top-4 left-0 px-4">
+        <div>
+          <Breadcrumbs variant="light" color="foreground">
+            <BreadcrumbItem
+              href={SidebarRoutes.dashboard}
+            >
+              Dashboard
+            </BreadcrumbItem>
+            <BreadcrumbItem
+              href={TestRoutes.takeTest}
+            >
+              Take a Test
+            </BreadcrumbItem>
+            <BreadcrumbItem
+              color="warning"
+            >
+              Pick a Subject
+            </BreadcrumbItem>
+          </Breadcrumbs>
+        </div>
+      </div>
       <div className="space-y-3 text-center">
         <h2 className="text-2xl md:text-3xl text-kidemia-black font-semibold">
           Welcome! Let's Get Started

@@ -3,8 +3,10 @@ import { FaArrowRight, FaRegQuestionCircle } from "react-icons/fa";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { IoTimeOutline } from "react-icons/io5";
 import { MdCreditScore } from "react-icons/md";
+import { useNavigate } from "react-router";
 
 interface AssessmentCardI {
+  id: string;
   title: string;
   code: string;
   timeMins: number;
@@ -14,6 +16,7 @@ interface AssessmentCardI {
   avgScore: string
 }
 export default function AssessmentCard({
+  id,
   title,
   code,
   timeMins,
@@ -22,6 +25,7 @@ export default function AssessmentCard({
   priceNo,
   avgScore
 }: AssessmentCardI) {
+  const navigate = useNavigate()
   return (
     <Card shadow="none" className="p-4 bg-kidemia-biege/25 border border-kidemia-grey/30">
       <CardBody>
@@ -63,8 +67,8 @@ export default function AssessmentCard({
           size="md"
           radius="sm"
           type="button"
-
           endContent={<FaArrowRight />}
+          onPress={() => navigate(`/assessment/intructions/${id}`)}
         >
           Practice
         </Button>

@@ -3,7 +3,7 @@ import { useSetAtom } from "jotai";
 import { TestRoutes } from "../../routes";
 import { Avatar } from "@heroui/react";
 import { getNameIntials, hexToRgba } from "../../utils";
-import { selectedSubjectTitleAtom } from "../../store/test.atom";
+import { selectedSubjectIdeAtom, selectedSubjectTitleAtom } from "../../store/test.atom";
 
 interface SubjectCardI {
   id: string;
@@ -24,9 +24,13 @@ export default function SubjectCard({
 }: SubjectCardI) {
   const subjectPath = TestRoutes.subjectTopics.replace(":id", id);
   const setSelectedTitle = useSetAtom(selectedSubjectTitleAtom);
+  const setSelectedId = useSetAtom(selectedSubjectIdeAtom);
+
+
 
   const handleClick = () => {
     setSelectedTitle(title);
+    setSelectedId(id)
   };
 
   return (

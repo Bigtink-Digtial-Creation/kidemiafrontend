@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import CustomCheckbox from "../../components/Cards/CustomCheckbox";
-import { Button, CheckboxGroup, Pagination, Spinner } from "@heroui/react";
-import { TestRoutes } from "../../routes";
+import { BreadcrumbItem, Breadcrumbs, Button, CheckboxGroup, Pagination, Spinner } from "@heroui/react";
+import { SidebarRoutes, TestRoutes } from "../../routes";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import { useAtom, useAtomValue } from "jotai";
@@ -66,6 +66,33 @@ export default function TestTopicsPage() {
 
   return (
     <section className="py-4 space-y-12 md:px-12 w-full">
+      <div className="absolute top-4 left-0 px-4">
+        <div>
+          <Breadcrumbs variant="light" color="foreground">
+            <BreadcrumbItem
+              href={SidebarRoutes.dashboard}
+            >
+              Dashboard
+            </BreadcrumbItem>
+            <BreadcrumbItem
+              href={TestRoutes.takeTest}
+            >
+              Take a Test
+            </BreadcrumbItem>
+            <BreadcrumbItem
+              href={TestRoutes.testSubjects}
+            >
+              Pick a Subject
+            </BreadcrumbItem>
+
+            <BreadcrumbItem
+              color="warning"
+            >
+              Pick Subject Topics
+            </BreadcrumbItem>
+          </Breadcrumbs>
+        </div>
+      </div>
       <div className="space-y-3">
         <h2 className="text-2xl text-kidemia-black font-semibold text-center">
           Choose up to 5 {subjectTitle ? subjectTitle : ""} Topics that Interest
