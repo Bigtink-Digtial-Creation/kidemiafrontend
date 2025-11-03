@@ -9,7 +9,9 @@ export interface UserT {
   profile_picture_url?: string;
 }
 
-export const encryptedStorage = createJSONStorage<string | null>(() => localStorage);
+export const encryptedStorage = createJSONStorage<string | null>(
+  () => localStorage,
+);
 
 export const storedAuthTokenAtom = atomWithStorage(
   StoredKeys.token,
@@ -17,11 +19,11 @@ export const storedAuthTokenAtom = atomWithStorage(
   encryptedStorage,
   {
     getOnInit: true,
-  }
+  },
 );
 
 export const storedUserData = createJSONStorage<LoginResponse | null>(
-  () => localStorage
+  () => localStorage,
 );
 
 export const loggedinUserAtom = atomWithStorage(
@@ -30,7 +32,7 @@ export const loggedinUserAtom = atomWithStorage(
   storedUserData,
   {
     getOnInit: true,
-  }
+  },
 );
 
 export const userAtom = atomWithStorage<UserT | null>("userDetail", null);

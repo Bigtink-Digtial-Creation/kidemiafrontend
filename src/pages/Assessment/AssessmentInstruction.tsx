@@ -10,7 +10,7 @@ export default function AssessmentInstruction() {
   const user = useAtomValue(userAtom);
   const assessment = useAtomValue(assessmentAtom);
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>()
+  const { id } = useParams<{ id: string }>();
 
   return (
     <>

@@ -152,8 +152,8 @@ export const router = createBrowserRouter([
       },
       {
         path: AssessmentRoutes.assesmentQuestions,
-        element: <AssessmentQuestions />
-      }
+        element: <AssessmentQuestions />,
+      },
     ],
   },
 ]);

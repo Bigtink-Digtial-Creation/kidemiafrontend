@@ -38,8 +38,6 @@ export default function AssessmentPage() {
     return assessment.slice(startIndex, endIndex);
   }, [assessment, page, pageSize]);
 
-  console.log({ assessmentData });
-
   if (isLoading || !assessmentData) {
     return (
       <div className="h-screen flex justify-center items-center">
