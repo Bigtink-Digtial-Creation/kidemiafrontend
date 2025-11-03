@@ -2,7 +2,14 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import CustomCheckbox from "../../components/Cards/CustomCheckbox";
-import { BreadcrumbItem, Breadcrumbs, Button, CheckboxGroup, Pagination, Spinner } from "@heroui/react";
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  Button,
+  CheckboxGroup,
+  Pagination,
+  Spinner,
+} from "@heroui/react";
 import { SidebarRoutes, TestRoutes } from "../../routes";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
@@ -69,27 +76,17 @@ export default function TestTopicsPage() {
       <div className="absolute top-4 left-0 px-4">
         <div>
           <Breadcrumbs variant="light" color="foreground">
-            <BreadcrumbItem
-              href={SidebarRoutes.dashboard}
-            >
+            <BreadcrumbItem href={SidebarRoutes.dashboard}>
               Dashboard
             </BreadcrumbItem>
-            <BreadcrumbItem
-              href={TestRoutes.takeTest}
-            >
+            <BreadcrumbItem href={TestRoutes.takeTest}>
               Take a Test
             </BreadcrumbItem>
-            <BreadcrumbItem
-              href={TestRoutes.testSubjects}
-            >
+            <BreadcrumbItem href={TestRoutes.testSubjects}>
               Pick a Subject
             </BreadcrumbItem>
 
-            <BreadcrumbItem
-              color="warning"
-            >
-              Pick Subject Topics
-            </BreadcrumbItem>
+            <BreadcrumbItem color="warning">Pick Subject Topics</BreadcrumbItem>
           </Breadcrumbs>
         </div>
       </div>

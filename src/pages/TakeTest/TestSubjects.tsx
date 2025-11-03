@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Spinner, Pagination, Breadcrumbs, BreadcrumbItem } from "@heroui/react";
+import {
+  Spinner,
+  Pagination,
+  Breadcrumbs,
+  BreadcrumbItem,
+} from "@heroui/react";
 import SubjectCard from "../../components/Cards/SubjectCard";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
@@ -70,20 +75,13 @@ export default function TestSubjectsPage() {
         <div className="absolute top-4 left-0 px-4">
           <div>
             <Breadcrumbs variant="light" color="foreground">
-              <BreadcrumbItem
-                href={SidebarRoutes.dashboard}
-              >
+              <BreadcrumbItem href={SidebarRoutes.dashboard}>
                 Dashboard
               </BreadcrumbItem>
-              <BreadcrumbItem
-                href={TestRoutes.takeTest}
-              >
+              <BreadcrumbItem href={TestRoutes.takeTest}>
                 Take a Test
               </BreadcrumbItem>
-              <BreadcrumbItem
-                href={TestRoutes.takeTest}
-                color="warning"
-              >
+              <BreadcrumbItem href={TestRoutes.takeTest} color="warning">
                 Pick a Subject
               </BreadcrumbItem>
             </Breadcrumbs>
@@ -111,21 +109,13 @@ export default function TestSubjectsPage() {
       <div className="absolute top-4 left-0 px-4">
         <div>
           <Breadcrumbs variant="light" color="foreground">
-            <BreadcrumbItem
-              href={SidebarRoutes.dashboard}
-            >
+            <BreadcrumbItem href={SidebarRoutes.dashboard}>
               Dashboard
             </BreadcrumbItem>
-            <BreadcrumbItem
-              href={TestRoutes.takeTest}
-            >
+            <BreadcrumbItem href={TestRoutes.takeTest}>
               Take a Test
             </BreadcrumbItem>
-            <BreadcrumbItem
-              color="warning"
-            >
-              Pick a Subject
-            </BreadcrumbItem>
+            <BreadcrumbItem color="warning">Pick a Subject</BreadcrumbItem>
           </Breadcrumbs>
         </div>
       </div>

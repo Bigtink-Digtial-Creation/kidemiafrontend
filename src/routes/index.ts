@@ -43,4 +43,3 @@ export type SidebarRoutes = (typeof SidebarRoutes)[keyof typeof SidebarRoutes];
 export type TestRoutes = (typeof TestRoutes)[keyof typeof TestRoutes];
 export type AssessmentRoutes =
   (typeof AssessmentRoutes)[keyof typeof AssessmentRoutes];
-

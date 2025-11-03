@@ -1,9 +1,11 @@
 import { Button, Card, CardBody, CardFooter } from "@heroui/react";
+import { useSetAtom } from "jotai";
 import { FaArrowRight, FaRegQuestionCircle } from "react-icons/fa";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { IoTimeOutline } from "react-icons/io5";
 import { MdCreditScore } from "react-icons/md";
 import { useNavigate } from "react-router";
+import { assessmentAtom } from "../../store/test.atom";
 
 interface AssessmentCardI {
   id: string;
@@ -13,7 +15,7 @@ interface AssessmentCardI {
   questionsNo: number;
   attemptsNo: number;
   priceNo: string;
-  avgScore: string
+  avgScore: string;
 }
 export default function AssessmentCard({
   id,
@@ -23,13 +25,28 @@ export default function AssessmentCard({
   questionsNo,
   attemptsNo,
   priceNo,
-  avgScore
+  avgScore,
 }: AssessmentCardI) {
-  const navigate = useNavigate()
-  return (
-    <Card shadow="none" className="p-4 bg-kidemia-biege/25 border border-kidemia-grey/30">
-      <CardBody>
+  const navigate = useNavigate();
+  const setAssessment = useSetAtom(assessmentAtom);
 
+  const handlePracticeClick = () => {
+    setAssessment({
+      title,
+      code,
+      avgScore,
+      timeMins,
+      questionsNo,
+    });
+    navigate(`/assessment/intructions/${id}`);
+  };
+
+  return (
+    <Card
+      shadow="none"
+      className="p-4 bg-kidemia-biege/25 border border-kidemia-grey/30"
+    >
+      <CardBody>
         <div className="space-y-2">
           <h3 className="text-kidemia-black font-medium text-base">{title}</h3>
           <p className="text-sm text-kidemia-grey">{code}</p>
@@ -53,14 +70,17 @@ export default function AssessmentCard({
 
           <div className="flex items-center space-x-1">
             <MdCreditScore className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-            <p className="text-kidemia-grey text-md">{avgScore} average score</p>
+            <p className="text-kidemia-grey text-md">
+              {avgScore} average score
+            </p>
           </div>
         </div>
-
       </CardBody>
 
       <CardFooter className="flex justify-between items-center gap-2">
-        <p className="text-kidemia-grey text-md whitespace-nowrap">{priceNo} Units</p>
+        <p className="text-kidemia-grey text-md whitespace-nowrap">
+          {priceNo} Units
+        </p>
 
         <Button
           className="bg-kidemia-secondary text-kidemia-white font-medium"
@@ -68,12 +88,11 @@ export default function AssessmentCard({
           radius="sm"
           type="button"
           endContent={<FaArrowRight />}
-          onPress={() => navigate(`/assessment/intructions/${id}`)}
+          onPress={handlePracticeClick}
         >
           Practice
         </Button>
       </CardFooter>
-
     </Card>
   );
 }

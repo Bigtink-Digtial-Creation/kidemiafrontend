@@ -11,43 +11,29 @@ import {
 export default function TestInstrusctionsPage() {
   const subjectTitle = useAtomValue(selectedSubjectTitleAtom);
   const topics = useAtomValue(selectedTopicsAtom);
-  const subjectId = useAtomValue(selectedSubjectIdeAtom)
-
+  const subjectId = useAtomValue(selectedSubjectIdeAtom);
 
   const navigate = useNavigate();
   return (
     <section className="flex flex-col min-h-screen py-4 space-y-12 md:px-12">
-
       <div className="absolute top-4 left-0 px-4">
         <div>
           <Breadcrumbs variant="light" color="foreground">
-            <BreadcrumbItem
-              href={SidebarRoutes.dashboard}
-            >
+            <BreadcrumbItem href={SidebarRoutes.dashboard}>
               Dashboard
             </BreadcrumbItem>
-            <BreadcrumbItem
-              href={TestRoutes.takeTest}
-            >
+            <BreadcrumbItem href={TestRoutes.takeTest}>
               Take a Test
             </BreadcrumbItem>
-            <BreadcrumbItem
-              href={TestRoutes.testSubjects}
-            >
+            <BreadcrumbItem href={TestRoutes.testSubjects}>
               Pick a Subject
             </BreadcrumbItem>
 
-            <BreadcrumbItem
-              href={`/take-a-test/subjects/${subjectId}`}
-            >
+            <BreadcrumbItem href={`/take-a-test/subjects/${subjectId}`}>
               Pick Subject Topics
             </BreadcrumbItem>
 
-            <BreadcrumbItem
-              color="warning"
-            >
-              Test Intructions
-            </BreadcrumbItem>
+            <BreadcrumbItem color="warning">Test Intructions</BreadcrumbItem>
           </Breadcrumbs>
         </div>
       </div>

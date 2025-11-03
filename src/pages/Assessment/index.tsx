@@ -1,12 +1,19 @@
-import { BreadcrumbItem, Breadcrumbs, Button, Chip, Pagination, Spinner } from '@heroui/react'
-import { SidebarRoutes } from '../../routes'
-import { PiExamBold } from 'react-icons/pi'
-import { MdOutlineDashboard } from 'react-icons/md'
-import { useQuery } from '@tanstack/react-query'
-import { QueryKeys } from '../../utils/queryKeys'
-import { ApiSDK } from '../../sdk'
-import AssessmentCard from '../../components/Cards/AssessmentCard'
-import { useMemo, useState } from 'react'
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  Button,
+  Chip,
+  Pagination,
+  Spinner,
+} from "@heroui/react";
+import { SidebarRoutes } from "../../routes";
+import { PiExamBold } from "react-icons/pi";
+import { MdOutlineDashboard } from "react-icons/md";
+import { useQuery } from "@tanstack/react-query";
+import { QueryKeys } from "../../utils/queryKeys";
+import { ApiSDK } from "../../sdk";
+import AssessmentCard from "../../components/Cards/AssessmentCard";
+import { useMemo, useState } from "react";
 
 export default function AssessmentPage() {
   const [page, setPage] = useState<number>(1);
@@ -14,10 +21,14 @@ export default function AssessmentPage() {
 
   const { data: assessmentData, isLoading } = useQuery({
     queryKey: [QueryKeys.allAssessment],
-    queryFn: () => ApiSDK.AssessmentsService.getAssessmentsApiV1AssessmentsGet("exam"),
-  })
+    queryFn: () =>
+      ApiSDK.AssessmentsService.getAssessmentsApiV1AssessmentsGet("exam"),
+  });
 
-  const assessment = useMemo(() => assessmentData?.items || [], [assessmentData]);
+  const assessment = useMemo(
+    () => assessmentData?.items || [],
+    [assessmentData],
+  );
 
   const totalPages = Math.ceil(assessment.length / pageSize);
 
@@ -38,8 +49,8 @@ export default function AssessmentPage() {
   }
 
   return (
-    <div className='space-y-8'>
-      <div className='flex justify-between items-center'>
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
         <Breadcrumbs variant="light" color="foreground">
           <BreadcrumbItem
             href={SidebarRoutes.dashboard}
@@ -56,8 +67,12 @@ export default function AssessmentPage() {
           </BreadcrumbItem>
         </Breadcrumbs>
 
-        <div className='flex justify-between items-center space-x-6'>
-          <Chip variant='flat' color="primary" className='text-sm font-semibold whitespace-nowrap'>
+        <div className="flex justify-between items-center space-x-6">
+          <Chip
+            variant="flat"
+            color="primary"
+            className="text-sm font-semibold whitespace-nowrap"
+          >
             Unit balance : 100
           </Chip>
 
@@ -72,52 +87,52 @@ export default function AssessmentPage() {
         </div>
       </div>
 
-      <div className='space-y-3'>
-
+      <div className="space-y-3">
         <div>
-          <p className='text-kidemia-grey text-lg'>Explore Past Questions</p>
+          <p className="text-kidemia-grey text-lg">Explore Past Questions</p>
         </div>
 
-
-        <div className='py-4'>
+        <div className="py-4">
           {assessment?.length === 0 ? (
             <div>
-              <p className='text-center text-kidemia-grey italic'>No Available Assessment</p>
+              <p className="text-center text-kidemia-grey italic">
+                No Available Assessment
+              </p>
             </div>
           ) : (
-              <div>
-
-              <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
-                  {currentPageData?.map((asst) => (
-                    <AssessmentCard
-                      key={asst.id}
-                      id={asst.id}
-                      title={asst.title}
-                      code={asst.code}
-                      timeMins={asst.duration_minutes}
-                      questionsNo={asst.total_questions}
-                      attemptsNo={asst.total_attempts}
-                      priceNo={asst.price}
-                      avgScore={asst.average_score} />
-                  ))}
-                </div>
-                <div className='flex justify-end'>
-                  <Pagination
-                    radius="sm"
-                    page={page}
-                    total={totalPages}
-                    onChange={setPage}
-                    showControls
-                    classNames={{
-                      cursor: "border-1 bg-transparent text-kidemia-primary",
-                      item: "bg-transparent shadow-none cursor-pointer",
-                    }}
+            <div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {currentPageData?.map((asst) => (
+                  <AssessmentCard
+                    key={asst.id}
+                    id={asst.id}
+                    title={asst.title}
+                    code={asst.code}
+                    timeMins={asst.duration_minutes}
+                    questionsNo={asst.total_questions}
+                    attemptsNo={asst.total_attempts}
+                    priceNo={asst.price}
+                    avgScore={asst.average_score}
                   />
-                </div>
+                ))}
+              </div>
+              <div className="flex justify-end">
+                <Pagination
+                  radius="sm"
+                  page={page}
+                  total={totalPages}
+                  onChange={setPage}
+                  showControls
+                  classNames={{
+                    cursor: "border-1 bg-transparent text-kidemia-primary",
+                    item: "bg-transparent shadow-none cursor-pointer",
+                  }}
+                />
+              </div>
             </div>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 }

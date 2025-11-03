@@ -1,5 +1,11 @@
 import { createBrowserRouter } from "react-router";
-import { AuthRoutes, HomeRoutes, SidebarRoutes, TestRoutes } from "./routes";
+import {
+  AssessmentRoutes,
+  AuthRoutes,
+  HomeRoutes,
+  SidebarRoutes,
+  TestRoutes,
+} from "./routes";
 
 //layouts
 import HomeLayout from "./layouts/Home.layout";
@@ -33,6 +39,7 @@ import HistoryPage from "./pages/History";
 import ProfilePage from "./pages/Profile";
 import SettingsPage from "./pages/Settings";
 import AssessmentPage from "./pages/Assessment";
+import AssessmentInstruction from "./pages/Assessment/AssessmentInstruction";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -137,6 +144,10 @@ export const router = createBrowserRouter([
       {
         path: TestRoutes.review,
         element: <ReviewSubmission />,
+      },
+      {
+        path: AssessmentRoutes.assesmentIntructions,
+        element: <AssessmentInstruction />,
       },
     ],
   },
