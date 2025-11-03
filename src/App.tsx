@@ -40,6 +40,7 @@ import ProfilePage from "./pages/Profile";
 import SettingsPage from "./pages/Settings";
 import AssessmentPage from "./pages/Assessment";
 import AssessmentInstruction from "./pages/Assessment/AssessmentInstruction";
+import AssessmentQuestions from "./pages/Assessment/AssessmentQuestions";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -149,6 +150,10 @@ export const router = createBrowserRouter([
         path: AssessmentRoutes.assesmentIntructions,
         element: <AssessmentInstruction />,
       },
+      {
+        path: AssessmentRoutes.assesmentQuestions,
+        element: <AssessmentQuestions />
+      }
     ],
   },
 ]);

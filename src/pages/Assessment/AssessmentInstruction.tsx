@@ -4,12 +4,13 @@ import { IoIosInformationCircleOutline } from "react-icons/io";
 import { userAtom } from "../../store/user.atom";
 import { useAtomValue } from "jotai";
 import { assessmentAtom } from "../../store/test.atom";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 export default function AssessmentInstruction() {
   const user = useAtomValue(userAtom);
   const assessment = useAtomValue(assessmentAtom);
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>()
 
   return (
     <>
@@ -134,6 +135,7 @@ export default function AssessmentInstruction() {
               size="md"
               radius="sm"
               type="button"
+              onPress={() => navigate(`/assessment/${id}/questions`)}
             >
               Start Assessment
             </Button>

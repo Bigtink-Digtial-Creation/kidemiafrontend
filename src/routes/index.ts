@@ -35,6 +35,7 @@ export const TestRoutes = {
 
 export const AssessmentRoutes = {
   assesmentIntructions: "/assessment/intructions/:id",
+  assesmentQuestions: "/assessment/:id/questions",
 };
 
 export type HomeRoutes = (typeof HomeRoutes)[keyof typeof HomeRoutes];
