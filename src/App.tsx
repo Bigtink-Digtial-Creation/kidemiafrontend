@@ -32,6 +32,7 @@ import ReviewSubmission from "./pages/TakeTest/ReviewSubmission";
 import HistoryPage from "./pages/History";
 import ProfilePage from "./pages/Profile";
 import SettingsPage from "./pages/Settings";
+import AssessmentPage from "./pages/Assessment";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -99,6 +100,10 @@ export const router = createBrowserRouter([
       {
         path: SidebarRoutes.settings,
         element: <SettingsPage />,
+      },
+      {
+        path: SidebarRoutes.takeAssessment,
+        element: <AssessmentPage />,
       },
     ],
   },

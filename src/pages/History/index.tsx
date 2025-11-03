@@ -17,6 +17,7 @@ export default function HistoryPage() {
           <BreadcrumbItem
             href={SidebarRoutes.history}
             startContent={<MdManageHistory />}
+            color="warning"
           >
             History
           </BreadcrumbItem>

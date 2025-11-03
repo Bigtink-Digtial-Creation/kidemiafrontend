@@ -19,6 +19,7 @@ export default function PerformancePage() {
           <BreadcrumbItem
             href={SidebarRoutes.performance}
             startContent={<CgPerformance />}
+            color="warning"
           >
             Performance
           </BreadcrumbItem>

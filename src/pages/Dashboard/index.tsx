@@ -9,7 +9,7 @@ import { PiExamFill } from "react-icons/pi";
 import { FaSpellCheck } from "react-icons/fa";
 import { MdTimer } from "react-icons/md";
 import { categoriesData, dataSeries } from "../../staticData";
-import { TestRoutes } from "../../routes";
+import { SidebarRoutes, TestRoutes } from "../../routes";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -34,6 +34,7 @@ export default function DashboardPage() {
               size="md"
               radius="sm"
               type="button"
+              onPress={() => navigate(SidebarRoutes.takeAssessment)}
             >
               Take an Assessment
             </Button>
