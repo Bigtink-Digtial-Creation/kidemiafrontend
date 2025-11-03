@@ -20,6 +20,7 @@ export const SidebarRoutes = {
   performance: "/dashboard/performance",
   history: "/dashboard/history",
   profile: "/dashboard/profile",
+  takeAssessment: "/dashboard/assessment",
 };
 
 export const TestRoutes = {

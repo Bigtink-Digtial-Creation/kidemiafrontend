@@ -30,12 +30,12 @@ export default function DashboardPage() {
             </Button>
 
             <Button
-              className="bg-kidemia-secondary text-kidemia-white font-medium w-full"
+              className="bg-kidemia-secondary text-kidemia-white font-medium w-full px-8"
               size="md"
               radius="sm"
               type="button"
             >
-              Take an Exam
+              Take an Assessment
             </Button>
           </div>
         </div>
