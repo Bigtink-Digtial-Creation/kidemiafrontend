@@ -1,15 +1,17 @@
-import { Button } from "@heroui/react";
+import { Button, Card, CardBody, CardFooter } from "@heroui/react";
 import { FaArrowRight, FaRegQuestionCircle } from "react-icons/fa";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { IoTimeOutline } from "react-icons/io5";
+import { MdCreditScore } from "react-icons/md";
 
 interface AssessmentCardI {
   title: string;
   code: string;
-  timeMins: string;
-  questionsNo: string;
-  attemptsNo: string;
+  timeMins: number;
+  questionsNo: number;
+  attemptsNo: number;
   priceNo: string;
+  avgScore: string
 }
 export default function AssessmentCard({
   title,
@@ -18,46 +20,56 @@ export default function AssessmentCard({
   questionsNo,
   attemptsNo,
   priceNo,
+  avgScore
 }: AssessmentCardI) {
   return (
-    <div className="px-4 py-6  bg-kidemia-biege/25 border border-kidemia-grey/30 rounded-2xl space-y-4">
-      <div className="space-y-2">
-        <h3 className="text-kidemia-black font-semibold text-base">{title}</h3>
-        <p className="text-sm text-kidemia-grey">{code}</p>
-      </div>
+    <Card shadow="none" className="p-4 bg-kidemia-biege/25 border border-kidemia-grey/30">
+      <CardBody>
 
-      <div className="flex justify-between items-center flex-wrap gap-2">
-        <div className="flex items-center space-x-1">
-          <IoTimeOutline className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-          <p className="text-kidemia-grey text-md">{timeMins} mins</p>
+        <div className="space-y-2">
+          <h3 className="text-kidemia-black font-medium text-base">{title}</h3>
+          <p className="text-sm text-kidemia-grey">{code}</p>
         </div>
 
-        <div className="flex items-center space-x-1">
-          <FaRegQuestionCircle className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-          <p className="text-kidemia-grey text-md">{questionsNo} questions</p>
+        <div className="flex justify-between items-center flex-wrap gap-2 py-4">
+          <div className="flex items-center space-x-1">
+            <IoTimeOutline className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
+            <p className="text-kidemia-grey text-md">{timeMins} mins</p>
+          </div>
+
+          <div className="flex items-center space-x-1">
+            <FaRegQuestionCircle className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
+            <p className="text-kidemia-grey text-md">{questionsNo} questions</p>
+          </div>
+
+          <div className="flex items-center space-x-1">
+            <FaRegCircleCheck className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
+            <p className="text-kidemia-grey text-md">{attemptsNo} attempts</p>
+          </div>
+
+          <div className="flex items-center space-x-1">
+            <MdCreditScore className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
+            <p className="text-kidemia-grey text-md">{avgScore} average score</p>
+          </div>
         </div>
 
-        <div className="flex items-center space-x-1">
-          <FaRegCircleCheck className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-          <p className="text-kidemia-grey text-md">{attemptsNo} attempts</p>
-        </div>
-      </div>
+      </CardBody>
 
-      <div className="flex justify-between items-center">
-        <p className="text-kidemia-grey text-md">{priceNo} Units</p>
+      <CardFooter className="flex justify-between items-center gap-2">
+        <p className="text-kidemia-grey text-md whitespace-nowrap">{priceNo} Units</p>
 
         <Button
           className="bg-kidemia-secondary text-kidemia-white font-medium"
           size="md"
           radius="sm"
           type="button"
+
           endContent={<FaArrowRight />}
-          // onPress={handleNext}
-          // isDisabled={!selectedAnswers[currentIndex]}
         >
           Practice
         </Button>
-      </div>
-    </div>
+      </CardFooter>
+
+    </Card>
   );
 }
