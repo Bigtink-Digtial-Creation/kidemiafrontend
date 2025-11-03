@@ -1,8 +1,6 @@
 import { createJSONStorage, atomWithStorage } from "jotai/utils";
 import { StoredKeys } from "../utils/storedKeys";
 import type { LoginResponse } from "../sdk/generated";
-import { atom } from "jotai";
-
 export interface UserT {
   id?: string;
   first_name?: string;
@@ -11,9 +9,7 @@ export interface UserT {
   profile_picture_url?: string;
 }
 
-export const encryptedStorage = createJSONStorage<string | null>(
-  () => localStorage,
-);
+export const encryptedStorage = createJSONStorage<string | null>(() => localStorage);
 
 export const storedAuthTokenAtom = atomWithStorage(
   StoredKeys.token,
@@ -21,11 +17,11 @@ export const storedAuthTokenAtom = atomWithStorage(
   encryptedStorage,
   {
     getOnInit: true,
-  },
+  }
 );
 
 export const storedUserData = createJSONStorage<LoginResponse | null>(
-  () => localStorage,
+  () => localStorage
 );
 
 export const loggedinUserAtom = atomWithStorage(
@@ -34,7 +30,7 @@ export const loggedinUserAtom = atomWithStorage(
   storedUserData,
   {
     getOnInit: true,
-  },
+  }
 );
 
-export const userAtom = atom<UserT | null>(null);
+export const userAtom = atomWithStorage<UserT | null>("userDetail", null);

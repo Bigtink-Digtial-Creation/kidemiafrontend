@@ -134,7 +134,6 @@ export default function AssessmentInstruction() {
               size="md"
               radius="sm"
               type="button"
-              // onPress={() => navigate(TestRoutes.questions)}
             >
               Start Assessment
             </Button>
