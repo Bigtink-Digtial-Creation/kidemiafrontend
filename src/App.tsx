@@ -1,5 +1,11 @@
 import { createBrowserRouter } from "react-router";
-import { AuthRoutes, HomeRoutes, SidebarRoutes, TestRoutes } from "./routes";
+import {
+  AssessmentRoutes,
+  AuthRoutes,
+  HomeRoutes,
+  SidebarRoutes,
+  TestRoutes,
+} from "./routes";
 
 //layouts
 import HomeLayout from "./layouts/Home.layout";
@@ -32,6 +38,11 @@ import ReviewSubmission from "./pages/TakeTest/ReviewSubmission";
 import HistoryPage from "./pages/History";
 import ProfilePage from "./pages/Profile";
 import SettingsPage from "./pages/Settings";
+import AssessmentPage from "./pages/Assessment";
+import AssessmentInstruction from "./pages/Assessment/AssessmentInstruction";
+import AssessmentAttempt from "./pages/Assessment/AssessmentAttempt";
+import AssessmentQuestions from "./pages/Assessment/AssessmentQuestions";
+import AssessmentResult from "./pages/Assessment/AssessmentResult";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -100,6 +111,10 @@ export const router = createBrowserRouter([
         path: SidebarRoutes.settings,
         element: <SettingsPage />,
       },
+      {
+        path: SidebarRoutes.takeAssessment,
+        element: <AssessmentPage />,
+      },
     ],
   },
   {
@@ -132,6 +147,22 @@ export const router = createBrowserRouter([
       {
         path: TestRoutes.review,
         element: <ReviewSubmission />,
+      },
+      {
+        path: AssessmentRoutes.assesmentIntructions,
+        element: <AssessmentInstruction />,
+      },
+      {
+        path: AssessmentRoutes.assesmentAttempt,
+        element: <AssessmentAttempt />,
+      },
+      {
+        path: AssessmentRoutes.assessmentQuestion,
+        element: <AssessmentQuestions />,
+      },
+      {
+        path: AssessmentRoutes.assessmentResult,
+        element: <AssessmentResult />,
       },
     ],
   },

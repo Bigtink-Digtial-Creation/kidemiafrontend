@@ -20,6 +20,7 @@ export const SidebarRoutes = {
   performance: "/dashboard/performance",
   history: "/dashboard/history",
   profile: "/dashboard/profile",
+  takeAssessment: "/dashboard/assessment",
 };
 
 export const TestRoutes = {
@@ -31,7 +32,17 @@ export const TestRoutes = {
   results: "/take-a-test/results",
   review: "/take-a-test/review-submission",
 };
+
+export const AssessmentRoutes = {
+  assesmentIntructions: "/assessment/intructions/:id",
+  assesmentAttempt: "/assessment/:id/attempt-instructions",
+  assessmentQuestion: "/assessment/:assessment_id/:attempt_id/questions",
+  assessmentResult: "/assessment/result/:assessment_id",
+};
+
 export type HomeRoutes = (typeof HomeRoutes)[keyof typeof HomeRoutes];
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
 export type SidebarRoutes = (typeof SidebarRoutes)[keyof typeof SidebarRoutes];
 export type TestRoutes = (typeof TestRoutes)[keyof typeof TestRoutes];
+export type AssessmentRoutes =
+  (typeof AssessmentRoutes)[keyof typeof AssessmentRoutes];

@@ -9,7 +9,7 @@ import { PiExamFill } from "react-icons/pi";
 import { FaSpellCheck } from "react-icons/fa";
 import { MdTimer } from "react-icons/md";
 import { categoriesData, dataSeries } from "../../staticData";
-import { TestRoutes } from "../../routes";
+import { SidebarRoutes, TestRoutes } from "../../routes";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -30,12 +30,13 @@ export default function DashboardPage() {
             </Button>
 
             <Button
-              className="bg-kidemia-secondary text-kidemia-white font-medium w-full"
+              className="bg-kidemia-secondary text-kidemia-white font-medium w-full px-8"
               size="md"
               radius="sm"
               type="button"
+              onPress={() => navigate(SidebarRoutes.takeAssessment)}
             >
-              Take an Exam
+              Take an Assessment
             </Button>
           </div>
         </div>

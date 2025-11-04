@@ -27,6 +27,7 @@ export function getTokenFromStore(key: string) {
   if (expiredAt < Date.now()) {
     localStorage.setItem(key, JSON.stringify(null));
     localStorage.setItem(StoredKeys.user, JSON.stringify(null));
+    localStorage.clear();
     window.location.replace(AuthRoutes.login);
     return null;
   }

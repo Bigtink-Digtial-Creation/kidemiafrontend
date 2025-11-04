@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Avatar, Image } from "@heroui/react";
 import { Link } from "react-router";
 import { IoMenu } from "react-icons/io5";
@@ -9,6 +9,8 @@ import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import { getNameIntials } from "../../utils";
+import { useSetAtom } from "jotai";
+import { userAtom, type UserT } from "../../store/user.atom";
 
 type HeaderT = {
   sidebarOpen: string | boolean | undefined;
@@ -16,6 +18,8 @@ type HeaderT = {
 };
 
 export default function Header(props: HeaderT) {
+  const setUser = useSetAtom(userAtom);
+
   const handleOpenSidebar = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
@@ -27,6 +31,10 @@ export default function Header(props: HeaderT) {
     queryKey: [QueryKeys.user],
     queryFn: () => ApiSDK.AuthenticationService.getCurrentUserApiV1AuthMeGet(),
   });
+
+  useEffect(() => {
+    if (user) setUser(user as UserT);
+  }, [user, setUser]);
 
   const fullName = [user?.first_name, user?.last_name]
     .filter(Boolean)
