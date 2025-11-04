@@ -18,10 +18,12 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import type { SaveAnswerRequest } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
 import InstructionCard from "./InstructionCard";
+import { useResetAtom } from "jotai/utils";
 
 type OptionT = string;
 
 export default function AssessmentQuestions() {
+  const resetAns = useResetAtom(selectedAssesmentAnswersAtom);
   const { assessment_id, attempt_id } = useParams<{
     assessment_id: string;
     attempt_id: string;
@@ -32,9 +34,6 @@ export default function AssessmentQuestions() {
     selectedAssesmentAnswersAtom,
   );
 
-  // console.log("Assessment ID:", assessment_id);
-  // console.log("Attempt ID:", attempt_id);
-
   const { data: asstQuestions, isLoading } = useQuery<any>({
     queryKey: [QueryKeys.assessmentQuestions, assessment_id],
     queryFn: () =>
@@ -44,8 +43,6 @@ export default function AssessmentQuestions() {
       ),
     enabled: !!assessment_id,
   });
-
-  console.log(asstQuestions?.questions);
 
   const allQuestions = useMemo(() => {
     if (!asstQuestions?.questions) return [];
@@ -64,21 +61,6 @@ export default function AssessmentQuestions() {
     }));
   };
 
-  // mutation
-  // const saveAnsMutation = useMutation({
-  //   mutationFn: ({ attempt_id, requestBody }: {
-  //     attempt_id: string;
-  //     requestBody: SaveAnswerRequest;
-  //   }) => ApiSDK.AttemptsService.saveAnswerApiV1AttemptsAttemptIdAnswerPost(attempt_id, requestBody),
-  //   onSuccess(data) {
-  //     console.log({ data });
-
-  //   },
-  //   onError(error) {
-  //     console.log(error);
-
-  //   }
-  // })
   const saveAnsMutation = useMutation({
     mutationFn: async ({
       attempt_id,
@@ -93,31 +75,15 @@ export default function AssessmentQuestions() {
       );
     },
     onSuccess: (data) => {
-      console.log("✅ Answer submitted successfully:", data);
+      addToast({
+        description: data.message,
+        color: "success",
+      });
     },
     onError: (error) => {
       console.error("❌ Failed to submit answer:", error);
     },
   });
-
-  // const handleNext = () => {
-  //   const selectedOptionId = selectedAnswers[currentIndex];
-  //   const questionId = currentQuestion?.id;
-  //   //Send user’s selected answer for this question
-  //   if (attempt_id && questionId && selectedOptionId) {
-  //     saveAnsMutation.mutate({
-  //       attempt_id,
-  //       requestBody: {
-  //         question_id: questionId,
-  //         selected_option_ids: [selectedOptionId],
-  //       },
-  //     });
-  //   }
-  //   // Then move to next question
-  //   if (currentIndex < allQuestions.length - 1) {
-  //     setCurrentIndex((prev) => prev + 1)
-  //   }
-  // }
 
   const handleNext = async () => {
     const selectedOptionId = selectedAnswers[currentIndex];
@@ -155,14 +121,23 @@ export default function AssessmentQuestions() {
   };
 
   // submit mutation
+  const submitAttemptMutation = useMutation({
+    mutationFn: (attemptId: string) =>
+      ApiSDK.AttemptsService.submitAttemptApiV1AttemptsAttemptIdSubmitPost(
+        attemptId,
+      ),
+    onSuccess(data) {
+      console.log({ data });
+    },
+    onError(error) {
+      console.log("err:", { error });
+    },
+  });
 
-  // const submitAttemptMutation = useMutation({
-  //   mutationFn: (attemptId: string) => ApiSDK.AttemptsService.submitAttemptApiV1AttemptsAttemptIdSubmitPost(attemptId)
-  // })
-
-  // const onSubmit = (attemptId: string) => {
-  //   submitAttemptMutation.mutate(attemptId)
-  // }
+  const handleSubmit = (attemptId: string) => {
+    submitAttemptMutation.mutate(attemptId);
+    resetAns();
+  };
 
   if (isLoading || !currentQuestion) {
     return (
@@ -240,10 +215,13 @@ export default function AssessmentQuestions() {
             size="md"
             radius="sm"
             type="button"
-            // onPress={handleSubmit}
-            isDisabled={!selectedAnswers[currentIndex]}
+            onPress={() => handleSubmit(attempt_id!)}
+            isDisabled={
+              !selectedAnswers[currentIndex] || submitAttemptMutation.isPending
+            }
+            isLoading={submitAttemptMutation.isPending}
           >
-            Submit
+            {submitAttemptMutation.isPending ? "Submitting Attempt" : "Submit"}
           </Button>
         ) : (
           <Button
@@ -258,7 +236,7 @@ export default function AssessmentQuestions() {
             }
             isLoading={saveAnsMutation.isPending}
           >
-            Next
+            {saveAnsMutation.isPending ? "Saving Answer" : "Next"}
           </Button>
         )}
       </div>
