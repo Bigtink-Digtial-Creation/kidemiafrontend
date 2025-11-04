@@ -33,3 +33,8 @@ export const assessmentAtom = atomWithStorage<AssessmentDetails | null>(
   "kidemia-assessment",
   null,
 );
+
+
+export const selectedAssesmentAnswersAtom = atomWithStorage<{
+  [key: number]: string;
+}>("selectedAssessmentAnswers", {});

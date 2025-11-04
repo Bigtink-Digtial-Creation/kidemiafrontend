@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AttemptResultResponse } from "./AttemptResultResponse";
+import type { AttemptResultResponse } from './AttemptResultResponse';
 /**
  * Paginated attempt list
  */
@@ -12,3 +12,4 @@ export type AttemptListResponse = {
   page: number;
   page_size: number;
 };
+

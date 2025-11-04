@@ -5,11 +5,4 @@
 /**
  * Status of an assessment attempt
  */
-export type AttemptStatus =
-  | "not_started"
-  | "in_progress"
-  | "paused"
-  | "submitted"
-  | "graded"
-  | "abandoned"
-  | "expired";
+export type AttemptStatus = 'not_started' | 'in_progress' | 'paused' | 'submitted' | 'graded' | 'abandoned' | 'expired';

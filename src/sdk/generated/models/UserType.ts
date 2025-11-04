@@ -5,8 +5,4 @@
 /**
  * Types of users in the system
  */
-export type UserType =
-  | "student"
-  | "guardian"
-  | "institution_admin"
-  | "platform_admin";
+export type UserType = 'student' | 'guardian' | 'institution_admin' | 'platform_admin';

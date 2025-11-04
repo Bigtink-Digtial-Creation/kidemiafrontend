@@ -9,5 +9,6 @@ export type QuestionOptionResponseTrim = {
   option_text: string;
   option_order: number;
   is_correct?: boolean;
-  explanation?: string | null;
+  explanation?: (string | null);
 };
+

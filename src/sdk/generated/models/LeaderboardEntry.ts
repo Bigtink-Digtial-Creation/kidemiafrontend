@@ -14,3 +14,4 @@ export type LeaderboardEntry = {
   time_spent_seconds: number;
   submitted_at: string;
 };
+

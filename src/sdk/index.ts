@@ -24,9 +24,11 @@ export function getTokenFromStore(key: string) {
   const decoded = jwtDecode(rawToken);
   const expiredAt = (decoded.exp || 0) * 1000;
 
+
   if (expiredAt < Date.now()) {
     localStorage.setItem(key, JSON.stringify(null));
     localStorage.setItem(StoredKeys.user, JSON.stringify(null));
+    localStorage.clear();
     window.location.replace(AuthRoutes.login);
     return null;
   }

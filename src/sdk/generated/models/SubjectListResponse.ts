@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { SubjectResponse } from "./SubjectResponse";
+import type { SubjectResponse } from './SubjectResponse';
 /**
  * Paginated subject list response
  */
@@ -12,3 +12,4 @@ export type SubjectListResponse = {
   page: number;
   page_size: number;
 };
+

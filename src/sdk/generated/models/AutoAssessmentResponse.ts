@@ -13,3 +13,4 @@ export type AutoAssessmentResponse = {
   topics_covered: Array<string>;
   message: string;
 };
+

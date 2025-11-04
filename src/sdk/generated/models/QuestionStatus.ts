@@ -5,9 +5,4 @@
 /**
  * Question status
  */
-export type QuestionStatus =
-  | "draft"
-  | "review"
-  | "approved"
-  | "rejected"
-  | "archived";
+export type QuestionStatus = 'draft' | 'review' | 'approved' | 'rejected' | 'archived';

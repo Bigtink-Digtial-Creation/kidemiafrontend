@@ -11,7 +11,8 @@ export type PermissionResponse = {
   id: string;
   name: string;
   display_name: string;
-  description?: string | null;
+  description?: (string | null);
   resource: string;
   action: string;
 };
+

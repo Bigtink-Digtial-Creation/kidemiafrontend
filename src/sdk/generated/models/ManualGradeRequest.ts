@@ -6,6 +6,7 @@
  * Request to manually grade an answer
  */
 export type ManualGradeRequest = {
-  points_earned: number | string;
-  feedback?: string | null;
+  points_earned: (number | string);
+  feedback?: (string | null);
 };
+
