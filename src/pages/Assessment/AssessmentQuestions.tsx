@@ -10,11 +10,11 @@ export default function AssessmentQuestions() {
   console.log(id);
   const { data: assessmentQuestions, isLoading } = useQuery({
     queryKey: [QueryKeys.assessmentQuestions, id],
-    queryFn: () =>
-      ApiSDK.AssessmentsService.getAssessmentApiV1AssessmentsAssessmentIdGet(
-        id!,
-        true,
-      ),
+    queryFn: () => ApiSDK.AttemptsService.startAttemptApiV1AttemptsAssessmentIdStartPost(id!, {}),
+    // ApiSDK.AssessmentsService.getAssessmentApiV1AssessmentsAssessmentIdGet(
+    //   id!,
+    //   true,
+    // ),
     enabled: !!id,
   });
 
