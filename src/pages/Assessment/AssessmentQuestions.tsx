@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
-import { Button, Card, CardBody, Pagination, Radio, RadioGroup, Spinner } from "@heroui/react";
+import { addToast, Button, Card, CardBody, Pagination, Radio, RadioGroup, Spinner } from "@heroui/react";
 import { useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import { selectedAssesmentAnswersAtom } from "../../store/test.atom";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import type { SaveAnswerRequest } from "../../sdk/generated";
+import { apiErrorParser } from "../../utils/errorParser";
 
 type OptionT = string;
 
@@ -20,8 +22,8 @@ export default function AssessmentQuestions() {
   const [currentIndex, setCurrentIndex] = useState<number>(0)
   const [selectedAnswers, setSelectedAnswers] = useAtom(selectedAssesmentAnswersAtom)
 
-  console.log("Assessment ID:", assessment_id);
-  console.log("Attempt ID:", attempt_id);
+  // console.log("Assessment ID:", assessment_id);
+  // console.log("Attempt ID:", attempt_id);
 
   const { data: asstQuestions, isLoading } = useQuery<any>({
     queryKey: [QueryKeys.assessmentQuestions, assessment_id],
@@ -52,12 +54,91 @@ export default function AssessmentQuestions() {
     }))
   }
 
+  // mutation
+  // const submitAnsMutation = useMutation({
+  //   mutationFn: ({ attempt_id, requestBody }: {
+  //     attempt_id: string;
+  //     requestBody: SaveAnswerRequest;
+  //   }) => ApiSDK.AttemptsService.saveAnswerApiV1AttemptsAttemptIdAnswerPost(attempt_id, requestBody),
+  //   onSuccess(data) {
+  //     console.log({ data });
 
-  const handleNext = () => {
-    if (currentIndex < allQuestions.length - 1) {
-      setCurrentIndex((prev) => prev + 1)
+  //   },
+  //   onError(error) {
+  //     console.log(error);
+
+  //   }
+  // })
+  const submitAnsMutation = useMutation({
+    mutationFn: async ({
+      attempt_id,
+      requestBody,
+    }: {
+      attempt_id: string;
+      requestBody: SaveAnswerRequest;
+    }) => {
+      return await ApiSDK.AttemptsService.saveAnswerApiV1AttemptsAttemptIdAnswerPost(
+        attempt_id,
+        requestBody
+      );
+    },
+    onSuccess: (data) => {
+      console.log("✅ Answer submitted successfully:", data);
+    },
+    onError: (error) => {
+      console.error("❌ Failed to submit answer:", error);
+    },
+  });
+
+  // const handleNext = () => {
+  //   const selectedOptionId = selectedAnswers[currentIndex];
+  //   const questionId = currentQuestion?.id;
+  //   //Send user’s selected answer for this question
+  //   if (attempt_id && questionId && selectedOptionId) {
+  //     submitAnsMutation.mutate({
+  //       attempt_id,
+  //       requestBody: {
+  //         question_id: questionId,
+  //         selected_option_ids: [selectedOptionId],
+  //       },
+  //     });
+  //   }
+  //   // Then move to next question
+  //   if (currentIndex < allQuestions.length - 1) {
+  //     setCurrentIndex((prev) => prev + 1)
+  //   }
+  // }
+
+  const handleNext = async () => {
+    const selectedOptionId = selectedAnswers[currentIndex];
+    const currentQuestionId = currentQuestion?.id;
+
+    if (!selectedOptionId || !currentQuestionId) return;
+
+    try {
+      await submitAnsMutation.mutateAsync({
+        attempt_id: attempt_id!,
+        requestBody: {
+          question_id: currentQuestionId,
+          selected_option_ids: [selectedOptionId],
+        },
+      });
+
+      // Only move to next question on success
+      if (currentIndex < allQuestions.length - 1) {
+        setCurrentIndex((prev) => prev + 1);
+      }
+
+    } catch (error) {
+      const parsedError = apiErrorParser(error)
+      addToast({
+        title: "An Error Occured",
+        description: parsedError.name,
+        color: "danger"
+      })
     }
-  }
+  };
+
   const handlePrev = () => {
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1)
@@ -149,7 +230,7 @@ export default function AssessmentQuestions() {
         </Card>
       </div>
 
-      <div className="py-4">
+      <div className="py-4 px-6">
         <div className="space-y-3">
           <h2 className="text-xl text-kidemia-black font-semibold">
             Question {currentIndex + 1}
@@ -211,7 +292,8 @@ export default function AssessmentQuestions() {
             type="button"
             endContent={<FaArrowRight />}
             onPress={handleNext}
-            isDisabled={!selectedAnswers[currentIndex]}
+              isDisabled={!selectedAnswers[currentIndex] || submitAnsMutation.isPending}
+              isLoading={submitAnsMutation.isPending}
           >
             Next
           </Button>
