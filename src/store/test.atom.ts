@@ -39,4 +39,4 @@ export const selectedAssesmentAnswersAtom = atomWithStorage<{
   [key: number]: string;
 }>("selectedAssessmentAnswers", {});
 
-export const attemptResultAtom = atom<any>(null);
+export const attemptResultAtom = atomWithStorage<any>("attempt-result", null);

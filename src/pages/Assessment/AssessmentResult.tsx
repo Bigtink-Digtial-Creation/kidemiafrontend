@@ -1,55 +1,15 @@
-import  { useEffect, useState } from "react";
 import { attemptResultAtom } from "../../store/test.atom";
 import { useAtomValue } from "jotai";
 import { Button, Card, CardBody, CardFooter, Chip } from "@heroui/react";
 import { FiFileText } from "react-icons/fi";
 import { useNavigate } from "react-router";
 import { SidebarRoutes } from "../../routes";
-import confetti from "canvas-confetti";
+import { useResetAtom } from "jotai/utils";
 
 export default function AssessmentResult() {
   const result = useAtomValue(attemptResultAtom);
+  const resetAttempt = useResetAtom(attemptResultAtom);
   const navigate = useNavigate();
-  const [hasTriggeredConfetti, setHasTriggeredConfetti] =
-    useState<boolean>(false);
-
-  // Trigger confetti once when result is loaded
-  useEffect(() => {
-    if (result && !hasTriggeredConfetti) {
-      setHasTriggeredConfetti(true);
-
-      // confetti burst
-      const duration = 3 * 1000;
-      const animationEnd = Date.now() + duration;
-      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-      function randomInRange(min: number, max: number) {
-        return Math.random() * (max - min) + min;
-      }
-
-      const interval = setInterval(function () {
-        const timeLeft = animationEnd - Date.now();
-
-        if (timeLeft <= 0) {
-          return clearInterval(interval);
-        }
-
-        const particleCount = 50 * (timeLeft / duration);
-        confetti({
-          ...defaults,
-          particleCount,
-          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-        });
-        confetti({
-          ...defaults,
-          particleCount,
-          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-        });
-      }, 250);
-
-      return () => clearInterval(interval);
-    }
-  }, [result, hasTriggeredConfetti]);
 
   if (!result) {
     return (
@@ -194,7 +154,7 @@ export default function AssessmentResult() {
                   <p className="font-medium text-kidemia-black">
                     Time Spent (s)
                   </p>
-                  {/* <p>{result.time_spent_seconds}</p> */}
+                  <p>{result.time_spent_seconds}</p>
                 </div>
               </div>
 
@@ -231,7 +191,10 @@ export default function AssessmentResult() {
                 className="bg-kidemia-secondary text-white font-semibold shadow-md hover:shadow-lg"
                 size="md"
                 radius="md"
-                onPress={() => navigate(SidebarRoutes.dashboard)}
+                onPress={() => {
+                  navigate(SidebarRoutes.dashboard);
+                  resetAttempt();
+                }}
               >
                 Dashboard
               </Button>
