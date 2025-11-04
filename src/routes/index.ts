@@ -37,6 +37,7 @@ export const AssessmentRoutes = {
   assesmentIntructions: "/assessment/intructions/:id",
   assesmentAttempt: "/assessment/:id/attempt-instructions",
   assessmentQuestion: "/assessment/:assessment_id/:attempt_id/questions",
+  assessmentResult: "/assessment/result/:assessment_id",
 };
 
 export type HomeRoutes = (typeof HomeRoutes)[keyof typeof HomeRoutes];

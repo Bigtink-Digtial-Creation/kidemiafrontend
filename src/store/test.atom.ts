@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
@@ -37,3 +38,5 @@ export const assessmentAtom = atomWithStorage<AssessmentDetails | null>(
 export const selectedAssesmentAnswersAtom = atomWithStorage<{
   [key: number]: string;
 }>("selectedAssessmentAnswers", {});
+
+export const attemptResultAtom = atom<any>(null);

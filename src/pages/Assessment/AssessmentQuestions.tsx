@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useMemo, useState } from "react";
+import { useAtom, useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import {
@@ -11,19 +14,21 @@ import {
   RadioGroup,
   Spinner,
 } from "@heroui/react";
-import { useMemo, useState } from "react";
-import { useAtom } from "jotai";
-import { selectedAssesmentAnswersAtom } from "../../store/test.atom";
+import {
+  attemptResultAtom,
+  selectedAssesmentAnswersAtom,
+} from "../../store/test.atom";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import type { SaveAnswerRequest } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
 import InstructionCard from "./InstructionCard";
-import { useResetAtom } from "jotai/utils";
 
 type OptionT = string;
 
 export default function AssessmentQuestions() {
   const resetAns = useResetAtom(selectedAssesmentAnswersAtom);
+  const setAttemptResult = useSetAtom(attemptResultAtom);
+
   const { assessment_id, attempt_id } = useParams<{
     assessment_id: string;
     attempt_id: string;
@@ -33,6 +38,8 @@ export default function AssessmentQuestions() {
   const [selectedAnswers, setSelectedAnswers] = useAtom(
     selectedAssesmentAnswersAtom,
   );
+
+  const navigate = useNavigate();
 
   const { data: asstQuestions, isLoading } = useQuery<any>({
     queryKey: [QueryKeys.assessmentQuestions, assessment_id],
@@ -127,10 +134,19 @@ export default function AssessmentQuestions() {
         attemptId,
       ),
     onSuccess(data) {
-      console.log({ data });
+      setAttemptResult(data);
+      navigate(`/assessment/result/${assessment_id}`);
+      addToast({
+        description: "Attempt Submitted Successfull",
+        color: "success",
+      });
     },
     onError(error) {
-      console.log("err:", { error });
+      const parsedError = apiErrorParser(error);
+      addToast({
+        description: parsedError.message,
+        color: "danger",
+      });
     },
   });
 
