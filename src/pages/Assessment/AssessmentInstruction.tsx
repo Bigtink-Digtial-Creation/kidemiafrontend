@@ -135,7 +135,7 @@ export default function AssessmentInstruction() {
               size="md"
               radius="sm"
               type="button"
-              onPress={() => navigate(`/assessment/${id}/questions`)}
+              onPress={() => navigate(`/assessment/${id}/attempt-instructions`)}
             >
               Start Assessment
             </Button>
