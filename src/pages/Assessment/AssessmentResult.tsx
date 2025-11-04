@@ -193,7 +193,7 @@ export default function AssessmentResult() {
                 radius="md"
                 onPress={() => {
                   navigate(SidebarRoutes.dashboard);
-                  resetAttempt();
+                  setTimeout(() => resetAttempt(), 100); 
                 }}
               >
                 Dashboard
