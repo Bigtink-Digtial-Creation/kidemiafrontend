@@ -3,13 +3,21 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
-import { addToast, Button, Card, CardBody, Pagination, Radio, RadioGroup, Spinner } from "@heroui/react";
+import {
+  addToast,
+  Button,
+  Pagination,
+  Radio,
+  RadioGroup,
+  Spinner,
+} from "@heroui/react";
 import { useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import { selectedAssesmentAnswersAtom } from "../../store/test.atom";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import type { SaveAnswerRequest } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
+import InstructionCard from "./InstructionCard";
 
 type OptionT = string;
 
@@ -19,8 +27,10 @@ export default function AssessmentQuestions() {
     attempt_id: string;
   }>();
 
-  const [currentIndex, setCurrentIndex] = useState<number>(0)
-  const [selectedAnswers, setSelectedAnswers] = useAtom(selectedAssesmentAnswersAtom)
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [selectedAnswers, setSelectedAnswers] = useAtom(
+    selectedAssesmentAnswersAtom,
+  );
 
   // console.log("Assessment ID:", assessment_id);
   // console.log("Attempt ID:", attempt_id);
@@ -45,17 +55,17 @@ export default function AssessmentQuestions() {
     }));
   }, [asstQuestions]);
 
-  const currentQuestion = allQuestions[currentIndex]
+  const currentQuestion = allQuestions[currentIndex];
 
   const handleOptionSelect = (value: OptionT) => {
     setSelectedAnswers((prev) => ({
       ...prev,
-      [currentIndex]: value
-    }))
-  }
+      [currentIndex]: value,
+    }));
+  };
 
   // mutation
-  // const submitAnsMutation = useMutation({
+  // const saveAnsMutation = useMutation({
   //   mutationFn: ({ attempt_id, requestBody }: {
   //     attempt_id: string;
   //     requestBody: SaveAnswerRequest;
@@ -69,7 +79,7 @@ export default function AssessmentQuestions() {
 
   //   }
   // })
-  const submitAnsMutation = useMutation({
+  const saveAnsMutation = useMutation({
     mutationFn: async ({
       attempt_id,
       requestBody,
@@ -79,7 +89,7 @@ export default function AssessmentQuestions() {
     }) => {
       return await ApiSDK.AttemptsService.saveAnswerApiV1AttemptsAttemptIdAnswerPost(
         attempt_id,
-        requestBody
+        requestBody,
       );
     },
     onSuccess: (data) => {
@@ -95,7 +105,7 @@ export default function AssessmentQuestions() {
   //   const questionId = currentQuestion?.id;
   //   //Send user’s selected answer for this question
   //   if (attempt_id && questionId && selectedOptionId) {
-  //     submitAnsMutation.mutate({
+  //     saveAnsMutation.mutate({
   //       attempt_id,
   //       requestBody: {
   //         question_id: questionId,
@@ -116,7 +126,7 @@ export default function AssessmentQuestions() {
     if (!selectedOptionId || !currentQuestionId) return;
 
     try {
-      await submitAnsMutation.mutateAsync({
+      await saveAnsMutation.mutateAsync({
         attempt_id: attempt_id!,
         requestBody: {
           question_id: currentQuestionId,
@@ -128,107 +138,55 @@ export default function AssessmentQuestions() {
       if (currentIndex < allQuestions.length - 1) {
         setCurrentIndex((prev) => prev + 1);
       }
-
     } catch (error) {
-      const parsedError = apiErrorParser(error)
+      const parsedError = apiErrorParser(error);
       addToast({
         title: "An Error Occured",
         description: parsedError.name,
-        color: "danger"
-      })
+        color: "danger",
+      });
     }
   };
 
   const handlePrev = () => {
     if (currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1)
+      setCurrentIndex((prev) => prev - 1);
     }
-  }
+  };
 
+  // submit mutation
+
+  // const submitAttemptMutation = useMutation({
+  //   mutationFn: (attemptId: string) => ApiSDK.AttemptsService.submitAttemptApiV1AttemptsAttemptIdSubmitPost(attemptId)
+  // })
+
+  // const onSubmit = (attemptId: string) => {
+  //   submitAttemptMutation.mutate(attemptId)
+  // }
 
   if (isLoading || !currentQuestion) {
     return (
       <div className="h-screen flex flex-col justify-center items-center">
         <Spinner size="sm" color="warning" />
-        <p className="pt-2 text-base italic text-kidemia-black text-center">Loading Questions...</p>
+        <p className="pt-2 text-base italic text-kidemia-black text-center">
+          Loading Questions...
+        </p>
       </div>
     );
   }
 
   return (
     <section className="space-y-6 md:px-12 w-full max-w-4xl pb-24-">
-      <div>
-        <Card
-          shadow="none"
-          className="border border-kidemia-grey/20 bg-kidemia-white"
-        >
-          <CardBody className="p-6">
-            <div className="flex- items-center- justify-between- space-y-1 ">
-              <div className="flex space-x-4 items-center">
-                <p className="text-kidemia-black text-base font-medium">
-                  Title:
-                </p>
-                <p className="text-kidemia-black text-sm font-medium">
-                  {asstQuestions.title || "---"}
-                </p>
-              </div>
-
-              <div className="flex space-x-4 items-center">
-                <p className="text-kidemia-black text-base font-medium">
-                  Code:
-                </p>
-                <p className="text-kidemia-black text-sm font-medium">
-                  {asstQuestions.code || "---"}
-                </p>
-              </div>
-
-              <div className="flex space-x-4 items-center">
-                <p className="text-kidemia-black text-base font-medium">
-                  Session:
-                </p>
-                <p className="text-kidemia-black text-sm font-medium">
-                  {asstQuestions.exam_session || "---"},{" "}
-                  {asstQuestions.exam_year || "---"}
-                </p>
-              </div>
-
-              <div className="flex space-x-4 items-center">
-                <p className="text-kidemia-black text-base font-medium">
-                  Assessment Type:
-                </p>
-                <p className="text-kidemia-black text-sm font-medium capitalize text-center">
-                  {asstQuestions.assessment_type || "---"}
-                </p>
-              </div>
-
-              <div className="flex space-x-4 items-center">
-                <p className="text-kidemia-black text-base font-medium">
-                  Category:
-                </p>
-                <p className="text-kidemia-black text-sm font-medium capitalize">
-                  {asstQuestions.category || "---"}
-                </p>
-              </div>
-
-              <div className="flex space-x-4 items-center">
-                <p className="text-kidemia-black text-base font-medium">
-                  Description:
-                </p>
-                <p className="text-kidemia-black text-sm font-medium">
-                  {asstQuestions.description || "---"}
-                </p>
-              </div>
-
-              <div className="py-4">
-                <p className="text-kidemia-black text-sm font-medium leading-relaxed whitespace-pre-line">
-                  {asstQuestions.instructions ||
-                    "No specific instructions provided."}
-                </p>
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-      </div>
+      <InstructionCard
+        title={asstQuestions.title}
+        code={asstQuestions.code}
+        exam_session={asstQuestions.exam_session}
+        exam_year={asstQuestions.exam_year}
+        assessment_type={asstQuestions.assessment_type}
+        category={asstQuestions.category}
+        description={asstQuestions.description}
+        instructions={asstQuestions.instructions}
+      />
 
       <div className="py-4 px-6">
         <div className="space-y-3">
@@ -241,20 +199,23 @@ export default function AssessmentQuestions() {
         </div>
 
         <div className="py-4">
-
-          <RadioGroup value={selectedAnswers[currentIndex] || ""}
+          <RadioGroup
+            value={selectedAnswers[currentIndex] || ""}
             onValueChange={handleOptionSelect}
             classNames={{
               wrapper: "space-y-6",
             }}
           >
             {currentQuestion.options.map((option: any) => (
-              <Radio key={option.id} value={option.id} className="text-kidemia-grey font-medium"
-                color="warning">
+              <Radio
+                key={option.id}
+                value={option.id}
+                className="text-kidemia-grey font-medium"
+                color="warning"
+              >
                 {option.option_text}
               </Radio>
             ))}
-
           </RadioGroup>
         </div>
       </div>
@@ -292,13 +253,14 @@ export default function AssessmentQuestions() {
             type="button"
             endContent={<FaArrowRight />}
             onPress={handleNext}
-              isDisabled={!selectedAnswers[currentIndex] || submitAnsMutation.isPending}
-              isLoading={submitAnsMutation.isPending}
+            isDisabled={
+              !selectedAnswers[currentIndex] || saveAnsMutation.isPending
+            }
+            isLoading={saveAnsMutation.isPending}
           >
             Next
           </Button>
         )}
-
       </div>
 
       <div className="flex justify-center items-center py-2">

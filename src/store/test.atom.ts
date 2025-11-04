@@ -34,7 +34,6 @@ export const assessmentAtom = atomWithStorage<AssessmentDetails | null>(
   null,
 );
 
-
 export const selectedAssesmentAnswersAtom = atomWithStorage<{
   [key: number]: string;
 }>("selectedAssessmentAnswers", {});
