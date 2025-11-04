@@ -5,4 +5,5 @@ export const QueryKeys = {
   allQuestions: "questions",
   allAssessment: "allAssessment",
   assessmentQuestions: "assessmentQuestions",
+  assesstmentAttempt: "assesstmentAttempt",
 } as const;

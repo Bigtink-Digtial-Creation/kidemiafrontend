@@ -2,8 +2,21 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
-import { Spinner, Button, Card, CardBody, CardFooter, Breadcrumbs, BreadcrumbItem } from "@heroui/react";
-import { BiCalendar, BiPlayCircle, BiQuestionMark, BiShield } from "react-icons/bi";
+import {
+  Spinner,
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  Breadcrumbs,
+  BreadcrumbItem,
+} from "@heroui/react";
+import {
+  BiCalendar,
+  BiPlayCircle,
+  BiQuestionMark,
+  BiShield,
+} from "react-icons/bi";
 import { FiFileText } from "react-icons/fi";
 import { BsClock } from "react-icons/bs";
 import { SidebarRoutes } from "../../routes";
@@ -13,9 +26,12 @@ export default function AssessmentQuestions() {
   const navigate = useNavigate();
 
   const { data: assessmentQuestions, isLoading } = useQuery({
-    queryKey: [QueryKeys.assessmentQuestions, id],
+    queryKey: [QueryKeys.assesstmentAttempt, id],
     queryFn: () =>
-      ApiSDK.AttemptsService.startAttemptApiV1AttemptsAssessmentIdStartPost(id!, {}),
+      ApiSDK.AttemptsService.startAttemptApiV1AttemptsAssessmentIdStartPost(
+        id!,
+        {},
+      ),
     enabled: !!id,
   });
 
@@ -53,9 +69,7 @@ export default function AssessmentQuestions() {
               Assessments Intructions
             </BreadcrumbItem>
 
-            <BreadcrumbItem color="warning">
-              Assessments Details
-            </BreadcrumbItem>
+            <BreadcrumbItem color="warning">Assessments Details</BreadcrumbItem>
           </Breadcrumbs>
         </div>
       </div>
@@ -63,9 +77,8 @@ export default function AssessmentQuestions() {
         <Card
           shadow="none"
           className="border border-kidemia-grey/20 bg-kidemia-white"
-
         >
-          <CardBody className="space-y-6 py-6 px-8 ">
+          <CardBody className="space-y-6 py-6 px-8">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl sm:text-3xl font-bold text-kidemia-black">
                 Assessment Details
@@ -148,15 +161,18 @@ export default function AssessmentQuestions() {
                 size="lg"
                 radius="md"
                 startContent={<BiPlayCircle className="w-5 h-5" />}
-                onPress={() => navigate(`/assessment/${assessment_id}/${attempt_id}`)}
+                onPress={() =>
+                  navigate(
+                    `/assessment/${assessment_id}/${attempt_id}/questions`,
+                  )
+                }
               >
                 Start Assessment
               </Button>
             </div>
           </CardFooter>
         </Card>
-      </div >
+      </div>
     </section>
-
   );
 }
