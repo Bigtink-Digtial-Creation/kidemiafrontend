@@ -33,6 +33,7 @@ export default function LogoutModal({
         title: "Logout Successful",
         color: "success",
       });
+      localStorage.clear();
       navigate(AuthRoutes.login);
     }, 2000);
   };

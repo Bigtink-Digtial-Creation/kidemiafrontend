@@ -20,7 +20,7 @@ export default function InstructionCard(props: InstructionCardI) {
           className="border border-kidemia-grey/20 bg-kidemia-white"
         >
           <CardBody className="p-6">
-            <div className="flex- items-center- justify-between- space-y-1 ">
+            <div className="space-y-1 ">
               <div className="flex space-x-4 items-center">
                 <p className="text-kidemia-black text-base font-medium">
                   Title:

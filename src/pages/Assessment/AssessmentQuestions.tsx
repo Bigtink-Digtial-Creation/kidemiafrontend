@@ -21,7 +21,6 @@ import {
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import type { SaveAnswerRequest } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
-import InstructionCard from "./InstructionCard";
 
 type OptionT = string;
 
@@ -168,17 +167,13 @@ export default function AssessmentQuestions() {
 
   return (
     <section className="space-y-6 md:px-12 w-full max-w-4xl pb-24-">
-      <InstructionCard
-        title={asstQuestions.title}
-        code={asstQuestions.code}
-        exam_session={asstQuestions.exam_session}
-        exam_year={asstQuestions.exam_year}
-        assessment_type={asstQuestions.assessment_type}
-        category={asstQuestions.category}
-        description={asstQuestions.description}
-        instructions={asstQuestions.instructions}
-      />
-
+      <div className="absolute top-4 left-0 px-4">
+        <p className="text-kidemia-grey text-md">
+          {asstQuestions.title || "---"} | {asstQuestions.exam_session || "---"}
+          , {asstQuestions.exam_year || "---"} |{" "}
+          {asstQuestions.description || "---"}
+        </p>
+      </div>
       <div className="py-4 px-6">
         <div className="space-y-3">
           <h2 className="text-xl text-kidemia-black font-semibold">
