@@ -8,6 +8,8 @@ import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import {
   addToast,
+  BreadcrumbItem,
+  Breadcrumbs,
   Button,
   Pagination,
   Radio,
@@ -37,6 +39,7 @@ export default function AssessmentQuestions() {
   const [selectedAnswers, setSelectedAnswers] = useAtom(
     selectedAssesmentAnswersAtom,
   );
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -81,10 +84,7 @@ export default function AssessmentQuestions() {
       );
     },
     onSuccess: (data) => {
-      addToast({
-        description: data.message,
-        color: "success",
-      });
+      console.log("❌ Answer saved:", data);
     },
     onError: (error) => {
       console.error("❌ Failed to submit answer:", error);
@@ -132,15 +132,21 @@ export default function AssessmentQuestions() {
       ApiSDK.AttemptsService.submitAttemptApiV1AttemptsAttemptIdSubmitPost(
         attemptId,
       ),
+    onMutate: () => {
+      setIsSubmitting(true);
+    },
     onSuccess(data) {
       setAttemptResult(data);
-      navigate(`/assessment/result/${assessment_id}`);
       addToast({
         description: "Attempt Submitted Successfull",
         color: "success",
       });
+      setTimeout(() => {
+        navigate(`/assessment/result/${assessment_id}`);
+      }, 800);
     },
     onError(error) {
+      setIsSubmitting(false);
       const parsedError = apiErrorParser(error);
       addToast({
         description: parsedError.message,
@@ -165,14 +171,40 @@ export default function AssessmentQuestions() {
     );
   }
 
+  if (isSubmitting || submitAttemptMutation.isPending) {
+    return (
+      <div className="h-screen flex flex-col justify-center items-center bg-white- text-center space-y-4 px-4">
+        <Spinner size="lg" color="warning" />
+        <h2 className="text-2xl md:text-3xl font-semibold text-kidemia-black">
+          Relax, your result is cooking 🍳
+        </h2>
+        <p className="text-lg text-kidemia-grey max-w-md">
+          We're adding the final touches to your assessment. This won't take
+          long; hang tight while we wrap things up!
+        </p>
+        <p className="text-base text-kidemia-secondary italic">
+          Please don't close or refresh this page.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <section className="space-y-6 md:px-12 w-full max-w-4xl pb-24-">
       <div className="absolute top-4 left-0 px-4">
-        <p className="text-kidemia-grey text-md">
-          {asstQuestions.title || "---"} | {asstQuestions.exam_session || "---"}
-          , {asstQuestions.exam_year || "---"} |{" "}
-          {asstQuestions.description || "---"}
-        </p>
+        <div>
+          <Breadcrumbs variant="light" color="foreground">
+            <BreadcrumbItem>{asstQuestions.title || "---"}</BreadcrumbItem>
+            <BreadcrumbItem>
+              {asstQuestions.exam_session || "---"},{" "}
+              {asstQuestions.exam_year || "---"}
+            </BreadcrumbItem>
+
+            <BreadcrumbItem>
+              {asstQuestions.description || "---"}
+            </BreadcrumbItem>
+          </Breadcrumbs>
+        </div>
       </div>
       <div className="py-4 px-6">
         <div className="space-y-3">
