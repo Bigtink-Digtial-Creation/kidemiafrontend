@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAtom, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -23,6 +24,7 @@ import {
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import type { SaveAnswerRequest } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
+import { formatTime } from "../../utils";
 
 type OptionT = string;
 
@@ -36,6 +38,9 @@ export default function AssessmentQuestions() {
   }>();
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [isTimeUp, setIsTimeUp] = useState<boolean>(false);
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+
   const [selectedAnswers, setSelectedAnswers] = useAtom(
     selectedAssesmentAnswersAtom,
   );
@@ -155,6 +160,40 @@ export default function AssessmentQuestions() {
     },
   });
 
+  useEffect(() => {
+    if (!isLoading && asstQuestions?.duration_minutes) {
+      const durationInSeconds = asstQuestions.duration_minutes * 60;
+
+      // Reset timer when new data loads
+      setTimeLeft(durationInSeconds);
+
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setIsTimeUp(true);
+
+            addToast({
+              title: "Time's up!",
+              description: "Submitting your answers automatically...",
+              color: "warning",
+            });
+
+            // Trigger auto-submit when time runs out
+            if (attempt_id && !submitAttemptMutation.isPending) {
+              submitAttemptMutation.mutate(attempt_id);
+            }
+
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [isLoading, asstQuestions?.duration_minutes]);
+
   const handleSubmit = (attemptId: string) => {
     submitAttemptMutation.mutate(attemptId);
     resetAns();
@@ -171,16 +210,19 @@ export default function AssessmentQuestions() {
     );
   }
 
-  if (isSubmitting || submitAttemptMutation.isPending) {
+  if (isSubmitting || submitAttemptMutation.isPending || isTimeUp) {
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-white- text-center space-y-4 px-4">
+      <div className="h-screen flex flex-col justify-center items-center text-center space-y-4 px-4">
         <Spinner size="lg" color="warning" />
         <h2 className="text-2xl md:text-3xl font-semibold text-kidemia-black">
-          Relax, your result is cooking 🍳
+          {isTimeUp
+            ? "⏰ Time's up! Submitting your test..."
+            : "Relax, your result is cooking 🍳"}
         </h2>
         <p className="text-lg text-kidemia-grey max-w-md">
-          We're adding the final touches to your assessment. This won't take
-          long; hang tight while we wrap things up!
+          {isTimeUp
+            ? "Don't worry,we're saving all your progress and wrapping things up for you."
+            : "We're adding the final touches to your test assessment. Hang tight while we finish up!"}
         </p>
         <p className="text-base text-kidemia-secondary italic">
           Please don't close or refresh this page.
@@ -191,7 +233,7 @@ export default function AssessmentQuestions() {
 
   return (
     <section className="space-y-6 md:px-12 w-full max-w-4xl pb-24-">
-      <div className="absolute top-4 left-0 px-4">
+      <div className="absolute top-4 left-0 px-2 flex flex-wrap justify-between items-center w-full">
         <div>
           <Breadcrumbs variant="light" color="foreground">
             <BreadcrumbItem>{asstQuestions.title || "---"}</BreadcrumbItem>
@@ -199,11 +241,15 @@ export default function AssessmentQuestions() {
               {asstQuestions.exam_session || "---"},{" "}
               {asstQuestions.exam_year || "---"}
             </BreadcrumbItem>
-
             <BreadcrumbItem>
               {asstQuestions.description || "---"}
             </BreadcrumbItem>
           </Breadcrumbs>
+        </div>
+        <div className="flex justify-between flex-col md:flex-row items-center gap-2 space-x-6">
+          <p className="text-md text-kidemia-black font-medium">
+            Time Left: {formatTime(timeLeft)}
+          </p>
         </div>
       </div>
       <div className="py-4 px-6">

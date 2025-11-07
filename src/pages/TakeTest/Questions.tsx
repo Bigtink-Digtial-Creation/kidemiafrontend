@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -9,22 +10,19 @@ import {
   Spinner,
 } from "@heroui/react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import {
   selectedAnswersAtom,
-  selectedTopicsAtom,
   testAttemptResultAtom,
 } from "../../store/test.atom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import { useNavigate, useParams } from "react-router";
-import { SidebarRoutes } from "../../routes";
 import { formatTime } from "../../utils";
 import type { SaveAnswerRequest } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
 import { useResetAtom } from "jotai/utils";
-// import type { AutoAssessmentRequest } from "../../sdk/generated";
 
 type AnswerOption = string;
 
@@ -35,26 +33,13 @@ export default function QuestionsPage() {
   }>();
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useAtom(selectedAnswersAtom);
-  const [timeLeft, setTimeLeft] = useState<number>(10 * 60);
+  const [timeLeft, setTimeLeft] = useState<number>(0);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isTimeUp, setIsTimeUp] = useState<boolean>(false);
+
   const setAttemptResult = useSetAtom(testAttemptResultAtom);
   const resetAns = useResetAtom(selectedAnswersAtom);
-
-  const selectedTopics = useAtomValue(selectedTopicsAtom);
-  const topicIds = selectedTopics.map((topic) => topic.id);
-
-  console.log({ topicIds });
-
   const navigate = useNavigate();
-
-  // const { data: questionsData, isLoading } = useQuery({
-  //   queryKey: [QueryKeys.allQuestions, topicIds],
-  //   queryFn: () =>
-  //     ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(
-  //       topicIds,
-  //     ),
-  //   enabled: topicIds.length > 0,
-  // });
 
   const { data: questionsData, isLoading } = useQuery<any>({
     queryKey: [QueryKeys.allQuestions, assessment_id],
@@ -66,8 +51,6 @@ export default function QuestionsPage() {
     enabled: !!assessment_id,
   });
 
-  // console.log({ testQuestions });
-
   // flatten and memoize questions for easy navigations
   const allQuestions = useMemo(() => {
     if (!questionsData?.questions) return [];
@@ -75,38 +58,9 @@ export default function QuestionsPage() {
       ...q,
       topicTitle: questionsData.title,
     }));
-    // return questionsData.questions.map((q: any) =>
-    //   topic.questions.map((q: any) => ({
-    //     ...q,
-    //     topic_name: topic.topic_name,
-    //   })),
-    // );
   }, [questionsData]);
 
   const currentQuestion = allQuestions[currentIndex];
-
-  //Start countdown once questions finish loading
-  useEffect(() => {
-    if (!isLoading && allQuestions.length > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            addToast({
-              title: "Attention",
-              description: "Test time is over!",
-              color: "danger",
-            });
-            navigate(SidebarRoutes.dashboard);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(timer);
-    }
-  }, [isLoading, allQuestions.length, navigate]);
 
   const saveAnsMutation = useMutation({
     mutationFn: async ({
@@ -135,12 +89,6 @@ export default function QuestionsPage() {
       [currentIndex]: value,
     }));
   };
-
-  // const handleNext = () => {
-  //   if (currentIndex < allQuestions.length - 1) {
-  //     setCurrentIndex((prev) => prev + 1);
-  //   }
-  // };
 
   const handleNext = async () => {
     const selectedOptionId = selectedAnswers[currentIndex];
@@ -206,11 +154,42 @@ export default function QuestionsPage() {
     },
   });
 
+  useEffect(() => {
+    if (!isLoading && questionsData?.duration_minutes) {
+      const durationInSeconds = questionsData.duration_minutes * 60;
+
+      setTimeLeft(durationInSeconds);
+
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setIsTimeUp(true);
+
+            addToast({
+              title: "Time's up!",
+              description: "Submitting your answers automatically...",
+              color: "warning",
+            });
+
+            //Trigger auto-submit when time runs out
+            if (attempt_id && !submitAttemptMutation.isPending) {
+              submitAttemptMutation.mutate(attempt_id);
+            }
+
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [isLoading, questionsData?.duration_minutes]);
+
   const handleSubmit = (attemptId: string) => {
     submitAttemptMutation.mutate(attemptId);
     resetAns();
-
-    // navigate(TestRoutes.review);
   };
 
   if (isLoading || !currentQuestion) {
@@ -224,16 +203,19 @@ export default function QuestionsPage() {
     );
   }
 
-  if (isSubmitting || submitAttemptMutation.isPending) {
+  if (isSubmitting || submitAttemptMutation.isPending || isTimeUp) {
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-white- text-center space-y-4 px-4">
+      <div className="h-screen flex flex-col justify-center items-center text-center space-y-4 px-4">
         <Spinner size="lg" color="warning" />
         <h2 className="text-2xl md:text-3xl font-semibold text-kidemia-black">
-          Relax, your result is cooking 🍳
+          {isTimeUp
+            ? "⏰ Time's up! Submitting your test..."
+            : "Relax, your result is cooking 🍳"}
         </h2>
         <p className="text-lg text-kidemia-grey max-w-md">
-          We're adding the final touches to your test assessment. This won't
-          take long; hang tight while we wrap things up!
+          {isTimeUp
+            ? "Don't worry,we're saving all your progress and wrapping things up for you."
+            : "We're adding the final touches to your test assessment. Hang tight while we finish up!"}
         </p>
         <p className="text-base text-kidemia-secondary italic">
           Please don't close or refresh this page.
