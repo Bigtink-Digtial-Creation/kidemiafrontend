@@ -23,9 +23,9 @@ import type { SaveAnswerRequest } from "../../sdk/generated";
 type AnswerOption = string;
 
 export default function QuestionsPage() {
-  const { assessment_id } = useParams<{
-    // attempt_id: string;
+  const { assessment_id, attempt_id } = useParams<{
     assessment_id: string
+    attempt_id: string;
   }>();
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useAtom(selectedAnswersAtom);

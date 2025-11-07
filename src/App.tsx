@@ -44,6 +44,7 @@ import AssessmentAttempt from "./pages/Assessment/AssessmentAttempt";
 import AssessmentQuestions from "./pages/Assessment/AssessmentQuestions";
 import AssessmentResult from "./pages/Assessment/AssessmentResult";
 import TestDetails from "./pages/TakeTest/TestDetails";
+import TestAttempt from "./pages/TakeTest/TestAttempt";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -140,6 +141,10 @@ export const router = createBrowserRouter([
       {
         path: TestRoutes.testDetails,
         element: <TestDetails />
+      },
+      {
+        path: TestRoutes.testAttempt,
+        element: <TestAttempt />
       },
       {
         path: TestRoutes.questions,

@@ -29,7 +29,8 @@ export const TestRoutes = {
   subjectTopics: "/take-a-test/subjects/:id",
   testIntructions: "/take-a-test/:id/instructions",
   testDetails: "/take-a-test/:id/details",
-  questions: "/take-a-test/questions/:attempt_id/:assessment_id",
+  testAttempt: "/take-a-test/start/:assessmentId",
+  questions: "/take-a-test/:assessment_id/:attempt_id/questions",
   results: "/take-a-test/results",
   review: "/take-a-test/review-submission",
 };

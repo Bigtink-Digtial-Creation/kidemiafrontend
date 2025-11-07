@@ -17,6 +17,18 @@ export default function TestDetails() {
   const navigate = useNavigate()
 
 
+  // const { data: attemptId, isLoading: isAttemptId } = useQuery({
+  //   queryKey: [QueryKeys.assesstmentAttempt, id],
+  //   queryFn: () =>
+  //     ApiSDK.AttemptsService.startAttemptApiV1AttemptsAssessmentIdStartPost(
+  //       id!,
+  //       {},
+  //     ),
+  //   enabled: !!id,
+  // });
+
+  // console.log({ attemptId });
+
   const { data: testDetails, isLoading } = useQuery({
     queryKey: [QueryKeys.testDetails, id, topicIds],
     queryFn: ({ queryKey }) => {
@@ -28,18 +40,11 @@ export default function TestDetails() {
     },
     enabled: !!id && !!topicIds?.length,
   });
-  
 
-  const { data: attemptId, isLoading: isAttemptId } = useQuery({
-    queryKey: [QueryKeys.assesstmentAttempt, id],
-    queryFn: () =>
-      ApiSDK.AttemptsService.startAttemptApiV1AttemptsAssessmentIdStartPost(
-        id!,
-        {},
-      ),
-    enabled: !!id,
-  });
-  if (isLoading || isAttemptId  || !testDetails) {
+  console.log({ testDetails });
+
+
+  if (isLoading || !testDetails) {
     return (
       <div className="h-screen flex justify-center items-center">
         <Spinner size="lg" color="warning" />
@@ -67,7 +72,7 @@ export default function TestDetails() {
             </BreadcrumbItem>
 
             <BreadcrumbItem href={`/take-a-test/${subjectId}/instructions`} >Test Intructions</BreadcrumbItem>
-            <BreadcrumbItem color='warning' >Test Details</BreadcrumbItem>
+            <BreadcrumbItem color='warning'>Test Details</BreadcrumbItem>
 
           </Breadcrumbs>
         </div>
@@ -122,10 +127,15 @@ export default function TestDetails() {
                 size="lg"
                 radius="md"
                 startContent={<BiPlayCircle className="w-5 h-5" />}
-                onPress={() =>
-                  navigate(
-                    `/take-a-test/questions/${attemptId?.attempt_id}/${attemptId?.assessment_id}`,
+                onPress={() => {
+
+                  // console.log(attemptId?.attempt_id, attemptId?.assessment_id);
+
+                  navigate(`/take-a-test/start/${testDetails?.assessment_id}`
+                // `/take-a-test/questions/${attemptId?.attempt_id}/${attemptId?.assessment_id}`,
                   )
+                }
+
                 }
               >
                 Proceed
