@@ -6,4 +6,5 @@ export const QueryKeys = {
   allAssessment: "allAssessment",
   assessmentQuestions: "assessmentQuestions",
   assesstmentAttempt: "assesstmentAttempt",
+  testDetails: "testDetails",
 } as const;

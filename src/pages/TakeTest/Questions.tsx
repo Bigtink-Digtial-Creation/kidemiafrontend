@@ -11,16 +11,22 @@ import {
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useAtom, useAtomValue } from "jotai";
 import { selectedAnswersAtom, selectedTopicsAtom } from "../../store/test.atom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { SidebarRoutes, TestRoutes } from "../../routes";
 import { formatTime } from "../../utils";
+import type { SaveAnswerRequest } from "../../sdk/generated";
+// import type { AutoAssessmentRequest } from "../../sdk/generated";
 
 type AnswerOption = string;
 
 export default function QuestionsPage() {
+  const { assessment_id } = useParams<{
+    // attempt_id: string;
+    assessment_id: string
+  }>();
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useAtom(selectedAnswersAtom);
   const [timeLeft, setTimeLeft] = useState<number>(10 * 60);
@@ -28,26 +34,48 @@ export default function QuestionsPage() {
   const selectedTopics = useAtomValue(selectedTopicsAtom);
   const topicIds = selectedTopics.map((topic) => topic.id);
 
+  console.log({ topicIds });
+
+
   const navigate = useNavigate();
 
-  const { data: questionsData, isLoading } = useQuery({
-    queryKey: [QueryKeys.allQuestions, topicIds],
+  // const { data: questionsData, isLoading } = useQuery({
+  //   queryKey: [QueryKeys.allQuestions, topicIds],
+  //   queryFn: () =>
+  //     ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(
+  //       topicIds,
+  //     ),
+  //   enabled: topicIds.length > 0,
+  // });
+
+
+  const { data: questionsData, isLoading } = useQuery<any>({
+    queryKey: [QueryKeys.allQuestions, assessment_id],
     queryFn: () =>
-      ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(
-        topicIds,
+      ApiSDK.AssessmentsService.getAssessmentApiV1AssessmentsAssessmentIdGet(
+        assessment_id!,
+        true,
       ),
-    enabled: topicIds.length > 0,
-  });
+    enabled: !!assessment_id,
+
+  })
+
+  // console.log({ testQuestions });
+
 
   // flatten and memoize questions for easy navigations
   const allQuestions = useMemo(() => {
-    if (!questionsData?.topics) return [];
-    return questionsData.topics.flatMap((topic: any) =>
-      topic.questions.map((q: any) => ({
-        ...q,
-        topic_name: topic.topic_name,
-      })),
-    );
+    if (!questionsData?.questions) return [];
+    return questionsData.questions.map((q: any) => ({
+      ...q,
+      topicTitle: questionsData.title
+    }))
+    // return questionsData.questions.map((q: any) =>
+    //   topic.questions.map((q: any) => ({
+    //     ...q,
+    //     topic_name: topic.topic_name,
+    //   })),
+    // );
   }, [questionsData]);
 
   const currentQuestion = allQuestions[currentIndex];
@@ -74,6 +102,29 @@ export default function QuestionsPage() {
       return () => clearInterval(timer);
     }
   }, [isLoading, allQuestions.length, navigate]);
+
+
+  const saveAnsMutation = useMutation({
+    mutationFn: async ({
+      attempt_id,
+      requestBody,
+    }: {
+      attempt_id: string;
+      requestBody: SaveAnswerRequest;
+    }) => {
+      return await ApiSDK.AttemptsService.saveAnswerApiV1AttemptsAttemptIdAnswerPost(
+        attempt_id,
+        requestBody,
+      );
+    },
+    onSuccess: (data) => {
+      console.log("❌ Answer saved:", data);
+    },
+    onError: (error) => {
+      console.error("❌ Failed to submit answer:", error);
+    },
+  });
+
 
   const handleAnswerSelect = (value: AnswerOption) => {
     setSelectedAnswers((prev) => ({

@@ -1,5 +1,5 @@
 import { BreadcrumbItem, Breadcrumbs, Button } from "@heroui/react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { SidebarRoutes, TestRoutes } from "../../routes";
 import { useAtomValue } from "jotai";
 import {
@@ -9,10 +9,14 @@ import {
 } from "../../store/test.atom";
 
 export default function TestInstrusctionsPage() {
+  const { id } = useParams<{ id: string }>();
+
   const subjectTitle = useAtomValue(selectedSubjectTitleAtom);
   const topics = useAtomValue(selectedTopicsAtom);
   const subjectId = useAtomValue(selectedSubjectIdeAtom);
   const navigate = useNavigate();
+
+  console.log({ id });
 
   return (
     <section className="flex flex-col min-h-screen py-4 space-y-12 md:px-12">
@@ -97,7 +101,8 @@ export default function TestInstrusctionsPage() {
             size="md"
             radius="sm"
             type="button"
-            onPress={() => navigate(TestRoutes.questions)}
+            // onPress={() => navigate(`/take-a-test/questions/${id}`)}
+            onPress={() => navigate(`/take-a-test/${id}/details`)}
           >
             Start Test
           </Button>
