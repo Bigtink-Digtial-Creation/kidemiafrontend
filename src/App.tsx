@@ -140,11 +140,11 @@ export const router = createBrowserRouter([
       },
       {
         path: TestRoutes.testDetails,
-        element: <TestDetails />
+        element: <TestDetails />,
       },
       {
         path: TestRoutes.testAttempt,
-        element: <TestAttempt />
+        element: <TestAttempt />,
       },
       {
         path: TestRoutes.questions,

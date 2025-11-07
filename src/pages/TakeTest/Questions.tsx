@@ -10,7 +10,11 @@ import {
 } from "@heroui/react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { selectedAnswersAtom, selectedTopicsAtom, testAttemptResultAtom } from "../../store/test.atom";
+import {
+  selectedAnswersAtom,
+  selectedTopicsAtom,
+  testAttemptResultAtom,
+} from "../../store/test.atom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
@@ -26,7 +30,7 @@ type AnswerOption = string;
 
 export default function QuestionsPage() {
   const { assessment_id, attempt_id } = useParams<{
-    assessment_id: string
+    assessment_id: string;
     attempt_id: string;
   }>();
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -34,14 +38,12 @@ export default function QuestionsPage() {
   const [timeLeft, setTimeLeft] = useState<number>(10 * 60);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const setAttemptResult = useSetAtom(testAttemptResultAtom);
-  const resetAns = useResetAtom(selectedAnswersAtom)
-
+  const resetAns = useResetAtom(selectedAnswersAtom);
 
   const selectedTopics = useAtomValue(selectedTopicsAtom);
   const topicIds = selectedTopics.map((topic) => topic.id);
 
   console.log({ topicIds });
-
 
   const navigate = useNavigate();
 
@@ -54,7 +56,6 @@ export default function QuestionsPage() {
   //   enabled: topicIds.length > 0,
   // });
 
-
   const { data: questionsData, isLoading } = useQuery<any>({
     queryKey: [QueryKeys.allQuestions, assessment_id],
     queryFn: () =>
@@ -63,19 +64,17 @@ export default function QuestionsPage() {
         true,
       ),
     enabled: !!assessment_id,
-
-  })
+  });
 
   // console.log({ testQuestions });
-
 
   // flatten and memoize questions for easy navigations
   const allQuestions = useMemo(() => {
     if (!questionsData?.questions) return [];
     return questionsData.questions.map((q: any) => ({
       ...q,
-      topicTitle: questionsData.title
-    }))
+      topicTitle: questionsData.title,
+    }));
     // return questionsData.questions.map((q: any) =>
     //   topic.questions.map((q: any) => ({
     //     ...q,
@@ -109,7 +108,6 @@ export default function QuestionsPage() {
     }
   }, [isLoading, allQuestions.length, navigate]);
 
-
   const saveAnsMutation = useMutation({
     mutationFn: async ({
       attempt_id,
@@ -130,7 +128,6 @@ export default function QuestionsPage() {
       console.error("❌ Failed to submit answer:", error);
     },
   });
-
 
   const handleAnswerSelect = (value: AnswerOption) => {
     setSelectedAnswers((prev) => ({
@@ -213,7 +210,7 @@ export default function QuestionsPage() {
     submitAttemptMutation.mutate(attemptId);
     resetAns();
 
-  // navigate(TestRoutes.review);
+    // navigate(TestRoutes.review);
   };
 
   if (isLoading || !currentQuestion) {
@@ -235,8 +232,8 @@ export default function QuestionsPage() {
           Relax, your result is cooking 🍳
         </h2>
         <p className="text-lg text-kidemia-grey max-w-md">
-          We're adding the final touches to your test assessment. This won't take
-          long; hang tight while we wrap things up!
+          We're adding the final touches to your test assessment. This won't
+          take long; hang tight while we wrap things up!
         </p>
         <p className="text-base text-kidemia-secondary italic">
           Please don't close or refresh this page.
@@ -279,10 +276,10 @@ export default function QuestionsPage() {
               wrapper: "space-y-6",
             }}
           >
-            {currentQuestion.options.map((option: any, idx: number) => (
+            {currentQuestion.options.map((option: any) => (
               <Radio
-                key={idx}
-                value={option.option_text}
+                key={option.id}
+                value={option.id}
                 className="text-kidemia-grey font-medium"
                 color="warning"
               >
@@ -329,12 +326,12 @@ export default function QuestionsPage() {
             type="button"
             endContent={<FaArrowRight />}
             onPress={handleNext}
-              isDisabled={
-                !selectedAnswers[currentIndex] || saveAnsMutation.isPending
-              }
-              isLoading={saveAnsMutation.isPending}
-            >
-              {saveAnsMutation.isPending ? "Saving Answer" : "Next"}
+            isDisabled={
+              !selectedAnswers[currentIndex] || saveAnsMutation.isPending
+            }
+            isLoading={saveAnsMutation.isPending}
+          >
+            {saveAnsMutation.isPending ? "Saving Answer" : "Next"}
           </Button>
         )}
       </div>

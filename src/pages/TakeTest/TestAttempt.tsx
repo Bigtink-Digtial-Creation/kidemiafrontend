@@ -1,23 +1,34 @@
-import { useQuery } from '@tanstack/react-query';
-import { useNavigate, useParams } from 'react-router';
-import { QueryKeys } from '../../utils/queryKeys';
-import { ApiSDK } from '../../sdk';
-import { BreadcrumbItem, Breadcrumbs, Button, Card, CardBody, CardFooter, Spinner } from '@heroui/react';
-import { SidebarRoutes, TestRoutes } from '../../routes';
-import { useAtomValue } from 'jotai';
-import { selectedSubjectIdeAtom } from '../../store/test.atom';
-import { BiCalendar, BiPlayCircle, BiQuestionMark, BiShield } from 'react-icons/bi';
-import { FiFileText } from 'react-icons/fi';
-import { BsClock } from 'react-icons/bs';
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router";
+import { QueryKeys } from "../../utils/queryKeys";
+import { ApiSDK } from "../../sdk";
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  Spinner,
+} from "@heroui/react";
+import { SidebarRoutes, TestRoutes } from "../../routes";
+import { useAtomValue } from "jotai";
+import { selectedSubjectIdeAtom } from "../../store/test.atom";
+import {
+  BiCalendar,
+  BiPlayCircle,
+  BiQuestionMark,
+  BiShield,
+} from "react-icons/bi";
+import { FiFileText } from "react-icons/fi";
+import { BsClock } from "react-icons/bs";
 
 export default function TestAttempt() {
   const { assessmentId } = useParams<{ assessmentId: string }>();
   const subjectId = useAtomValue(selectedSubjectIdeAtom);
-const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  console.log({ assessmentId });
-  
-  const { data: attemptTest , isLoading} = useQuery({
+  const { data: attemptTest, isLoading } = useQuery({
     queryKey: [QueryKeys.testAttempt, assessmentId],
     queryFn: () =>
       ApiSDK.AttemptsService.startAttemptApiV1AttemptsAssessmentIdStartPost(
@@ -27,8 +38,6 @@ const navigate = useNavigate()
     enabled: !!assessmentId,
   });
 
-
-
   if (isLoading || !attemptTest) {
     return (
       <div className="h-screen flex justify-center items-center">
@@ -36,7 +45,6 @@ const navigate = useNavigate()
       </div>
     );
   }
-  console.log({ attemptTest });
 
   const {
     attempt_id,
@@ -67,14 +75,17 @@ const navigate = useNavigate()
               Pick Subject Topics
             </BreadcrumbItem>
 
-            <BreadcrumbItem href={`/take-a-test/${subjectId}/instructions`} >Test Intructions</BreadcrumbItem>
-            <BreadcrumbItem href={`/take-a-test/${subjectId}/details`}>Test Details</BreadcrumbItem>
-            <BreadcrumbItem color='warning'>Test Attempt</BreadcrumbItem>
-
+            <BreadcrumbItem href={`/take-a-test/${subjectId}/instructions`}>
+              Test Intructions
+            </BreadcrumbItem>
+            <BreadcrumbItem href={`/take-a-test/${subjectId}/details`}>
+              Test Details
+            </BreadcrumbItem>
+            <BreadcrumbItem color="warning">Test Attempt</BreadcrumbItem>
           </Breadcrumbs>
         </div>
       </div>
-      
+
       <div>
         <Card
           shadow="none"
@@ -83,7 +94,7 @@ const navigate = useNavigate()
           <CardBody className="space-y-6 py-6 px-8">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl sm:text-3xl font-bold text-kidemia-black">
-               Test Assessment Details
+                Test Assessment Details
               </h2>
               <div className="hidden sm:flex items-center gap-2 text-kidemia-grey/70">
                 <BiShield className="w-5 h-5 text-kidemia-secondary" />
@@ -175,6 +186,6 @@ const navigate = useNavigate()
           </CardFooter>
         </Card>
       </div>
-      </section>
-  )
+    </section>
+  );
 }

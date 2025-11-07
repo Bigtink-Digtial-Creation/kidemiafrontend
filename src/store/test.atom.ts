@@ -27,12 +27,12 @@ export const selectedTopicsAtom = atom<SelectedTopic[]>([]);
 
 export const selectedAnswersAtom = atomWithStorage<{ [key: number]: string }>(
   "selectedAnswers",
-  {}
+  {},
 );
 
 export const assessmentAtom = atomWithStorage<AssessmentDetails | null>(
   "kidemia-assessment",
-  null
+  null,
 );
 
 export const selectedAssesmentAnswersAtom = atomWithStorage<{
@@ -43,5 +43,5 @@ export const attemptResultAtom = atomWithStorage<any>("attempt-result", null);
 
 export const testAttemptResultAtom = atomWithStorage<any>(
   "test-attempt-result",
-  null
+  null,
 );
