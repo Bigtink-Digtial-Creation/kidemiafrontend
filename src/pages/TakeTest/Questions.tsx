@@ -9,15 +9,17 @@ import {
   Spinner,
 } from "@heroui/react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { useAtom, useAtomValue } from "jotai";
-import { selectedAnswersAtom, selectedTopicsAtom } from "../../store/test.atom";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { selectedAnswersAtom, selectedTopicsAtom, testAttemptResultAtom } from "../../store/test.atom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import { useNavigate, useParams } from "react-router";
-import { SidebarRoutes, TestRoutes } from "../../routes";
+import { SidebarRoutes } from "../../routes";
 import { formatTime } from "../../utils";
 import type { SaveAnswerRequest } from "../../sdk/generated";
+import { apiErrorParser } from "../../utils/errorParser";
+import { useResetAtom } from "jotai/utils";
 // import type { AutoAssessmentRequest } from "../../sdk/generated";
 
 type AnswerOption = string;
@@ -30,6 +32,10 @@ export default function QuestionsPage() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useAtom(selectedAnswersAtom);
   const [timeLeft, setTimeLeft] = useState<number>(10 * 60);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const setAttemptResult = useSetAtom(testAttemptResultAtom);
+  const resetAns = useResetAtom(selectedAnswersAtom)
+
 
   const selectedTopics = useAtomValue(selectedTopicsAtom);
   const topicIds = selectedTopics.map((topic) => topic.id);
@@ -133,9 +139,38 @@ export default function QuestionsPage() {
     }));
   };
 
-  const handleNext = () => {
-    if (currentIndex < allQuestions.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
+  // const handleNext = () => {
+  //   if (currentIndex < allQuestions.length - 1) {
+  //     setCurrentIndex((prev) => prev + 1);
+  //   }
+  // };
+
+  const handleNext = async () => {
+    const selectedOptionId = selectedAnswers[currentIndex];
+    const currentQuestionId = currentQuestion?.id;
+
+    if (!selectedOptionId || !currentQuestionId) return;
+
+    try {
+      await saveAnsMutation.mutateAsync({
+        attempt_id: attempt_id!,
+        requestBody: {
+          question_id: currentQuestionId,
+          selected_option_ids: [selectedOptionId],
+        },
+      });
+
+      // Only move to next question on success
+      if (currentIndex < allQuestions.length - 1) {
+        setCurrentIndex((prev) => prev + 1);
+      }
+    } catch (error) {
+      const parsedError = apiErrorParser(error);
+      addToast({
+        title: "An Error Occured",
+        description: parsedError.name,
+        color: "danger",
+      });
     }
   };
 
@@ -145,14 +180,67 @@ export default function QuestionsPage() {
     }
   };
 
-  const handleSubmit = () => {
-    navigate(TestRoutes.review);
+  // submit mutation
+  const submitAttemptMutation = useMutation({
+    mutationFn: (attemptId: string) =>
+      ApiSDK.AttemptsService.submitAttemptApiV1AttemptsAttemptIdSubmitPost(
+        attemptId,
+      ),
+    onMutate: () => {
+      setIsSubmitting(true);
+    },
+    onSuccess(data) {
+      setAttemptResult(data);
+      addToast({
+        description: "Attempt Submitted Successfull",
+        color: "success",
+      });
+      setTimeout(() => {
+        navigate(`/take-a-test/results/${assessment_id}`);
+      }, 800);
+    },
+    onError(error) {
+      setIsSubmitting(false);
+      const parsedError = apiErrorParser(error);
+      addToast({
+        description: parsedError.message,
+        color: "danger",
+      });
+    },
+  });
+
+  const handleSubmit = (attemptId: string) => {
+    submitAttemptMutation.mutate(attemptId);
+    resetAns();
+
+  // navigate(TestRoutes.review);
   };
 
   if (isLoading || !currentQuestion) {
     return (
-      <div className="h-screen flex justify-center items-center">
+      <div className="h-screen flex flex-col justify-center items-center">
+        <Spinner size="sm" color="warning" />
+        <p className="pt-2 text-base italic text-kidemia-black text-center">
+          Loading Questions...
+        </p>
+      </div>
+    );
+  }
+
+  if (isSubmitting || submitAttemptMutation.isPending) {
+    return (
+      <div className="h-screen flex flex-col justify-center items-center bg-white- text-center space-y-4 px-4">
         <Spinner size="lg" color="warning" />
+        <h2 className="text-2xl md:text-3xl font-semibold text-kidemia-black">
+          Relax, your result is cooking 🍳
+        </h2>
+        <p className="text-lg text-kidemia-grey max-w-md">
+          We're adding the final touches to your test assessment. This won't take
+          long; hang tight while we wrap things up!
+        </p>
+        <p className="text-base text-kidemia-secondary italic">
+          Please don't close or refresh this page.
+        </p>
       </div>
     );
   }
@@ -225,10 +313,13 @@ export default function QuestionsPage() {
             size="md"
             radius="sm"
             type="button"
-            onPress={handleSubmit}
-            isDisabled={!selectedAnswers[currentIndex]}
+            onPress={() => handleSubmit(attempt_id!)}
+            isDisabled={
+              !selectedAnswers[currentIndex] || submitAttemptMutation.isPending
+            }
+            isLoading={submitAttemptMutation.isPending}
           >
-            Submit
+            {submitAttemptMutation.isPending ? "Submitting Attempt" : "Submit"}
           </Button>
         ) : (
           <Button
@@ -238,9 +329,12 @@ export default function QuestionsPage() {
             type="button"
             endContent={<FaArrowRight />}
             onPress={handleNext}
-            isDisabled={!selectedAnswers[currentIndex]}
-          >
-            Next
+              isDisabled={
+                !selectedAnswers[currentIndex] || saveAnsMutation.isPending
+              }
+              isLoading={saveAnsMutation.isPending}
+            >
+              {saveAnsMutation.isPending ? "Saving Answer" : "Next"}
           </Button>
         )}
       </div>
