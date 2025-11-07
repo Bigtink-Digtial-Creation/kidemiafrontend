@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -9,71 +10,78 @@ import {
   Spinner,
 } from "@heroui/react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { useAtom, useAtomValue } from "jotai";
-import { selectedAnswersAtom, selectedTopicsAtom } from "../../store/test.atom";
-import { useQuery } from "@tanstack/react-query";
+import { useAtom, useSetAtom } from "jotai";
+import {
+  selectedAnswersAtom,
+  testAttemptResultAtom,
+} from "../../store/test.atom";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
-import { useNavigate } from "react-router";
-import { SidebarRoutes, TestRoutes } from "../../routes";
+import { useNavigate, useParams } from "react-router";
 import { formatTime } from "../../utils";
+import type { SaveAnswerRequest } from "../../sdk/generated";
+import { apiErrorParser } from "../../utils/errorParser";
+import { useResetAtom } from "jotai/utils";
 
 type AnswerOption = string;
 
 export default function QuestionsPage() {
+  const { assessment_id, attempt_id } = useParams<{
+    assessment_id: string;
+    attempt_id: string;
+  }>();
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useAtom(selectedAnswersAtom);
-  const [timeLeft, setTimeLeft] = useState<number>(10 * 60);
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isTimeUp, setIsTimeUp] = useState<boolean>(false);
 
-  const selectedTopics = useAtomValue(selectedTopicsAtom);
-  const topicIds = selectedTopics.map((topic) => topic.id);
-
+  const setAttemptResult = useSetAtom(testAttemptResultAtom);
+  const resetAns = useResetAtom(selectedAnswersAtom);
   const navigate = useNavigate();
 
-  const { data: questionsData, isLoading } = useQuery({
-    queryKey: [QueryKeys.allQuestions, topicIds],
+  const { data: questionsData, isLoading } = useQuery<any>({
+    queryKey: [QueryKeys.allQuestions, assessment_id],
     queryFn: () =>
-      ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(
-        topicIds,
+      ApiSDK.AssessmentsService.getAssessmentApiV1AssessmentsAssessmentIdGet(
+        assessment_id!,
+        true,
       ),
-    enabled: topicIds.length > 0,
+    enabled: !!assessment_id,
   });
 
   // flatten and memoize questions for easy navigations
   const allQuestions = useMemo(() => {
-    if (!questionsData?.topics) return [];
-    return questionsData.topics.flatMap((topic: any) =>
-      topic.questions.map((q: any) => ({
-        ...q,
-        topic_name: topic.topic_name,
-      })),
-    );
+    if (!questionsData?.questions) return [];
+    return questionsData.questions.map((q: any) => ({
+      ...q,
+      topicTitle: questionsData.title,
+    }));
   }, [questionsData]);
 
   const currentQuestion = allQuestions[currentIndex];
 
-  //Start countdown once questions finish loading
-  useEffect(() => {
-    if (!isLoading && allQuestions.length > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            addToast({
-              title: "Attention",
-              description: "Test time is over!",
-              color: "danger",
-            });
-            navigate(SidebarRoutes.dashboard);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(timer);
-    }
-  }, [isLoading, allQuestions.length, navigate]);
+  const saveAnsMutation = useMutation({
+    mutationFn: async ({
+      attempt_id,
+      requestBody,
+    }: {
+      attempt_id: string;
+      requestBody: SaveAnswerRequest;
+    }) => {
+      return await ApiSDK.AttemptsService.saveAnswerApiV1AttemptsAttemptIdAnswerPost(
+        attempt_id,
+        requestBody,
+      );
+    },
+    onSuccess: (data) => {
+      console.log("❌ Answer saved:", data);
+    },
+    onError: (error) => {
+      console.error("❌ Failed to submit answer:", error);
+    },
+  });
 
   const handleAnswerSelect = (value: AnswerOption) => {
     setSelectedAnswers((prev) => ({
@@ -82,9 +90,32 @@ export default function QuestionsPage() {
     }));
   };
 
-  const handleNext = () => {
-    if (currentIndex < allQuestions.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
+  const handleNext = async () => {
+    const selectedOptionId = selectedAnswers[currentIndex];
+    const currentQuestionId = currentQuestion?.id;
+
+    if (!selectedOptionId || !currentQuestionId) return;
+
+    try {
+      await saveAnsMutation.mutateAsync({
+        attempt_id: attempt_id!,
+        requestBody: {
+          question_id: currentQuestionId,
+          selected_option_ids: [selectedOptionId],
+        },
+      });
+
+      // Only move to next question on success
+      if (currentIndex < allQuestions.length - 1) {
+        setCurrentIndex((prev) => prev + 1);
+      }
+    } catch (error) {
+      const parsedError = apiErrorParser(error);
+      addToast({
+        title: "An Error Occured",
+        description: parsedError.name,
+        color: "danger",
+      });
     }
   };
 
@@ -94,14 +125,101 @@ export default function QuestionsPage() {
     }
   };
 
-  const handleSubmit = () => {
-    navigate(TestRoutes.review);
+  // submit mutation
+  const submitAttemptMutation = useMutation({
+    mutationFn: (attemptId: string) =>
+      ApiSDK.AttemptsService.submitAttemptApiV1AttemptsAttemptIdSubmitPost(
+        attemptId,
+      ),
+    onMutate: () => {
+      setIsSubmitting(true);
+    },
+    onSuccess(data) {
+      setAttemptResult(data);
+      addToast({
+        description: "Attempt Submitted Successfull",
+        color: "success",
+      });
+      setTimeout(() => {
+        navigate(`/take-a-test/results/${assessment_id}`);
+      }, 800);
+    },
+    onError(error) {
+      setIsSubmitting(false);
+      const parsedError = apiErrorParser(error);
+      addToast({
+        description: parsedError.message,
+        color: "danger",
+      });
+    },
+  });
+
+  useEffect(() => {
+    if (!isLoading && questionsData?.duration_minutes) {
+      const durationInSeconds = questionsData.duration_minutes * 60;
+
+      setTimeLeft(durationInSeconds);
+
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setIsTimeUp(true);
+
+            addToast({
+              title: "Time's up!",
+              description: "Submitting your answers automatically...",
+              color: "warning",
+            });
+
+            //Trigger auto-submit when time runs out
+            if (attempt_id && !submitAttemptMutation.isPending) {
+              submitAttemptMutation.mutate(attempt_id);
+            }
+
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [isLoading, questionsData?.duration_minutes]);
+
+  const handleSubmit = (attemptId: string) => {
+    submitAttemptMutation.mutate(attemptId);
+    resetAns();
   };
 
   if (isLoading || !currentQuestion) {
     return (
-      <div className="h-screen flex justify-center items-center">
+      <div className="h-screen flex flex-col justify-center items-center">
+        <Spinner size="sm" color="warning" />
+        <p className="pt-2 text-base italic text-kidemia-black text-center">
+          Loading Questions...
+        </p>
+      </div>
+    );
+  }
+
+  if (isSubmitting || submitAttemptMutation.isPending || isTimeUp) {
+    return (
+      <div className="h-screen flex flex-col justify-center items-center text-center space-y-4 px-4">
         <Spinner size="lg" color="warning" />
+        <h2 className="text-2xl md:text-3xl font-semibold text-kidemia-black">
+          {isTimeUp
+            ? "⏰ Time's up! Submitting your test..."
+            : "Relax, your result is cooking 🍳"}
+        </h2>
+        <p className="text-lg text-kidemia-grey max-w-md">
+          {isTimeUp
+            ? "Don't worry,we're saving all your progress and wrapping things up for you."
+            : "We're adding the final touches to your test assessment. Hang tight while we finish up!"}
+        </p>
+        <p className="text-base text-kidemia-secondary italic">
+          Please don't close or refresh this page.
+        </p>
       </div>
     );
   }
@@ -140,10 +258,10 @@ export default function QuestionsPage() {
               wrapper: "space-y-6",
             }}
           >
-            {currentQuestion.options.map((option: any, idx: number) => (
+            {currentQuestion.options.map((option: any) => (
               <Radio
-                key={idx}
-                value={option.option_text}
+                key={option.id}
+                value={option.id}
                 className="text-kidemia-grey font-medium"
                 color="warning"
               >
@@ -174,10 +292,13 @@ export default function QuestionsPage() {
             size="md"
             radius="sm"
             type="button"
-            onPress={handleSubmit}
-            isDisabled={!selectedAnswers[currentIndex]}
+            onPress={() => handleSubmit(attempt_id!)}
+            isDisabled={
+              !selectedAnswers[currentIndex] || submitAttemptMutation.isPending
+            }
+            isLoading={submitAttemptMutation.isPending}
           >
-            Submit
+            {submitAttemptMutation.isPending ? "Submitting Attempt" : "Submit"}
           </Button>
         ) : (
           <Button
@@ -187,9 +308,12 @@ export default function QuestionsPage() {
             type="button"
             endContent={<FaArrowRight />}
             onPress={handleNext}
-            isDisabled={!selectedAnswers[currentIndex]}
+            isDisabled={
+              !selectedAnswers[currentIndex] || saveAnsMutation.isPending
+            }
+            isLoading={saveAnsMutation.isPending}
           >
-            Next
+            {saveAnsMutation.isPending ? "Saving Answer" : "Next"}
           </Button>
         )}
       </div>

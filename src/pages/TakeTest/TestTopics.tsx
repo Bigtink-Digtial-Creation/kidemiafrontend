@@ -150,7 +150,7 @@ export default function TestTopicsPage() {
           className="bg-kidemia-secondary text-kidemia-white font-semibold w-full md:w-1/4"
           radius="sm"
           isDisabled={selectedTopics.length !== 5}
-          onPress={() => navigate(TestRoutes.testIntructions)}
+          onPress={() => navigate(`/take-a-test/${id}/instructions`)}
         >
           Continue
         </Button>

@@ -1,63 +1,206 @@
 import { useNavigate } from "react-router";
-import ReactApexChart from "react-apexcharts";
-import { Button } from "@heroui/react";
-import { options, value } from "../../staticData";
+import { Button, Card, CardBody, CardFooter, Chip } from "@heroui/react";
 import { SidebarRoutes } from "../../routes";
+import { testAttemptResultAtom } from "../../store/test.atom";
+import { useAtomValue } from "jotai";
+import { useResetAtom } from "jotai/utils";
+import { FiFileText } from "react-icons/fi";
 
 export default function ResultPage() {
+  const result = useAtomValue(testAttemptResultAtom);
+  const resetAttempt = useResetAtom(testAttemptResultAtom);
   const navigate = useNavigate();
+
+  if (!result) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen text-center p-4">
+        <p className="text-lg text-kidemia-grey font-medium">
+          No attempt data found. Please complete an assessment first.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <section className="py-4 space-y-12 md:px-12 w-full max-w-xl">
-      <div className="relative flex items-center justify-center">
-        <ReactApexChart
-          options={options}
-          series={[value]}
-          type="radialBar"
-          height={200}
-          width={200}
-        />
+    <section className="max-w-5xl w-full mx-auto mt-8 px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col justify-center items-center space-y-2 py-4">
+        <h3 className="text-3xl text-kidemia-primary font-semibold">
+          Congratulations
+        </h3>
+        <p className="text-kidemia-grey text-base">
+          Below is your test asseesment result
+        </p>
       </div>
-
       <div>
-        <div className="space-y-3">
-          <h2 className="text-xl text-kidemia-black font-semibold text-center">
-            You got 5/20
-          </h2>
-
-          <div className="flex justify-around items-center gap-3">
-            <p className="text-md font-semibold text-kidemia-black">Remark:</p>
-            <p className="text-base text-kidemia-grey font-medium">Poor</p>
-          </div>
-
-          <div className="flex justify-around items-center gap-3">
-            <p className="text-md font-semibold text-kidemia-black">Comment:</p>
-            <p className="text-base text-kidemia-grey font-medium">
-              You can always do better
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex items-center space-x-6 py-6">
-        <Button
-          className="bg-kidemia-biege border border-enita-black2 font-medium text-kidemia-primary w-full"
-          variant="faded"
-          size="md"
-          radius="sm"
-          type="button"
+        <Card
+          shadow="none"
+          className="border border-kidemia-grey/20 bg-kidemia-white"
         >
-          View Corrections
-        </Button>
+          <CardBody className="space-y-6 py-6 px-8">
+            <div className="flex items-center justify-between flex-wrap">
+              <h2 className="text-2xl sm:text-3xl font-bold text-kidemia-black text-center">
+                Test Assessment Result
+              </h2>
+              <div className="flex items-center gap-2 text-kidemia-grey/70 ">
+                <p>Status</p>
+                <Chip
+                  variant="flat"
+                  size="sm"
+                  color="success"
+                  className="text-xs font-bold capitalize"
+                >
+                  {result.status}
+                </Chip>
+              </div>
+            </div>
 
-        <Button
-          className="bg-kidemia-secondary text-kidemia-white font-medium w-full"
-          size="md"
-          radius="sm"
-          type="button"
-          onPress={() => navigate(SidebarRoutes.dashboard)}
-        >
-          Dashboard
-        </Button>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+              <div className="flex items-center gap-3">
+                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
+                <div className="space-y-1">
+                  <p className="font-medium text-kidemia-black">Attempt</p>
+                  <p>#{result.attempt_number}</p>
+                  <p>1</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
+                <div className="space-y-1">
+                  <p className="font-medium text-kidemia-black">Grade</p>
+                  <p className="capitalize">{result.grade}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
+                <div className="space-y-1">
+                  <p className="font-medium text-kidemia-black">Score</p>
+                  <p>{result.score}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
+                <div className="space-y-1">
+                  <p className="font-medium text-kidemia-black">Percentage</p>
+                  <p>{`${result.percentage}%`}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
+                <div className="space-y-1">
+                  <p className="font-medium text-kidemia-black">
+                    Correct Answers
+                  </p>
+                  <p>{result.correct_answers}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
+                <div className="space-y-1">
+                  <p className="font-medium text-kidemia-black">
+                    Incorrect Answers
+                  </p>
+                  <p>{result.incorrect_answers}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
+                <div className="space-y-1">
+                  <p className="font-medium text-kidemia-black">
+                    Partially Correct
+                  </p>
+                  <p>{result.partially_correct}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
+                <div className="space-y-1">
+                  <p className="font-medium text-kidemia-black">
+                    Total Questions
+                  </p>
+                  <p>{result.total_questions}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
+                <div className="space-y-1">
+                  <p className="font-medium text-kidemia-black">
+                    Points Earned
+                  </p>
+                  <p>{result.points_earned}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
+                <div className="space-y-1">
+                  <p className="font-medium text-kidemia-black">
+                    Points Possible
+                  </p>
+                  <p>{result.points_possible}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
+                <div className="space-y-1">
+                  <p className="font-medium text-kidemia-black">
+                    Time Spent (s)
+                  </p>
+                  <p>{result.time_spent_seconds}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
+                <div className="space-y-1">
+                  <p className="font-medium text-kidemia-black">
+                    Certificate Issued
+                  </p>
+                  <p>{result.certificate_issued ? "Yes" : "No"}</p>
+                </div>
+              </div>
+            </div>
+          </CardBody>
+
+          <CardFooter className="bg-kidemia-biege/10 border-t border-kidemia-grey/10 px-6 py-6">
+            <div className="w-full flex justify-between items-center">
+              <div>
+                {result.certificate_url && (
+                  <div className="text-center pt-4">
+                    <a
+                      href={result.certificate_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block bg-yellow-500 text-white font-medium px-4 py-2 rounded-md hover:bg-yellow-600 transition"
+                    >
+                      View Certificate
+                    </a>
+                  </div>
+                )}
+              </div>
+
+              <Button
+                className="bg-kidemia-secondary text-white font-semibold shadow-md hover:shadow-lg"
+                size="md"
+                radius="md"
+                onPress={() => {
+                  navigate(SidebarRoutes.dashboard);
+                  setTimeout(() => resetAttempt(), 100);
+                }}
+              >
+                Dashboard
+              </Button>
+            </div>
+          </CardFooter>
+        </Card>
       </div>
     </section>
   );

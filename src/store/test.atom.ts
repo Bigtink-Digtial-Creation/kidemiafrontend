@@ -40,3 +40,8 @@ export const selectedAssesmentAnswersAtom = atomWithStorage<{
 }>("selectedAssessmentAnswers", {});
 
 export const attemptResultAtom = atomWithStorage<any>("attempt-result", null);
+
+export const testAttemptResultAtom = atomWithStorage<any>(
+  "test-attempt-result",
+  null,
+);
