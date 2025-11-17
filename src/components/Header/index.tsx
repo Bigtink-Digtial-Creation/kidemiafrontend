@@ -4,7 +4,7 @@ import { Link } from "react-router";
 import { IoMenu } from "react-icons/io5";
 import { FaBell } from "react-icons/fa";
 import { SidebarRoutes } from "../../routes";
-import AppLogo from "@/assets/appLogo.png";
+import { AppLogo } from "../../assets/images";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
@@ -62,7 +62,7 @@ export default function Header(props: HeaderT) {
             </div>
             <div className="sm:block w-2/5 flex-1 ml-4">
               <h3 className="text-kidemia-black2 text-base font-semibold capitalize">
-                Hey, {user?.first_name}
+                Hello, {user?.first_name}
               </h3>
             </div>
 

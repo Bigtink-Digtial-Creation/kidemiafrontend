@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
 import { useAtom, useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
@@ -9,8 +7,6 @@ import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import {
   addToast,
-  BreadcrumbItem,
-  Breadcrumbs,
   Button,
   Pagination,
   Radio,
@@ -91,8 +87,10 @@ export default function AssessmentQuestions() {
     onSuccess: (data) => {
       console.log("❌ Answer saved:", data);
     },
-    onError: (error) => {
-      console.error("❌ Failed to submit answer:", error);
+    onError: () => {
+      console.error(
+        "❌ Failed to submit answer. Check your network connection",
+      );
     },
   });
 
@@ -233,19 +231,7 @@ export default function AssessmentQuestions() {
 
   return (
     <section className="space-y-6 md:px-12 w-full max-w-4xl pb-24-">
-      <div className="absolute top-4 left-0 px-2 flex flex-wrap justify-between items-center w-full">
-        <div>
-          <Breadcrumbs variant="light" color="foreground">
-            <BreadcrumbItem>{asstQuestions.title || "---"}</BreadcrumbItem>
-            <BreadcrumbItem>
-              {asstQuestions.exam_session || "---"},{" "}
-              {asstQuestions.exam_year || "---"}
-            </BreadcrumbItem>
-            <BreadcrumbItem>
-              {asstQuestions.description || "---"}
-            </BreadcrumbItem>
-          </Breadcrumbs>
-        </div>
+      <div className="absolute top-4 left-0 px-2 flex flex-wrap justify-end items-center w-full">
         <div className="flex justify-between flex-col md:flex-row items-center gap-2 space-x-6">
           <p className="text-md text-kidemia-black font-medium">
             Time Left: {formatTime(timeLeft)}

@@ -36,7 +36,7 @@ export default function DashboardPage() {
               type="button"
               onPress={() => navigate(SidebarRoutes.takeAssessment)}
             >
-              Take an Assessment
+              Take Exam
             </Button>
           </div>
         </div>

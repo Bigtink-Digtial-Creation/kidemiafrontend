@@ -19,6 +19,7 @@ export const SidebarRoutes = {
   settings: "/dashboard/settings",
   performance: "/dashboard/performance",
   history: "/dashboard/history",
+  leaderboard: "/dashboard/leaderboard",
   profile: "/dashboard/profile",
   takeAssessment: "/dashboard/assessment",
 };
@@ -42,9 +43,14 @@ export const AssessmentRoutes = {
   assessmentResult: "/assessment/result/:assessment_id",
 };
 
+export const PaymentRoutes = {
+  checkout: "/checkout/:id/plan",
+};
+
 export type HomeRoutes = (typeof HomeRoutes)[keyof typeof HomeRoutes];
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
 export type SidebarRoutes = (typeof SidebarRoutes)[keyof typeof SidebarRoutes];
 export type TestRoutes = (typeof TestRoutes)[keyof typeof TestRoutes];
+export type PaymentRoutes = (typeof PaymentRoutes)[keyof typeof PaymentRoutes];
 export type AssessmentRoutes =
   (typeof AssessmentRoutes)[keyof typeof AssessmentRoutes];
