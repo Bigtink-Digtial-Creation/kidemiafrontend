@@ -5,7 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 type Billing = "monthly" | "annual";
 
 export default function SubscriptionPage() {
-  const { id } = useParams(); // id will be the plan name as requested (e.g. 'student')
+  const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const search = new URLSearchParams(location.search);
@@ -38,8 +38,7 @@ export default function SubscriptionPage() {
     // For this demo, we simply keep them on page and show the form replaced by a "Continue to payment" button
   }, [isAuthenticated]);
 
-  const redirectBack =
-    search.get("redirect") || location.pathname + location.search;
+  // const redirectBack = search.get("redirect") || location.pathname + location.search;
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();

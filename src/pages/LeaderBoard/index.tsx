@@ -1,4 +1,4 @@
-import { useState, Fragment } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Trophy,
@@ -8,9 +8,7 @@ import {
   Crown,
 } from "lucide-react";
 
-//═══════════════════════════════════════════════
-// TYPES
-//═══════════════════════════════════════════════
+
 type LeaderboardUser = {
   id: string;
   rank: number;
@@ -34,10 +32,8 @@ type Badge = {
 type FilterType = "assessment" | "subject" | "class" | "institution";
 type TimeFrame = "week" | "month" | "allTime";
 
-//═══════════════════════════════════════════════
-// MOCK DATA GENERATOR (REPLACE WITH API LATER)
-//═══════════════════════════════════════════════
-const generateMockData = (filter: FilterType): LeaderboardUser[] => {
+
+const generateMockData = (): LeaderboardUser[] => {
   const sample = [
     { name: "Alex Rodriguez", username: "AlexR_21", avatar: "https://i.pravatar.cc/150?img=12" },
     { name: "Mira Learning", username: "LearnWithMira", avatar: "https://i.pravatar.cc/150?img=45" },
@@ -73,27 +69,19 @@ const generateMockData = (filter: FilterType): LeaderboardUser[] => {
   }));
 };
 
-//═══════════════════════════════════════════════
-// FETCH HOOK
-//═══════════════════════════════════════════════
+
 const useLeaderboardData = (filter: FilterType, timeFrame: TimeFrame) => {
   return useQuery({
     queryKey: ["leaderboard", filter, timeFrame],
     queryFn: async () => {
       await new Promise((r) => setTimeout(r, 500));
-      return generateMockData(filter);
+      return generateMockData();
     },
     staleTime: 20000,
   });
 };
 
-//═══════════════════════════════════════════════
-// UI SUB-COMPONENTS (still in same file)
-//═══════════════════════════════════════════════
 
-/**********************
- * TIMEFRAME TOGGLE
- **********************/
 const TimeFrameToggle = ({
   timeFrame,
   setTimeFrame,
@@ -125,9 +113,7 @@ const TimeFrameToggle = ({
   );
 };
 
-/**********************
- * FILTER ROW
- **********************/
+
 const FilterRow = ({
   activeFilter,
   setActiveFilter,
@@ -159,10 +145,6 @@ const FilterRow = ({
     </div>
   );
 };
-
-/**********************
- * MOTIVATION CARD
- **********************/
 const MotivationCard = () => (
   <div className="relative overflow-hidden bg-gradient-to-br from-kidemia-primary via-kidemia-primary to-pink-500 rounded-3xl p-6 mb-6 border border-white/20">
     <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
@@ -183,7 +165,7 @@ const MotivationCard = () => (
           Just 9 points away from breaking into the Top 10.
         </p>
 
-        <button className="bg-white text-kidemia-primary px-5 py-2 rounded-xl font-semibold hover:bg-kidemia-secondary hover:text-kidemia-white hover:scale-105 transition">
+        <button className="bg-white text-kidemia-primary px-5 py-2 rounded-xl font-semibold hover:-kidemia-secondary hover:text-kidemia-white hover:scale-105 transition">
           Continue Learning
         </button>
       </div>
@@ -202,9 +184,7 @@ const MotivationCard = () => (
   </div>
 );
 
-/**********************
- * TOP 3 PANEL
- **********************/
+
 const TopThreePanel = ({ users }: { users: LeaderboardUser[] }) => (
   <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-5 border border-gray-200/50">
     <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
@@ -276,9 +256,7 @@ const TopThreePanel = ({ users }: { users: LeaderboardUser[] }) => (
   </div>
 );
 
-/**********************
- * FULL RANK LIST
- **********************/
+
 const RankList = ({
   users,
   currentUserIndex,
@@ -355,9 +333,7 @@ const RankList = ({
   </div>
 );
 
-//═══════════════════════════════════════════════
-// MAIN COMPONENT
-//═══════════════════════════════════════════════
+
 export default function ModernLeaderboard() {
   const [activeFilter, setActiveFilter] = useState<FilterType>("assessment");
   const [timeFrame, setTimeFrame] = useState<TimeFrame>("month");
@@ -411,7 +387,6 @@ export default function ModernLeaderboard() {
         </div>
       </div>
 
-      {/* Scrollbar styling */}
       <style>{`
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { scrollbar-width: none; }
