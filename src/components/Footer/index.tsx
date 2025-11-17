@@ -1,216 +1,79 @@
 import { Image } from "@heroui/react";
-import { footerData } from "../../staticData/home";
-import { Link } from "react-router";
-import { motion } from "framer-motion";
-import { FaFacebookF, FaLinkedinIn } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import AppImage from "../AppImage";
 import {
-  containerVariants,
-  itemVariants,
-  linkVariants,
-  logoVariants,
-  socialIconVariants,
-} from "./variants";
-import bgImage from "../../assets/images/map-bg.svg";
-import logo from "../../assets/kidemia.svg";
-
-const iconClasses = "text-kidemia-white text-base";
+  AppLogo,
+  ApplePlayLogo,
+  GooglePlayLogo,
+  FooterMap,
+} from "../../assets/images";
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="relative overflow-hidden">
-      <div
-        className="relative bg-cover bg-center h-full text-white"
-        style={{ backgroundImage: `url(${bgImage})` }}
-      >
-        <div className="absolute inset-0 bg-black/75" />
-
-        <div className="relative z-10 container max-w-screen-xl mx-auto h-full px-2 py-20">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            className="relative z-10 max-w-screen-xl mx-auto px-6 md:px-4"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:justify-items-center">
-              <motion.div
-                variants={logoVariants}
-                whileHover={{
-                  scale: 1.05,
-                  transition: { duration: 0.2 },
-                }}
-                whileTap={{ scale: 0.95 }}
-                className="col-span-1 cursor-pointer"
-              >
-                <Image src={logo} alt="logo" />
-              </motion.div>
-
-              {footerData.map((section, idx) => (
-                <motion.div key={idx} variants={itemVariants}>
-                  <motion.h4
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1, duration: 0.5 }}
-                    className="font-semibold mb-3 text-white"
-                  >
-                    {section.title}
-                  </motion.h4>
-                  <ul className="space-y-2 text-sm text-white">
-                    {section.links.map((link, linkIdx) => (
-                      <motion.li
-                        key={linkIdx}
-                        className="hover:underline  hover:text-kidemia-secondary cursor-pointer"
-                        variants={linkVariants}
-                        initial="rest"
-                        whileHover="hover"
-                        whileInView={{
-                          opacity: [0, 1],
-                          x: [20, 0],
-                        }}
-                        transition={{
-                          delay: idx * 0.1 + linkIdx * 0.05,
-                          duration: 0.4,
-                        }}
-                      >
-                        <Link to={link.href}>{link.label}</Link>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </motion.div>
-              ))}
-
-              {/* Desktop Social Icons */}
-              <motion.div
-                className="hidden md:flex space-x-4"
-                variants={itemVariants}
-              >
-                <motion.a
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variants={socialIconVariants}
-                  whileHover={{
-                    scale: 1.2,
-                    rotate: 5,
-                    transition: { duration: 0.2 },
-                  }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <motion.div className="w-9 h-9 cursor-pointer rounded-full bg-black flex items-center justify-center">
-                    <FaXTwitter className={iconClasses} />
-                  </motion.div>
-                </motion.a>
-
-                <motion.a
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variants={socialIconVariants}
-                  whileHover={{
-                    scale: 1.2,
-                    rotate: -5,
-                    transition: { duration: 0.2 },
-                  }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <motion.div className="w-9 h-9 cursor-pointer rounded-full bg-[#3b5998] flex items-center justify-center">
-                    <FaFacebookF className={iconClasses} />
-                  </motion.div>
-                </motion.a>
-
-                <motion.a
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variants={socialIconVariants}
-                  whileHover={{
-                    scale: 1.2,
-                    rotate: 5,
-                    transition: { duration: 0.2 },
-                  }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <motion.div className="w-9 h-9 cursor-pointer rounded-full bg-[#0077b5] flex items-center justify-center">
-                    <FaLinkedinIn className={iconClasses} />
-                  </motion.div>
-                </motion.a>
-              </motion.div>
+    <footer
+      className="bg-[#08192d] text-white py-12"
+      style={{
+        backgroundImage: `linear-gradient(rgba(8, 25, 45, 0.9), rgba(8, 25, 45, 0.9)), url(${FooterMap})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-8">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <Image src={AppLogo} alt="logo" width={80} />
             </div>
+            <p className="text-sm opacity-80 leading-relaxed">
+              A smarter way to teach, learn, and grow.
+            </p>
+          </div>
 
-            {/* Bottom Bar with Social Icons */}
-            <motion.div
-              className="flex flex-col md:flex-row justify-between items-center mt-10 pt-6 border-t md:border-0 border-white/20 text-white"
-              variants={itemVariants}
-            >
-              <motion.p
-                className="text-sm mb-4 md:mb-0 text-kidemia-white"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.6 }}
-              >
-                © {currentYear} Kidemia. All Rights Reserved.
-              </motion.p>
+          <div>
+            <h6 className="font-bold text-base mb-3">Company</h6>
+            <ul className="text-sm opacity-80 space-y-2">
+              <li className="hover:opacity-100 cursor-pointer">About</li>
+              <li className="hover:opacity-100 cursor-pointer">Careers</li>
+              <li className="hover:opacity-100 cursor-pointer">Contact</li>
+            </ul>
+          </div>
 
-              {/* Mobile Social Icons */}
-              <motion.div
-                className="flex space-x-4 md:hidden"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
-              >
-                <motion.a
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{
-                    scale: 1.2,
-                    rotate: 10,
-                    transition: { duration: 0.2 },
-                  }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <motion.div className="w-9 h-9 cursor-pointer rounded-full bg-black flex items-center justify-center">
-                    <FaXTwitter className={iconClasses} />
-                  </motion.div>
-                </motion.a>
+          <div>
+            <h6 className="font-bold text-base mb-3">Support</h6>
+            <ul className="text-sm opacity-80 space-y-2">
+              <li className="hover:opacity-100 cursor-pointer">Help Center</li>
+              <li className="hover:opacity-100 cursor-pointer">
+                Terms of Service
+              </li>
+              <li className="hover:opacity-100 cursor-pointer">
+                Privacy Policy
+              </li>
+            </ul>
+          </div>
 
-                <motion.a
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{
-                    scale: 1.2,
-                    rotate: -10,
-                    transition: { duration: 0.2 },
-                  }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <motion.div className="w-9 h-9 cursor-pointer rounded-full bg-[#3b5998] flex items-center justify-center">
-                    <FaFacebookF className={iconClasses} />
-                  </motion.div>
-                </motion.a>
+          <div>
+            <h6 className="font-bold text-base mb-3">Get the app</h6>
+            <div className="flex gap-3">
+              <div className="w-32 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center text-xs font-semibold cursor-pointer transition">
+                <AppImage
+                  src={ApplePlayLogo}
+                  alt={"apple play"}
+                  className="max-h-16 object-contain opacity-70 hover:opacity-100 transition"
+                />
+              </div>
+              <div className="w-32 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center text-xs font-semibold cursor-pointer transition">
+                <AppImage
+                  src={GooglePlayLogo}
+                  alt={"Google Play"}
+                  className="max-h-16 object-contain opacity-70 hover:opacity-100 transition"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
 
-                <motion.a
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{
-                    scale: 1.2,
-                    rotate: 10,
-                    transition: { duration: 0.2 },
-                  }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <motion.div className="w-9 h-9 cursor-pointer rounded-full bg-[#0077b5] flex items-center justify-center">
-                    <FaLinkedinIn className={iconClasses} />
-                  </motion.div>
-                </motion.a>
-              </motion.div>
-            </motion.div>
-          </motion.div>
+        <div className="border-t border-white/10 pt-6 text-center text-sm opacity-70">
+          © {new Date().getFullYear()} Kidemia. All rights reserved.
         </div>
       </div>
     </footer>

@@ -1,14 +1,4 @@
-import {
-  BreadcrumbItem,
-  Breadcrumbs,
-  Button,
-  Chip,
-  Pagination,
-  Spinner,
-} from "@heroui/react";
-import { SidebarRoutes } from "../../routes";
-import { PiExamBold } from "react-icons/pi";
-import { MdOutlineDashboard } from "react-icons/md";
+import { Button, Chip, Pagination, Spinner } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
@@ -49,22 +39,6 @@ export default function AssessmentPage() {
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
-        <Breadcrumbs variant="light" color="foreground">
-          <BreadcrumbItem
-            href={SidebarRoutes.dashboard}
-            startContent={<MdOutlineDashboard />}
-          >
-            Dashboard
-          </BreadcrumbItem>
-          <BreadcrumbItem
-            href={SidebarRoutes.takeAssessment}
-            startContent={<PiExamBold />}
-            color="warning"
-          >
-            Assessment
-          </BreadcrumbItem>
-        </Breadcrumbs>
-
         <div className="flex justify-between items-center space-x-6">
           <Chip
             variant="flat"
@@ -73,10 +47,9 @@ export default function AssessmentPage() {
           >
             Unit balance : 100
           </Chip>
-
           <Button
             className="bg-kidemia-secondary text-kidemia-white font-medium w-full px-8"
-            size="md"
+            size="sm"
             radius="sm"
             type="button"
           >
@@ -87,7 +60,7 @@ export default function AssessmentPage() {
 
       <div className="space-y-3">
         <div>
-          <p className="text-kidemia-grey text-lg">Explore Past Questions</p>
+          <p className="text-kidemia-grey text-lg">Explore Past Assessements</p>
         </div>
 
         <div className="py-4">

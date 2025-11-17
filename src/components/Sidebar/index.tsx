@@ -10,9 +10,9 @@ import { NavLink } from "react-router";
 import { motion } from "framer-motion";
 import { SidebarRoutes } from "../../routes";
 import { FiLogOut, FiSettings } from "react-icons/fi";
-import { sidebarLinks } from "./sidebarLink";
-import SidebarLink from "./SidebarLink";
-import AppLogo from "@/assets/appLogo.png";
+import { sidebarLinks } from "./sidebarLink.ts";
+import SidebarLink from "./SidebarLink.tsx";
+import { AppDarkLogo } from "../../assets/images";
 import LogoutModal from "./LogoutModal";
 
 type SidebarProps = {
@@ -92,7 +92,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
               to={SidebarRoutes.dashboard}
               className="animate-sidebar-text-show"
             >
-              <Image src={AppLogo} alt="Logo" width={80} />
+              <Image src={AppDarkLogo} alt="Logo" width={80} />
             </NavLink>
           </div>
         </div>

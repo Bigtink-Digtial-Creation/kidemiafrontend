@@ -71,7 +71,7 @@ export default function LoginPage() {
           Welcome Back
         </h2>
         <p className="text-lg text-kidemia-black2 text-center font-medium">
-          SignIn to continue
+          Login to continue
         </p>
       </div>
 
@@ -154,7 +154,7 @@ export default function LoginPage() {
             isDisabled={loginMutation.isPending}
             isLoading={loginMutation.isPending}
           >
-            SignIn
+            Sign In
           </Button>
         </div>
       </Form>

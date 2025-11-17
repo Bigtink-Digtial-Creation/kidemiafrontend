@@ -1,10 +1,9 @@
-import { Button, Card, CardBody, CardFooter } from "@heroui/react";
 import { useSetAtom } from "jotai";
+import { useNavigate } from "react-router";
 import { FaArrowRight, FaRegQuestionCircle } from "react-icons/fa";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { IoTimeOutline } from "react-icons/io5";
 import { MdCreditScore } from "react-icons/md";
-import { useNavigate } from "react-router";
 import { assessmentAtom } from "../../store/test.atom";
 
 interface AssessmentCardI {
@@ -17,6 +16,7 @@ interface AssessmentCardI {
   priceNo: string;
   avgScore: string;
 }
+
 export default function AssessmentCard({
   id,
   title,
@@ -42,57 +42,97 @@ export default function AssessmentCard({
   };
 
   return (
-    <Card
-      shadow="none"
-      className="p-4 bg-kidemia-biege/25 border border-kidemia-grey/30"
-    >
-      <CardBody>
-        <div className="space-y-2">
-          <h3 className="text-kidemia-black font-medium text-base">{title}</h3>
-          <p className="text-sm text-kidemia-grey">{code}</p>
+    <div className="w-full max-w-sm mx-auto">
+      <div
+        className="
+          bg-amber-50/40
+          border border-gray-300/40
+          rounded-xl
+          overflow-hidden
+          shadow-sm
+          hover:shadow-md
+          transition-shadow
+          duration-200
+          flex
+          flex-col
+          h-full
+        "
+      >
+        {/* Header Section */}
+        <div className="p-4 sm:p-5 space-y-1.5">
+          <h3 className="text-gray-900 font-semibold text-base sm:text-lg leading-snug line-clamp-2 min-h-[2.5rem]">
+            {title}
+          </h3>
         </div>
 
-        <div className="flex justify-between items-center flex-wrap gap-2 py-4">
-          <div className="flex items-center space-x-1">
-            <IoTimeOutline className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-            <p className="text-kidemia-grey text-md">{timeMins} mins</p>
-          </div>
+        {/* Stats Grid - Responsive */}
+        <div className="px-4 sm:px-5 pb-4">
+          <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
+            <div className="flex items-center gap-2 text-xs sm:text-sm bg-white/50 rounded-lg px-3 py-2.5 border border-gray-200/50">
+              <IoTimeOutline className="text-orange-500 text-base sm:text-lg flex-shrink-0" />
+              <span className="text-gray-700 font-medium whitespace-nowrap">
+                {timeMins} mins
+              </span>
+            </div>
 
-          <div className="flex items-center space-x-1">
-            <FaRegQuestionCircle className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-            <p className="text-kidemia-grey text-md">{questionsNo} questions</p>
-          </div>
+            <div className="flex items-center gap-2 text-xs sm:text-sm bg-white/50 rounded-lg px-3 py-2.5 border border-gray-200/50">
+              <FaRegQuestionCircle className="text-orange-500 text-base sm:text-lg flex-shrink-0" />
+              <span className="text-gray-700 font-medium whitespace-nowrap">
+                {questionsNo} Qs
+              </span>
+            </div>
 
-          <div className="flex items-center space-x-1">
-            <FaRegCircleCheck className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-            <p className="text-kidemia-grey text-md">{attemptsNo} attempts</p>
-          </div>
+            <div className="flex items-center gap-2 text-xs sm:text-sm bg-white/50 rounded-lg px-3 py-2.5 border border-gray-200/50">
+              <FaRegCircleCheck className="text-orange-500 text-base sm:text-lg flex-shrink-0" />
+              <span className="text-gray-700 font-medium whitespace-nowrap">
+                {attemptsNo} tries
+              </span>
+            </div>
 
-          <div className="flex items-center space-x-1">
-            <MdCreditScore className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-            <p className="text-kidemia-grey text-md">
-              {avgScore} average score
+            <div className="flex items-center gap-2 text-xs sm:text-sm bg-white/50 rounded-lg px-3 py-2.5 border border-gray-200/50">
+              <MdCreditScore className="text-orange-500 text-base sm:text-lg flex-shrink-0" />
+              <span className="text-gray-700 font-medium whitespace-nowrap">
+                {avgScore} avg
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer with Price and Button */}
+        <div className="mt-auto px-4 sm:px-5 pb-4 sm:pb-5">
+          <div className="flex items-center justify-between gap-3 pt-3 border-t border-gray-200/50">
+            <p className="text-gray-600 font-semibold text-sm sm:text-base whitespace-nowrap">
+              {priceNo} Units
             </p>
+
+            <button
+              onClick={handlePracticeClick}
+              className="
+                bg-orange-500
+                hover:bg-orange-600
+                active:bg-orange-700
+                text-white
+                font-semibold
+                text-sm
+                px-4
+                py-2.5
+                rounded-lg
+                transition-colors
+                duration-200
+                flex
+                items-center
+                gap-2
+                shadow-sm
+                hover:shadow
+                whitespace-nowrap
+              "
+            >
+              Start
+              <FaArrowRight className="text-xs" />
+            </button>
           </div>
         </div>
-      </CardBody>
-
-      <CardFooter className="flex justify-between items-center gap-2">
-        <p className="text-kidemia-grey text-md whitespace-nowrap">
-          {priceNo} Units
-        </p>
-
-        <Button
-          className="bg-kidemia-secondary text-kidemia-white font-medium"
-          size="md"
-          radius="sm"
-          type="button"
-          endContent={<FaArrowRight />}
-          onPress={handlePracticeClick}
-        >
-          Practice
-        </Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }

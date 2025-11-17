@@ -1,147 +1,101 @@
-import { BreadcrumbItem, Breadcrumbs, Button } from "@heroui/react";
-import { SidebarRoutes } from "../../routes";
+import { Button } from "@heroui/react";
 import { IoIosInformationCircleOutline } from "react-icons/io";
-import { userAtom } from "../../store/user.atom";
-import { useAtomValue } from "jotai";
 import { assessmentAtom } from "../../store/test.atom";
+import { useAtomValue } from "jotai";
 import { useNavigate, useParams } from "react-router";
 
 export default function AssessmentInstruction() {
-  const user = useAtomValue(userAtom);
   const assessment = useAtomValue(assessmentAtom);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
   return (
-    <>
-      <section className="py-4 space-y-12 md:px-12">
-        <div className="absolute top-4 left-0 px-4">
-          <div>
-            <Breadcrumbs variant="light" color="foreground">
-              <BreadcrumbItem href={SidebarRoutes.dashboard}>
-                Dashboard
-              </BreadcrumbItem>
-              <BreadcrumbItem href={SidebarRoutes.takeAssessment}>
-                Assessments
-              </BreadcrumbItem>
+    <section className="max-w-3xl mx-auto px-6 py-10 space-y-10">
+      {/* Page Title */}
+      <div className="space-y-2">
+        <h3 className="text-3xl font-bold text-kidemia-black">
+          Assessment Instructions
+        </h3>
+        <p className="text-kidemia-grey text-base">
+          Please review these details carefully before starting your assessment.
+        </p>
+      </div>
 
-              <BreadcrumbItem color="warning">
-                Assessments Intructions
-              </BreadcrumbItem>
-            </Breadcrumbs>
+      {/* Welcome + Assessment Summary */}
+      <div className="rounded-xl border border-kidemia-grey/20 bg-white p-6 space-y-4 shadow-sm">
+        <div className="space-y-3 text-sm sm:text-base">
+          <div className="flex justify-between">
+            <span className="font-semibold text-kidemia-black">
+              {assessment?.title}
+            </span>
+          </div>
+
+          <div className="flex justify-between">
+            <span className="font-medium text-kidemia-grey">Duration:</span>
+            <span className="font-semibold text-kidemia-black">
+              {assessment?.timeMins} minutes
+            </span>
+          </div>
+
+          <div className="flex justify-between">
+            <span className="font-medium text-kidemia-grey">
+              Total Questions:
+            </span>
+            <span className="font-semibold text-kidemia-black">
+              {assessment?.questionsNo} questions
+            </span>
+          </div>
+
+          <div className="flex justify-between">
+            <span className="font-medium text-kidemia-grey">Total Marks:</span>
+            <span className="font-semibold text-kidemia-primary">
+              {assessment?.avgScore} marks
+            </span>
           </div>
         </div>
+      </div>
 
-        <div className="space-y-12">
-          <div className="space-y-3">
-            <h2 className="text-2xl md:text-3xl text-kidemia-black font-semibold">
-              Assessments Intructions
-            </h2>
-          </div>
+      {/* Important Notes */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold text-kidemia-black">
+          What You Should Know...
+        </h3>
 
-          <div className="space-y-2">
-            <div className="flex space-x-6 items-center">
-              <h4 className="text-lg text-kidemia-black font-medium">
-                Welcome
-              </h4>
-              <p className="text-lg text-kidemia-primary font-semibold capitalize">
-                {user?.first_name} {user?.last_name}
-              </p>
+        <div className="space-y-3">
+          {[
+            "You are required to attempt all questions.",
+            "You cannot exit the assessment once you begin.",
+            "Closing the window or browser will be treated as submission.",
+          ].map((rule, i) => (
+            <div key={i} className="flex items-start gap-2">
+              <IoIosInformationCircleOutline className="text-red-500 text-xl mt-0.5 shrink-0" />
+              <p className="text-red-500 text-base">{rule}</p>
             </div>
-
-            <div className="flex space-x-6 items-center">
-              <h4 className="text-lg text-kidemia-black font-medium">
-                Assessment Title:
-              </h4>
-              <p className="text-lg text-kidemia-black font-semibold">
-                {assessment?.title}
-              </p>
-            </div>
-
-            <div className="flex space-x-6 items-center">
-              <h4 className="text-lg text-kidemia-black font-medium">
-                Assessment Code:
-              </h4>
-              <p className="text-lg text-kidemia-black font-medium">
-                {assessment?.code}
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center space-x-2">
-              <IoIosInformationCircleOutline className="text-red-400 text-xl pointer-events-none shrink-0" />
-              <p className="text-red-400 text-base">Attempt all questions.</p>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <IoIosInformationCircleOutline className="text-red-400 text-xl pointer-events-none shrink-0" />
-              <p className="text-red-400 text-base">
-                You cant leave once you start.
-              </p>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <IoIosInformationCircleOutline className="text-red-400 text-xl pointer-events-none shrink-0" />
-              <p className="text-red-400 text-base">
-                If you close this window, we assumme you're done with your
-                assessment
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex space-x-6 items-center">
-              <h4 className="text-lg text-kidemia-black font-medium">
-                Total Mark:
-              </h4>
-              <p className="text-lg text-kidemia-primary font-semibold">
-                {assessment?.avgScore} Marks
-              </p>
-            </div>
-
-            <div className="flex space-x-6 items-center">
-              <h4 className="text-lg text-kidemia-black font-medium">
-                Duration:
-              </h4>
-              <p className="text-lg text-kidemia-black font-semibold">
-                {assessment?.timeMins} Mins
-              </p>
-            </div>
-
-            <div className="flex space-x-6 items-center">
-              <h4 className="text-lg text-kidemia-black font-medium">
-                Questions:
-              </h4>
-              <p className="text-lg text-kidemia-black font-semibold">
-                {assessment?.questionsNo} Questions
-              </p>
-            </div>
-          </div>
-
-          <div className="flex justify-between items-center gap-6">
-            <Button
-              className="bg-kidemia-biege border border-enita-black2 font-medium text-kidemia-primary w-full"
-              variant="faded"
-              size="md"
-              radius="sm"
-              type="button"
-              onPress={() => navigate(SidebarRoutes.takeAssessment)}
-            >
-              Go Back
-            </Button>
-            <Button
-              className="bg-kidemia-secondary text-kidemia-white font-medium w-full"
-              size="md"
-              radius="sm"
-              type="button"
-              onPress={() => navigate(`/assessment/${id}/attempt-instructions`)}
-            >
-              Start Assessment
-            </Button>
-          </div>
+          ))}
         </div>
-      </section>
-    </>
+      </div>
+
+      {/* Buttons */}
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-4 pt-4">
+        <Button
+          variant="faded"
+          radius="sm"
+          size="md"
+          className="w-full border border-kidemia-grey/30 text-kidemia-primary"
+          onPress={() => navigate(-1)}
+        >
+          Go Back
+        </Button>
+
+        <Button
+          radius="sm"
+          size="md"
+          className="w-full bg-kidemia-secondary text-white font-semibold"
+          onPress={() => navigate(`/assessment/${id}/attempt-instructions`)}
+        >
+          Start Assessment
+        </Button>
+      </div>
+    </section>
   );
 }

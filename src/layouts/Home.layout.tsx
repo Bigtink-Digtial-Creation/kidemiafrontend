@@ -6,7 +6,7 @@ export default function HomeLayout() {
   return (
     <>
       <NavBar />
-      <main className="py-4">
+      <main className="">
         <Outlet />
       </main>
       <Footer />

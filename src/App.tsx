@@ -5,6 +5,7 @@ import {
   HomeRoutes,
   SidebarRoutes,
   TestRoutes,
+  PaymentRoutes,
 } from "./routes";
 
 //layouts
@@ -14,9 +15,9 @@ import DashboardLayout from "./layouts/Dashboard.layout";
 import TestLayout from "./layouts/Test.layout";
 
 // home pages
-import HomePage from "./pages/HomePage";
-import ContactUs from "./pages/HomePage/ContactUs";
-import AboutUs from "./pages/HomePage/AboutUs";
+import Home from "./pages/Home";
+import ContactUs from "./pages/Home/ContactUs";
+import AboutUs from "./pages/Home/AboutUs";
 
 // auth pages
 import LoginPage from "./pages/Auth/Login";
@@ -24,6 +25,9 @@ import ForgotPasswordPage from "./pages/Auth/ForgotPassword";
 import ChangePasswordPage from "./pages/Auth/ChangePassword";
 import SignUpPage from "./pages/Auth/Signup";
 import GuardianSignup from "./pages/Auth/Guardian";
+
+// Payment pages
+import SubscriptionPage from "./pages/payment/Checkout";
 
 // dashboard pages
 import DashboardPage from "./pages/Dashboard";
@@ -46,6 +50,8 @@ import AssessmentResult from "./pages/Assessment/AssessmentResult";
 import TestDetails from "./pages/TakeTest/TestDetails";
 import TestAttempt from "./pages/TakeTest/TestAttempt";
 
+import LeaderboardPage from "./pages/LeaderBoard";
+
 import ErrorPage from "./pages/ErrorPage";
 
 export const router = createBrowserRouter([
@@ -53,111 +59,49 @@ export const router = createBrowserRouter([
     element: <HomeLayout />,
     errorElement: <ErrorPage />,
     children: [
-      { path: HomeRoutes.home, element: <HomePage /> },
-      {
-        path: HomeRoutes.contact,
-        element: <ContactUs />,
-      },
-      {
-        path: HomeRoutes.about,
-        element: <AboutUs />,
-      },
+      { path: HomeRoutes.home, element: <Home /> },
+      { path: HomeRoutes.contact, element: <ContactUs /> },
+      { path: HomeRoutes.about, element: <AboutUs /> },
     ],
   },
   {
     element: <AuthLayout />,
     children: [
-      {
-        path: AuthRoutes.login,
-        element: <LoginPage />,
-      },
-      {
-        path: AuthRoutes.forgotPassword,
-        element: <ForgotPasswordPage />,
-      },
-      {
-        path: AuthRoutes.changePassword,
-        element: <ChangePasswordPage />,
-      },
-      {
-        path: AuthRoutes.signup,
-        element: <SignUpPage />,
-      },
-      {
-        path: AuthRoutes.guardian,
-        element: <GuardianSignup />,
-      },
+      { path: AuthRoutes.login, element: <LoginPage /> },
+      { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> },
+      { path: AuthRoutes.changePassword, element: <ChangePasswordPage /> },
+      { path: AuthRoutes.signup, element: <SignUpPage /> },
+      { path: AuthRoutes.guardian, element: <GuardianSignup /> },
     ],
   },
   {
     path: SidebarRoutes.dashboard,
     element: <DashboardLayout />,
     children: [
-      {
-        path: SidebarRoutes.dashboard,
-        element: <DashboardPage />,
-      },
-      {
-        path: SidebarRoutes.performance,
-        element: <PerformancePage />,
-      },
-      {
-        path: SidebarRoutes.history,
-        element: <HistoryPage />,
-      },
-      {
-        path: SidebarRoutes.profile,
-        element: <ProfilePage />,
-      },
-      {
-        path: SidebarRoutes.settings,
-        element: <SettingsPage />,
-      },
-      {
-        path: SidebarRoutes.takeAssessment,
-        element: <AssessmentPage />,
-      },
+      { path: SidebarRoutes.dashboard, element: <DashboardPage /> },
+      { path: SidebarRoutes.performance, element: <PerformancePage /> },
+      { path: SidebarRoutes.history, element: <HistoryPage /> },
+      { path: SidebarRoutes.leaderboard, element: <LeaderboardPage /> },
+      { path: SidebarRoutes.profile, element: <ProfilePage /> },
+      { path: SidebarRoutes.settings, element: <SettingsPage /> },
+      { path: SidebarRoutes.takeAssessment, element: <AssessmentPage /> },
     ],
+  },
+  {
+
   },
   {
     element: <TestLayout />,
     children: [
-      {
-        path: TestRoutes.takeTest,
-        element: <TakeTestPage />,
-      },
-      {
-        path: TestRoutes.testSubjects,
-        element: <TestSubjectsPage />,
-      },
-      {
-        path: TestRoutes.subjectTopics,
-        element: <TestTopicsPage />,
-      },
-      {
-        path: TestRoutes.testIntructions,
-        element: <TestInstrusctionsPage />,
-      },
-      {
-        path: TestRoutes.testDetails,
-        element: <TestDetails />,
-      },
-      {
-        path: TestRoutes.testAttempt,
-        element: <TestAttempt />,
-      },
-      {
-        path: TestRoutes.questions,
-        element: <QuestionsPage />,
-      },
-      {
-        path: TestRoutes.results,
-        element: <ResultPage />,
-      },
-      {
-        path: TestRoutes.review,
-        element: <ReviewSubmission />,
-      },
+      { path: TestRoutes.takeTest, element: <TakeTestPage /> },
+      { path: TestRoutes.testSubjects, element: <TestSubjectsPage /> },
+      { path: TestRoutes.subjectTopics, element: <TestTopicsPage /> },
+      { path: TestRoutes.testIntructions, element: <TestInstrusctionsPage /> },
+      { path: TestRoutes.testDetails, element: <TestDetails /> },
+      { path: TestRoutes.testAttempt, element: <TestAttempt /> },
+      { path: TestRoutes.questions, element: <QuestionsPage /> },
+      { path: TestRoutes.results, element: <ResultPage /> },
+      { path: TestRoutes.review, element: <ReviewSubmission /> },
       {
         path: AssessmentRoutes.assesmentIntructions,
         element: <AssessmentInstruction />,
@@ -175,5 +119,10 @@ export const router = createBrowserRouter([
         element: <AssessmentResult />,
       },
     ],
+  },
+
+  {
+    path: PaymentRoutes.checkout,
+    element: <SubscriptionPage />,
   },
 ]);
