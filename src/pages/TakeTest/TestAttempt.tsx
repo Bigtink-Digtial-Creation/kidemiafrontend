@@ -76,7 +76,7 @@ export default function TestAttempt() {
             </BreadcrumbItem>
 
             <BreadcrumbItem href={`/take-a-test/${subjectId}/instructions`}>
-              Test Intructions
+              Test Instructions
             </BreadcrumbItem>
             <BreadcrumbItem href={`/take-a-test/${subjectId}/details`}>
               Test Details

@@ -18,7 +18,7 @@ export default function SubscribeBar() {
               placeholder="Enter email address"
               type="email"
             />
-            <button className="px-6 py-3 bg-[#0a1f35] text-white rounded-lg font-semibold text-sm hover:bg-[#0d2842] transition whitespace-nowrap">
+            <button className="px-4 py-3 bg-[#0a1f35] text-white rounded-lg font-semibold text-sm hover:bg-[#0d2842] transition whitespace-nowrap">
               Subscribe
             </button>
           </div>

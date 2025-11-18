@@ -35,7 +35,7 @@ export default function TestInstrusctionsPage() {
               Pick Subject Topics
             </BreadcrumbItem>
 
-            <BreadcrumbItem color="warning">Test Intructions</BreadcrumbItem>
+            <BreadcrumbItem color="warning">Test Instructions</BreadcrumbItem>
           </Breadcrumbs>
         </div>
       </div>

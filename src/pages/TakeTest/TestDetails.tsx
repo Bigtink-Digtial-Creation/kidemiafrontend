@@ -69,7 +69,7 @@ export default function TestDetails() {
             </BreadcrumbItem>
 
             <BreadcrumbItem href={`/take-a-test/${subjectId}/instructions`}>
-              Test Intructions
+              Test Instructions
             </BreadcrumbItem>
             <BreadcrumbItem color="warning">Test Details</BreadcrumbItem>
           </Breadcrumbs>

@@ -10,13 +10,12 @@ export default function AssessmentInstruction() {
   const { id } = useParams<{ id: string }>();
 
   return (
-    <section className="max-w-3xl mx-auto px-6 py-10 space-y-10">
-      {/* Page Title */}
+    <section className="max-w-3xl mx-auto px-6 py-8 space-y-8">
       <div className="space-y-2">
-        <h3 className="text-3xl font-bold text-kidemia-black">
+        <h3 className="text-lg text-center font-bold text-kidemia-black">
           Assessment Instructions
         </h3>
-        <p className="text-kidemia-grey text-base">
+        <p className="text-kidemia-grey text-base text-center">
           Please review these details carefully before starting your assessment.
         </p>
       </div>

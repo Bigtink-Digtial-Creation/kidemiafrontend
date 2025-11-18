@@ -96,14 +96,14 @@ export const router = createBrowserRouter([
       { path: TestRoutes.takeTest, element: <TakeTestPage /> },
       { path: TestRoutes.testSubjects, element: <TestSubjectsPage /> },
       { path: TestRoutes.subjectTopics, element: <TestTopicsPage /> },
-      { path: TestRoutes.testIntructions, element: <TestInstrusctionsPage /> },
+      { path: TestRoutes.testInstructions, element: <TestInstrusctionsPage /> },
       { path: TestRoutes.testDetails, element: <TestDetails /> },
       { path: TestRoutes.testAttempt, element: <TestAttempt /> },
       { path: TestRoutes.questions, element: <QuestionsPage /> },
       { path: TestRoutes.results, element: <ResultPage /> },
       { path: TestRoutes.review, element: <ReviewSubmission /> },
       {
-        path: AssessmentRoutes.assesmentIntructions,
+        path: AssessmentRoutes.assessmentInstructions,
         element: <AssessmentInstruction />,
       },
       {
@@ -114,11 +114,13 @@ export const router = createBrowserRouter([
         path: AssessmentRoutes.assessmentQuestion,
         element: <AssessmentQuestions />,
       },
-      {
-        path: AssessmentRoutes.assessmentResult,
-        element: <AssessmentResult />,
-      },
+
     ],
+
+  },
+  {
+    path: AssessmentRoutes.assessmentResult,
+    element: <AssessmentResult />,
   },
 
   {
