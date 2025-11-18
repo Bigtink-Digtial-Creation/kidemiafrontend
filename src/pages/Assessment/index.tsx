@@ -1,9 +1,25 @@
-import { Button, Chip, Pagination, Spinner } from "@heroui/react";
+import { Button, Chip, Pagination } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import AssessmentCard from "../../components/Cards/AssessmentCard";
 import { useMemo, useState } from "react";
+import SpinnerCircle from "../../components/Spinner/Circle";
+
+export enum AssessmentType {
+  TEST = "test",
+  EXAM = "exam",
+}
+
+export enum AssessmentStatus {
+  DRAFT = "draft",
+  REVIEW = "review",
+  PUBLISHED = "published",
+  SCHEDULED = "scheduled",
+  ARCHIVED = "archived",
+  SUSPENDED = "suspended",
+}
+
 
 export default function AssessmentPage() {
   const [page, setPage] = useState<number>(1);
@@ -12,7 +28,10 @@ export default function AssessmentPage() {
   const { data: assessmentData, isLoading } = useQuery({
     queryKey: [QueryKeys.allAssessment],
     queryFn: () =>
-      ApiSDK.AssessmentsService.getAssessmentsApiV1AssessmentsGet("exam"),
+      ApiSDK.AssessmentsService.getAssessmentsApiV1AssessmentsGet(AssessmentType.EXAM,
+        undefined,   // category
+        undefined,   // subjectId
+        AssessmentStatus.PUBLISHED),
   });
 
   const assessment = useMemo(
@@ -31,7 +50,7 @@ export default function AssessmentPage() {
   if (isLoading || !assessmentData) {
     return (
       <div className="h-screen flex justify-center items-center">
-        <Spinner size="lg" color="warning" />
+        <SpinnerCircle />
       </div>
     );
   }

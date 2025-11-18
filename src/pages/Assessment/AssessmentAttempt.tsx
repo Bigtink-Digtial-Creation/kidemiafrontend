@@ -1,8 +1,11 @@
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { addToast } from "@heroui/react";
 import { useParams, useNavigate } from "react-router";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
-import { Spinner, Button, Card, CardBody, CardFooter } from "@heroui/react";
+import { Button, Card, CardBody, CardFooter } from "@heroui/react";
+import SpinnerCircle from "../../components/Spinner/Circle";
 import {
   BiCalendar,
   BiPlayCircle,
@@ -10,28 +13,67 @@ import {
   BiShield,
 } from "react-icons/bi";
 import { BsClock } from "react-icons/bs";
-
+import { SidebarRoutes } from "../../routes";
 export default function AssessmentInstructions() {
-  const { id } = useParams<{ id: string }>();
+  const { assessmentId } = useParams<{ assessmentId: string }>();
   const navigate = useNavigate();
 
-  const { data, isLoading } = useQuery({
-    queryKey: [QueryKeys.assesstmentAttempt, id],
+  const { data: assessmentAttemptData, isLoading, error } = useQuery({
+    queryKey: [QueryKeys.assesstmentAttempt, assessmentId],
     queryFn: () =>
       ApiSDK.AttemptsService.startAttemptApiV1AttemptsAssessmentIdStartPost(
-        id!,
-        {},
+        assessmentId!,
+        {}
       ),
-    enabled: !!id,
+    enabled: !!assessmentId,
+    retry: false,
   });
 
-  if (isLoading || !data) {
+  useEffect(() => {
+    if (error) {
+      const message =
+        (error as any)?.body?.message ||
+        (error as any)?.response?.data?.message ||
+        "Something went wrong";
+
+      addToast({ title: message, color: "warning" });
+      const timer = setTimeout(() => {
+        navigate(SidebarRoutes.takeAssessment);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [error, navigate, addToast]);
+
+  if (isLoading || !assessmentAttemptData) {
     return (
-      <div className="h-screen flex justify-center items-center">
-        <Spinner size="lg" color="warning" />
+      <div className="h-screen w-full flex justify-center items-center bg-gray-50 px-4">
+        <div className="flex flex-col items-center gap-6 p-8 sm:p-12 bg-white rounded-2xl shadow-xl max-w-md sm:max-w-lg md:max-w-2xl animate-fade-in">
+          {/* Spinner */}
+          <SpinnerCircle />
+
+          {/* Heading */}
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-700 text-center">
+            Preparing Your Assessment...
+          </h2>
+
+          {/* Subtext */}
+          <p className="text-sm sm:text-base md:text-lg text-gray-500 text-center max-w-md">
+            Please wait while we load your assessment instructions. This should
+            only take a few seconds.
+          </p>
+
+          {/* Animated dots */}
+          <div className="flex space-x-2 mt-2">
+            <span className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce delay-75"></span>
+            <span className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce delay-150"></span>
+            <span className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce delay-300"></span>
+          </div>
+        </div>
       </div>
     );
   }
+
 
   const {
     attempt_id,
@@ -41,7 +83,7 @@ export default function AssessmentInstructions() {
     total_questions,
     instructions,
     proctoring_required,
-  } = data;
+  } = assessmentAttemptData;
 
   return (
     <section className="max-w-4xl mx-auto mt-10 px-4 sm:px-6 lg:px-8">

@@ -11,7 +11,6 @@ import {
   Pagination,
   Radio,
   RadioGroup,
-  Spinner,
 } from "@heroui/react";
 import {
   attemptResultAtom,
@@ -21,6 +20,7 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import type { SaveAnswerRequest } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
 import { formatTime } from "../../utils";
+import SpinnerCircle from "../../components/Spinner/Circle";
 
 type OptionT = string;
 
@@ -200,7 +200,7 @@ export default function AssessmentQuestions() {
   if (isLoading || !currentQuestion) {
     return (
       <div className="h-screen flex flex-col justify-center items-center">
-        <Spinner size="sm" color="warning" />
+        <SpinnerCircle />
         <p className="pt-2 text-base italic text-kidemia-black text-center">
           Loading Questions...
         </p>
@@ -211,7 +211,7 @@ export default function AssessmentQuestions() {
   if (isSubmitting || submitAttemptMutation.isPending || isTimeUp) {
     return (
       <div className="h-screen flex flex-col justify-center items-center text-center space-y-4 px-4">
-        <Spinner size="lg" color="warning" />
+        <SpinnerCircle />
         <h2 className="text-2xl md:text-3xl font-semibold text-kidemia-black">
           {isTimeUp
             ? "⏰ Time's up! Submitting your test..."

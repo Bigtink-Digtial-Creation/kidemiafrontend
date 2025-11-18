@@ -28,7 +28,7 @@ export const TestRoutes = {
   takeTest: "/take-a-test",
   testSubjects: "/take-a-test/subjects",
   subjectTopics: "/take-a-test/subjects/:id",
-  testIntructions: "/take-a-test/:id/instructions",
+  testInstructions: "/take-a-test/:id/instructions",
   testDetails: "/take-a-test/:id/details",
   testAttempt: "/take-a-test/start/:assessmentId",
   questions: "/take-a-test/:assessment_id/:attempt_id/questions",
@@ -37,8 +37,8 @@ export const TestRoutes = {
 };
 
 export const AssessmentRoutes = {
-  assesmentIntructions: "/assessment/intructions/:id",
-  assesmentAttempt: "/assessment/:id/attempt-instructions",
+  assessmentInstructions: "/assessment/instructions/:id",
+  assesmentAttempt: "/assessment/:assessmentId/attempt-instructions",
   assessmentQuestion: "/assessment/:assessment_id/:attempt_id/questions",
   assessmentResult: "/assessment/result/:assessment_id",
 };

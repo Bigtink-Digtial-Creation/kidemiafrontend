@@ -38,7 +38,7 @@ export default function AssessmentCard({
       timeMins,
       questionsNo,
     });
-    navigate(`/assessment/intructions/${id}`);
+    navigate(`/assessment/instructions/${id}`);
   };
 
   return (

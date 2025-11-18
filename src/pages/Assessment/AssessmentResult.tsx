@@ -1,207 +1,129 @@
+import { useNavigate } from "react-router";
+import { Button, Card, CardBody, Image } from "@heroui/react";
+import { Home, LayoutDashboard } from "lucide-react";
+import AppLogo from "../../assets/images/logo/appDarkLogo.png";
 import { attemptResultAtom } from "../../store/test.atom";
 import { useAtomValue } from "jotai";
-import { Button, Card, CardBody, CardFooter, Chip } from "@heroui/react";
-import { FiFileText } from "react-icons/fi";
-import { useNavigate } from "react-router";
-import { SidebarRoutes } from "../../routes";
-import { useResetAtom } from "jotai/utils";
+// import { useResetAtom } from "jotai/utils";
+
+const gradeRemarkMap: Record<string, string> = {
+  A: "Excellent work!",
+  B: "Good job!",
+  C: "Fair performance, needs improvement",
+  D: "Below average, study more",
+  F: "Poor performance, try again",
+};
+
 
 export default function AssessmentResult() {
-  const result = useAtomValue(attemptResultAtom);
-  const resetAttempt = useResetAtom(attemptResultAtom);
   const navigate = useNavigate();
+  const result = useAtomValue(attemptResultAtom);
+  // const resetAttempt = useResetAtom(attemptResultAtom);
 
   if (!result) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen text-center p-4">
-        <p className="text-lg text-kidemia-grey font-medium">
-          No attempt data found. Please complete an assessment first.
-        </p>
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-[#E8DCC4]">
+        <Card className="w-full max-w-md text-center shadow-xl border-0">
+          <CardBody className="p-8 space-y-4">
+            <p className="text-lg font-medium text-[#2C3E50]">
+              No assessment data found
+            </p>
+            <p className="text-sm text-[#5A6C7D]">
+              Please complete an assessment first to view results
+            </p>
+            <Button
+              className="mt-6 bg-[#D2691E] text-white hover:bg-[#C85A3C]"
+              onClick={() => navigate("/")}
+            >
+              Go to Dashboard
+            </Button>
+          </CardBody>
+        </Card>
       </div>
     );
   }
 
   return (
-    <section className="max-w-5xl w-full mx-auto mt-8 px-4 sm:px-6 lg:px-8">
-      <div className="flex flex-col justify-center items-center space-y-2 py-4">
-        <h3 className="text-3xl text-kidemia-primary font-semibold">
-          Congratulations
-        </h3>
-        <p className="text-kidemia-grey text-base">
-          Below is your asseesment result
-        </p>
-      </div>
-      <div>
-        <Card
-          shadow="none"
-          className="border border-kidemia-grey/20 bg-kidemia-white"
-        >
-          <CardBody className="space-y-6 py-6 px-8">
-            <div className="flex items-center justify-between flex-wrap">
-              <h2 className="text-2xl sm:text-3xl font-bold text-kidemia-black text-center">
-                Assessment Result
-              </h2>
-              <div className="flex items-center gap-2 text-kidemia-grey/70 ">
-                <p>Status</p>
-                <Chip
-                  variant="flat"
-                  size="sm"
-                  color="success"
-                  className="text-xs font-bold capitalize"
-                >
-                  {result.status}
-                </Chip>
-              </div>
-            </div>
+    <div className="min-h-screen bg-[#E8DCC4]">
+      <div className="bg-[#C85A3C] h-6 sm:h-8"></div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
-              <div className="flex items-center gap-3">
-                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
-                <div className="space-y-1">
-                  <p className="font-medium text-kidemia-black">Attempt</p>
-                  <p>#{result.attempt_number}</p>
-                  <p>1</p>
-                </div>
-              </div>
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-12">
+        <div className="max-w-5xl mx-auto flex flex-col items-center">
 
-              <div className="flex items-center gap-3">
-                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
-                <div className="space-y-1">
-                  <p className="font-medium text-kidemia-black">Grade</p>
-                  <p className="capitalize">{result.grade}</p>
-                </div>
-              </div>
+          <Image src={AppLogo} alt="Logo" width={100} className="mb-8 sm:mb-12" />
 
-              <div className="flex items-center gap-3">
-                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
-                <div className="space-y-1">
-                  <p className="font-medium text-kidemia-black">Score</p>
-                  <p>{result.score}</p>
-                </div>
-              </div>
+          <div className="flex flex-col items-center mb-8 sm:mb-12">
+            <div className="relative w-36 h-36 sm:w-44 sm:h-44 lg:w-52 lg:h-52 mb-4 sm:mb-6">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 sm:-translate-y-2 w-2 sm:w-3 h-4 sm:h-6 bg-[#C85A3C] rounded-full"></div>
 
-              <div className="flex items-center gap-3">
-                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
-                <div className="space-y-1">
-                  <p className="font-medium text-kidemia-black">Percentage</p>
-                  <p>{`${result.percentage}%`}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
-                <div className="space-y-1">
-                  <p className="font-medium text-kidemia-black">
-                    Correct Answers
-                  </p>
-                  <p>{result.correct_answers}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
-                <div className="space-y-1">
-                  <p className="font-medium text-kidemia-black">
-                    Incorrect Answers
-                  </p>
-                  <p>{result.incorrect_answers}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
-                <div className="space-y-1">
-                  <p className="font-medium text-kidemia-black">
-                    Partially Correct
-                  </p>
-                  <p>{result.partially_correct}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
-                <div className="space-y-1">
-                  <p className="font-medium text-kidemia-black">
-                    Total Questions
-                  </p>
-                  <p>{result.total_questions}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
-                <div className="space-y-1">
-                  <p className="font-medium text-kidemia-black">
-                    Points Earned
-                  </p>
-                  <p>{result.points_earned}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
-                <div className="space-y-1">
-                  <p className="font-medium text-kidemia-black">
-                    Points Possible
-                  </p>
-                  <p>{result.points_possible}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
-                <div className="space-y-1">
-                  <p className="font-medium text-kidemia-black">
-                    Time Spent (s)
-                  </p>
-                  <p>{result.time_spent_seconds}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <FiFileText className="w-4 h-4 text-kidemia-secondary" />
-                <div className="space-y-1">
-                  <p className="font-medium text-kidemia-black">
-                    Certificate Issued
-                  </p>
-                  <p>{result.certificate_issued ? "Yes" : "No"}</p>
-                </div>
-              </div>
-            </div>
-          </CardBody>
-
-          <CardFooter className="bg-kidemia-biege/10 border-t border-kidemia-grey/10 px-6 py-6">
-            <div className="w-full flex justify-between items-center">
-              <div>
-                {result.certificate_url && (
-                  <div className="text-center pt-4">
-                    <a
-                      href={result.certificate_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block bg-yellow-500 text-white font-medium px-4 py-2 rounded-md hover:bg-yellow-600 transition"
-                    >
-                      View Certificate
-                    </a>
-                  </div>
-                )}
-              </div>
-
-              <Button
-                className="bg-kidemia-secondary text-white font-semibold shadow-md hover:shadow-lg"
-                size="md"
-                radius="md"
-                onPress={() => {
-                  navigate(SidebarRoutes.dashboard);
-                  setTimeout(() => resetAttempt(), 100);
+              <div
+                className="w-40 h-40 rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.3)] flex items-center justify-center"
+                style={{
+                  background:
+                    "radial-gradient(circle at 30% 30%, #D2691E, #C85A3C 40%, #A0472D 70%, #8B3A26)",
                 }}
               >
-                Dashboard
+                <span className="text-white text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
+                  {result.percentage}
+                </span>
+              </div>
+            </div>
+
+            <h2 className="text-xl mt-1 sm:text-2xl lg:text-3xl font-bold text-[#2C3E50] text-center px-4">
+              You scored {result.score}/{result.total_questions} Overall
+            </h2>
+          </div>
+
+          {/* Remark & Comment */}
+          <div className="max-w-2xl w-full mb-8 sm:mb-12 px-4 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
+              <span className="text-[#2C3E50] font-bold text-base sm:text-lg min-w-[100px] sm:min-w-[120px]">
+                Remark:
+              </span>
+              <span className="text-[#5A6C7D] text-base sm:text-lg">{gradeRemarkMap[result.grade]}</span>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
+              <span className="text-[#2C3E50] font-bold text-base sm:text-lg min-w-[100px] sm:min-w-[120px]">
+                Grade:
+              </span>
+              <span className="text-[#5A6C7D] text-base sm:text-lg">{result.grade}</span>
+            </div>
+          </div>
+
+
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 px-4">
+            <Button
+              size="lg"
+              className="w-full sm:w-auto bg-[#D2691E] hover:bg-[#C85A3C] text-white font-semibold px-8 sm:px-12 py-5 sm:py-6 text-base sm:text-lg rounded-xl sm:rounded-2xl shadow-lg transition-colors"
+              onClick={() => navigate("/corrections")}
+            >
+              View Corrections
+            </Button>
+
+            <div className="flex gap-4 sm:gap-6">
+              <Button
+                size="lg"
+                variant="light"
+                className="text-[#2C3E50] hover:text-[#1a252f] font-semibold px-4 sm:px-6 py-5 sm:py-6 text-base sm:text-lg flex items-center gap-2 transition-colors"
+                onClick={() => navigate("/")}
+              >
+                <Home className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">Home</span>
+              </Button>
+
+              <Button
+                size="lg"
+                variant="light"
+                className="text-[#2C3E50] hover:text-[#1a252f] font-semibold px-4 sm:px-6 py-5 sm:py-6 text-base sm:text-lg flex items-center gap-2 transition-colors"
+                onClick={() => navigate("/dashboard")}
+              >
+                <LayoutDashboard className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">Dashboard</span>
               </Button>
             </div>
-          </CardFooter>
-        </Card>
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }
