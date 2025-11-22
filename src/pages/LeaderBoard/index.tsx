@@ -36,10 +36,7 @@ interface Category {
   display_name: string;
 }
 
-interface TimeFrame {
-  key: string;
-  label: string;
-}
+
 
 const generateMockData = (): Student[] => {
   const students = [
@@ -116,38 +113,7 @@ const CategoryFilter = ({ active, setActive }: CategoryFilterProps) => {
   );
 };
 
-interface TimeFrameToggleProps {
-  timeFrame: string;
-  setTimeFrame: (frame: string) => void;
-}
-const TimeFrameToggle = ({ timeFrame, setTimeFrame }: TimeFrameToggleProps) => {
-  const frames: TimeFrame[] = [
-    { key: "week", label: "This Week" },
-    { key: "month", label: "This Month" },
-    { key: "allTime", label: "All Time" },
-  ];
 
-  // const selectedFrame = frames.find((f) => f.key === timeFrame);
-
-  return (
-    <>
-      <div className="flex gap-1.5 bg-white/60 backdrop-blur-xl rounded-full p-1 border border-gray-200/50">
-        {frames.map((tf) => (
-          <button
-            key={tf.key}
-            onClick={() => setTimeFrame(tf.key)}
-            className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${timeFrame === tf.key
-              ? "bg-gray-900 text-white shadow-sm"
-              : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
-              }`}
-          >
-            {tf.label}
-          </button>
-        ))}
-      </div>
-    </>
-  );
-};
 
 
 interface TopThreePanelProps {
@@ -294,7 +260,7 @@ export default function StudentLeaderboard() {
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Leaderboard</h1>
             <p className="text-gray-500 text-xs md:text-sm">Compete with learners across Nigeria</p>
           </div>
-          <TimeFrameToggle timeFrame={timeFrame} setTimeFrame={setTimeFrame} />
+          {/* <TimeFrameToggle timeFrame={timeFrame} setTimeFrame={setTimeFrame} /> */}
         </div>
 
         <CategoryFilter active={activeCategory} setActive={setActiveCategory} />
