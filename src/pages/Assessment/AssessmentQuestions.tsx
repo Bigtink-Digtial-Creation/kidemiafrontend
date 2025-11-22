@@ -85,11 +85,11 @@ export default function AssessmentQuestions() {
       );
     },
     onSuccess: (data) => {
-      console.log("❌ Answer saved:", data);
+      console.log("Answer saved:", data);
     },
     onError: () => {
       console.error(
-        "❌ Failed to submit answer. Check your network connection",
+        "Failed to submit answer. Check your network connection",
       );
     },
   });
