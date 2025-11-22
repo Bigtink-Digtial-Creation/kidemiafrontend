@@ -246,7 +246,7 @@ const RankList = ({ students, currentStudentIndex }: RankListProps) => (
 
 export default function StudentLeaderboard() {
   const [activeCategory, setActiveCategory] = useState<string>("all");
-  const [timeFrame, setTimeFrame] = useState<string>("month");
+  // const [timeFrame, setTimeFrame] = useState<string>("month");
 
   const data = generateMockData();
   const topThree = data.slice(0, 3);
