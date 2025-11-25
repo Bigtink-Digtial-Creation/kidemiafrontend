@@ -9,6 +9,7 @@ export const HomeRoutes = {
 export const AuthRoutes = {
   login: "/auth/login",
   signup: "/auth/signup",
+  unauthorized: "/auth/unauthorized",
   guardian: "/auth/signup/guardian",
   forgotPassword: "/auth/forgot-password",
   changePassword: "/auth/change-password",
@@ -22,6 +23,8 @@ export const SidebarRoutes = {
   leaderboard: "/dashboard/leaderboard",
   profile: "/dashboard/profile",
   takeAssessment: "/dashboard/assessment",
+  community: "/dashboard/community",
+
 };
 
 export const TestRoutes = {

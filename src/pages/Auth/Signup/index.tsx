@@ -37,12 +37,6 @@ export default function SignUpPage() {
   return (
     <section className="py-4 w-full md:w-2xl space-y-6">
       <div className="space-y-3">
-        <div className="flex justify-center items-center space-x-5">
-          <h2 className="text-3xl text-kidemia-black font-semibold text-center">
-            Welcome to
-          </h2>
-          <Image src={Logo} alt="logo" />
-        </div>
         <p className="text-lg text-kidemia-black2 text-center font-medium">
           Complete your registration in just 4 steps
         </p>

@@ -8,6 +8,8 @@ import {
   PaymentRoutes,
 } from "./routes";
 
+import { ProtectedRoute } from "./components/ProtectedRoute";
+
 //layouts
 import HomeLayout from "./layouts/Home.layout";
 import AuthLayout from "./layouts/Auth.layout";
@@ -51,8 +53,10 @@ import TestDetails from "./pages/TakeTest/TestDetails";
 import TestAttempt from "./pages/TakeTest/TestAttempt";
 
 import LeaderboardPage from "./pages/LeaderBoard";
+import CommunityPage from "./pages/Community/Feed";
 
 import ErrorPage from "./pages/ErrorPage";
+import UnauthorizedPage from "./pages/Auth/Login/unauthorized";
 
 export const router = createBrowserRouter([
   {
@@ -75,53 +79,55 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: SidebarRoutes.dashboard,
-    element: <DashboardLayout />,
+    element: (
+      <ProtectedRoute allowedRoles={["student"]} />
+    ),
     children: [
-      { path: SidebarRoutes.dashboard, element: <DashboardPage /> },
-      { path: SidebarRoutes.performance, element: <PerformancePage /> },
-      { path: SidebarRoutes.history, element: <HistoryPage /> },
-      { path: SidebarRoutes.leaderboard, element: <LeaderboardPage /> },
-      { path: SidebarRoutes.profile, element: <ProfilePage /> },
-      { path: SidebarRoutes.settings, element: <SettingsPage /> },
-      { path: SidebarRoutes.takeAssessment, element: <AssessmentPage /> },
-    ],
+      {
+        path: SidebarRoutes.dashboard,
+        element: <DashboardLayout />,
+        children: [
+          { path: SidebarRoutes.dashboard, element: <DashboardPage /> },
+          { path: SidebarRoutes.performance, element: <PerformancePage /> },
+          { path: SidebarRoutes.history, element: <HistoryPage /> },
+          { path: SidebarRoutes.leaderboard, element: <LeaderboardPage /> },
+          { path: SidebarRoutes.community, element: <CommunityPage /> },
+          { path: SidebarRoutes.profile, element: <ProfilePage /> },
+          { path: SidebarRoutes.settings, element: <SettingsPage /> },
+          { path: SidebarRoutes.takeAssessment, element: <AssessmentPage /> },
+        ],
+      }
+    ]
   },
   {
-
-  },
-  {
-    element: <TestLayout />,
+    element: (
+      <ProtectedRoute allowedRoles={["student"]} />
+    ),
     children: [
-      { path: TestRoutes.takeTest, element: <TakeTestPage /> },
-      { path: TestRoutes.testSubjects, element: <TestSubjectsPage /> },
-      { path: TestRoutes.subjectTopics, element: <TestTopicsPage /> },
-      { path: TestRoutes.testInstructions, element: <TestInstrusctionsPage /> },
-      { path: TestRoutes.testDetails, element: <TestDetails /> },
-      { path: TestRoutes.testAttempt, element: <TestAttempt /> },
-      { path: TestRoutes.questions, element: <QuestionsPage /> },
-      { path: TestRoutes.results, element: <ResultPage /> },
-      { path: TestRoutes.review, element: <ReviewSubmission /> },
       {
-        path: AssessmentRoutes.assessmentInstructions,
-        element: <AssessmentInstruction />,
-      },
-      {
-        path: AssessmentRoutes.assesmentAttempt,
-        element: <AssessmentAttempt />,
-      },
-      {
-        path: AssessmentRoutes.assessmentQuestion,
-        element: <AssessmentQuestions />,
-      },
-
-    ],
-
+        element: <TestLayout />,
+        children: [
+          { path: TestRoutes.takeTest, element: <TakeTestPage /> },
+          { path: TestRoutes.testSubjects, element: <TestSubjectsPage /> },
+          { path: TestRoutes.subjectTopics, element: <TestTopicsPage /> },
+          { path: TestRoutes.testInstructions, element: <TestInstrusctionsPage /> },
+          { path: TestRoutes.testDetails, element: <TestDetails /> },
+          { path: TestRoutes.testAttempt, element: <TestAttempt /> },
+          { path: TestRoutes.questions, element: <QuestionsPage /> },
+          { path: TestRoutes.results, element: <ResultPage /> },
+          { path: TestRoutes.review, element: <ReviewSubmission /> },
+          { path: AssessmentRoutes.assessmentInstructions, element: <AssessmentInstruction /> },
+          { path: AssessmentRoutes.assesmentAttempt, element: <AssessmentAttempt /> },
+          { path: AssessmentRoutes.assessmentQuestion, element: <AssessmentQuestions /> },
+        ],
+      }
+    ]
   },
   {
     path: AssessmentRoutes.assessmentResult,
     element: <AssessmentResult />,
   },
+  { path: AuthRoutes.unauthorized, element: <UnauthorizedPage /> },
 
   {
     path: PaymentRoutes.checkout,

@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Button, Form, Image, Input } from "@heroui/react";
+import { Button, Form, Input } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MdOutlineEmail } from "react-icons/md";
 import { GuardianSignupSchema } from "../../../schema/auth.schema";
-import Logo from "@/assets/kidemia.svg";
 import { BiScan } from "react-icons/bi";
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
 
@@ -26,12 +25,6 @@ export default function GuardianSignup() {
   return (
     <section className="py-4 w-full md:w-2xl space-y-6">
       <div className="space-y-3">
-        <div className="flex justify-center items-center space-x-5">
-          <h2 className="text-3xl text-kidemia-black font-semibold text-center">
-            Welcome to
-          </h2>
-          <Image src={Logo} alt="logo" />
-        </div>
         <p className="text-lg text-kidemia-black2 text-center font-medium">
           Create your passward to complete your registration as a Guardian
         </p>

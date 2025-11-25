@@ -13,8 +13,12 @@ import { AuthRoutes } from "../../routes";
 import { Link } from "react-router";
 
 export default function StepOne() {
-  const [isVisible, setIsVisible] = useState<boolean>(false);
-  const toggleVisibility = () => setIsVisible(!isVisible);
+  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState<boolean>(false);
+
+  const togglePasswordVisibility = () => setIsPasswordVisible(!isPasswordVisible);
+  const toggleConfirmPasswordVisibility = () => setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
+
   const setStep = useSetAtom(signupInfoStep);
   const [formData, setFormData] = useAtom(signupFormData);
   const {
@@ -95,9 +99,9 @@ export default function StepOne() {
                 aria-label="toggle password visibility"
                 className="focus:outline-none"
                 type="button"
-                onClick={toggleVisibility}
+                onClick={togglePasswordVisibility}
               >
-                {isVisible ? (
+                {isPasswordVisible ? (
                   <FaEyeSlash className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
                 ) : (
                   <FaRegEye className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
@@ -105,7 +109,7 @@ export default function StepOne() {
               </button>
             }
             placeholder="New Password"
-            type={isVisible ? "text" : "password"}
+            type={isPasswordVisible ? "text" : "password"}
             variant="flat"
             size="lg"
             radius="sm"
@@ -122,12 +126,12 @@ export default function StepOne() {
             }
             endContent={
               <button
-                aria-label="toggle password visibility"
+                aria-label="toggle confirm password visibility"
                 className="focus:outline-none"
                 type="button"
-                onClick={toggleVisibility}
+                onClick={toggleConfirmPasswordVisibility}
               >
-                {isVisible ? (
+                {isConfirmPasswordVisible ? (
                   <FaEyeSlash className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
                 ) : (
                   <FaRegEye className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
@@ -135,7 +139,7 @@ export default function StepOne() {
               </button>
             }
             placeholder="Confirm Password"
-            type={isVisible ? "text" : "password"}
+            type={isConfirmPasswordVisible ? "text" : "password"}
             variant="flat"
             size="lg"
             radius="sm"

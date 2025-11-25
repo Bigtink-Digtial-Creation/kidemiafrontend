@@ -8,9 +8,11 @@ import { Button, Form, Input, Radio, RadioGroup } from "@heroui/react";
 import { IoSchoolSharp } from "react-icons/io5";
 
 const prepData = [
-  { title: "Common Entrance", value: "CE" },
-  { title: "Junior WAEC", value: "JW" },
-  { title: "Senior WAEC", value: "SW" },
+  { title: "Common Entrance", value: "Common Entrance" },
+  { title: "Junior WAEC", value: "Junior WAEC" },
+  { title: "Senior WAEC", value: "Senior WAEC" },
+  { title: "NECO", value: "NECO" },
+  { title: "JAMB", value: "JAMB" },
 ];
 
 export default function StepThree() {

@@ -21,6 +21,7 @@ import { formatTime } from "../../utils";
 import type { SaveAnswerRequest } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
 import { useResetAtom } from "jotai/utils";
+import SpinnerCircle from "../../components/Spinner/Circle";
 
 type AnswerOption = string;
 
@@ -204,7 +205,7 @@ export default function QuestionsPage() {
   if (isSubmitting || submitAttemptMutation.isPending || isTimeUp) {
     return (
       <div className="h-screen flex flex-col justify-center items-center text-center space-y-4 px-4">
-        <Spinner size="lg" color="warning" />
+        < SpinnerCircle color="#ff0000" />
         <h2 className="text-2xl md:text-3xl font-semibold text-kidemia-black">
           {isTimeUp
             ? "⏰ Time's up! Submitting your test..."

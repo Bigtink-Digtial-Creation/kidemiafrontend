@@ -8,7 +8,6 @@ import {
   Button,
   CheckboxGroup,
   Pagination,
-  Spinner,
 } from "@heroui/react";
 import { SidebarRoutes, TestRoutes } from "../../routes";
 import { QueryKeys } from "../../utils/queryKeys";
@@ -18,6 +17,7 @@ import {
   selectedSubjectTitleAtom,
   selectedTopicsAtom,
 } from "../../store/test.atom";
+import SpinnerCircle from "../../components/Spinner/Circle";
 
 export default function TestTopicsPage() {
   const [selectedTopics, setSelectedTopics] = useAtom(selectedTopicsAtom);
@@ -38,11 +38,11 @@ export default function TestTopicsPage() {
   });
 
   if (isLoading) {
-    return (
+    return <>
       <div className="h-screen flex justify-center items-center">
-        <Spinner size="lg" color="warning" />
+        < SpinnerCircle />
       </div>
-    );
+    </>;
   }
 
   const totalTopics = topicData?.items?.length ?? 0;

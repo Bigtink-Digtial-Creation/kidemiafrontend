@@ -5,10 +5,13 @@ import {
   ModalBody,
   ModalContent,
 } from "@heroui/react";
-import { useState } from "react";
 import { useNavigate } from "react-router";
 import { HomeRoutes } from "../../routes";
 import { CgDanger } from "react-icons/cg";
+import { useMutation } from "@tanstack/react-query";
+import { ApiSDK } from "../../sdk";
+import { useAtom } from "jotai";
+import { loggedinUserAtom, storedAuthTokenAtom, userRoleAtom } from "../../store/user.atom";
 
 interface DeleteAccountI {
   isOpen: boolean;
@@ -21,20 +24,40 @@ export default function DeleteAccountModal({
   onOpenChange,
   onClose,
 }: DeleteAccountI) {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [loggedInUser, setLoggedInUser] = useAtom(loggedinUserAtom);
+  const [, setAuthToken] = useAtom(storedAuthTokenAtom);
+  const [, setUserRole] = useAtom(userRoleAtom);
 
-  const delAcct = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+  const userId = loggedInUser?.user?.id;
+
+  const deleteUserMutation = useMutation({
+    mutationFn: (userId: string) =>
+      ApiSDK.UsersService.deleteUserApiV1UsersUserIdDelete(userId),
+    onSuccess: () => {
+      setLoggedInUser(null);
+      setAuthToken(null);
+      setUserRole(null);
+      ApiSDK.OpenAPI.TOKEN = undefined;
       onClose();
       addToast({
-        title: "Account Deletion Successful",
+        title: "Account deleted successfully",
         color: "success",
       });
-      navigate(HomeRoutes.home);
-    }, 2000);
+      navigate(HomeRoutes.home, { replace: true });
+    },
+    onError: () => {
+      addToast({
+        title: "Failed to delete account",
+        color: "danger",
+      });
+    }
+  });
+
+  const handleDeleteAccount = () => {
+    if (userId) {
+      deleteUserMutation.mutate(userId);
+    }
   };
 
   return (
@@ -68,6 +91,7 @@ export default function DeleteAccountModal({
               radius="sm"
               className="bg-kidemia-biege border border-enita-black2 font-medium text-kidemia-primary w-full"
               onPress={onClose}
+              isDisabled={deleteUserMutation.isPending}
             >
               No, keep me logged in
             </Button>
@@ -76,9 +100,9 @@ export default function DeleteAccountModal({
               size="md"
               radius="sm"
               className="bg-kidemia-secondary text-kidemia-white font-medium w-full"
-              onPress={() => delAcct()}
-              isLoading={isLoading}
-              isDisabled={isLoading}
+              onPress={handleDeleteAccount}
+              isLoading={deleteUserMutation.isPending}
+              isDisabled={deleteUserMutation.isPending || !userId}
             >
               Yes, Delete
             </Button>

@@ -5,6 +5,9 @@ import { ApiSDK } from "../../sdk";
 import AssessmentCard from "../../components/Cards/AssessmentCard";
 import { useMemo, useState } from "react";
 import SpinnerCircle from "../../components/Spinner/Circle";
+import { useAtomValue } from "jotai";
+import { userWalletAtom, loggedinUserAtom } from "../../store/user.atom";
+import type { AssessmentCategory } from "../../sdk/generated";
 
 export enum AssessmentType {
   TEST = "test",
@@ -22,14 +25,22 @@ export enum AssessmentStatus {
 
 
 export default function AssessmentPage() {
+
+  const wallet = useAtomValue(userWalletAtom);
+  const loggedInUser = useAtomValue(loggedinUserAtom);
   const [page, setPage] = useState<number>(1);
   const pageSize = 10;
 
+  const userAssessmentCategory = loggedInUser?.user?.student?.category?.category_name;
+  const category: AssessmentCategory | null =
+    userAssessmentCategory
+      ? (userAssessmentCategory.toLowerCase() as AssessmentCategory)
+      : null;
   const { data: assessmentData, isLoading } = useQuery({
     queryKey: [QueryKeys.allAssessment],
     queryFn: () =>
       ApiSDK.AssessmentsService.getAssessmentsApiV1AssessmentsGet(AssessmentType.EXAM,
-        undefined,   // category
+        category,   // category
         undefined,   // subjectId
         AssessmentStatus.PUBLISHED),
   });
@@ -64,7 +75,7 @@ export default function AssessmentPage() {
             color="primary"
             className="text-sm font-semibold whitespace-nowrap"
           >
-            Unit balance : 100
+            Unit balance : ({wallet.symbol}) {wallet.balance}
           </Chip>
           <Button
             className="bg-kidemia-secondary text-kidemia-white font-medium w-full px-8"

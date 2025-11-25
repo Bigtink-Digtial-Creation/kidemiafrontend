@@ -30,6 +30,7 @@ export default function StepFour() {
     },
   });
 
+
   const signupMutation = useMutation({
     mutationFn: (formData: RegisterRequest) =>
       ApiSDK.AuthenticationService.registerApiV1AuthRegisterPost(formData),
@@ -66,14 +67,24 @@ export default function StepFour() {
     const {
       stepOne: { email, password, first_name, last_name },
       stepTwo: { role },
+      stepThree: { examOrSchool },
+      stepFour: { guardianOrAdminEmail },
     } = updatedFormData;
 
-    const payload = {
+    const payload: RegisterRequest = {
       email,
       password,
       first_name,
       last_name,
       user_type: role as UserType,
+      category: role === "student" ? examOrSchool : null,
+      guardian_email: role === "student" ? guardianOrAdminEmail : null,
+      school_name: role !== "student" ? examOrSchool : null,
+      admin_email: role !== "student" ? guardianOrAdminEmail : null,
+      middle_name: null,
+      phone_number: null,
+      date_of_birth: null,
+      username: null,
     };
 
     signupMutation.mutate(payload);

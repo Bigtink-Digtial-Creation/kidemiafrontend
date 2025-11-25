@@ -13,12 +13,12 @@ import {
   Card,
   CardBody,
   CardFooter,
-  Spinner,
 } from "@heroui/react";
 import { SidebarRoutes, TestRoutes } from "../../routes";
 import { FiClock } from "react-icons/fi";
 import { BiPlayCircle } from "react-icons/bi";
 import { QueryKeys } from "../../utils/queryKeys";
+import SpinnerCircle from "../../components/Spinner/Circle";
 
 export default function TestDetails() {
   const { id } = useParams<{ id: string }>();
@@ -42,11 +42,11 @@ export default function TestDetails() {
   });
 
   if (isLoading || !testDetails) {
-    return (
+    return <>
       <div className="h-screen flex justify-center items-center">
-        <Spinner size="lg" color="warning" />
+        < SpinnerCircle />
       </div>
-    );
+    </>;
   }
 
   return (

@@ -58,7 +58,7 @@ export const StepTwoSchema = z.object({
   role: z
     .string()
     .nonempty("Role is required")
-    .refine((val) => ["student", "school"].includes(val), {
+    .refine((val) => ["student", "institution_admin"].includes(val), {
       message: "Please select either Student or School",
     }),
 });

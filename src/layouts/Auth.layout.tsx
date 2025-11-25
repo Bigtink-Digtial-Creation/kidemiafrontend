@@ -1,16 +1,19 @@
-import { Image, Spinner } from "@heroui/react";
+import { Image } from "@heroui/react";
 import { Outlet } from "react-router";
 import { useAuthRedirect } from "../hooks/use-auth-redirect";
 import { AppDarkLogo } from "../assets/images";
+import SpinnerCircle from "../components/Spinner/Circle";
+
+
 export default function AuthLayout() {
   const { authToken } = useAuthRedirect(false);
 
   if (authToken) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <Spinner size="lg" color="warning" />
+    return <>
+      <div className="h-screen flex justify-center items-center">
+        < SpinnerCircle />
       </div>
-    );
+    </>;
   }
   return (
     <section className="min-h-screen flex items-center justify-center bg-kidemia-biege">
