@@ -1,13 +1,11 @@
 import type { JSX } from "react";
 import { useAtom } from "jotai";
-import { Image } from "@heroui/react";
 import { signupInfoStep, type SignUpInfoT } from "../../../store/auth.atom";
 import Stepper from "../../../components/SignUpForms/Stepper";
 import StepOne from "../../../components/SignUpForms/StepOne";
 import StepTwo from "../../../components/SignUpForms/StepTwo";
 import StepThree from "../../../components/SignUpForms/StepThree";
 import StepFour from "../../../components/SignUpForms/StepFour";
-import Logo from "@/assets/kidemia.svg";
 
 type StepTabT = {
   title: string;
