@@ -9,7 +9,6 @@ import {
   Card,
   CardBody,
   CardFooter,
-  Spinner,
 } from "@heroui/react";
 import { SidebarRoutes, TestRoutes } from "../../routes";
 import { useAtomValue } from "jotai";
@@ -22,6 +21,7 @@ import {
 } from "react-icons/bi";
 import { FiFileText } from "react-icons/fi";
 import { BsClock } from "react-icons/bs";
+import SpinnerCircle from "../../components/Spinner/Circle";
 
 export default function TestAttempt() {
   const { assessmentId } = useParams<{ assessmentId: string }>();
@@ -39,11 +39,11 @@ export default function TestAttempt() {
   });
 
   if (isLoading || !attemptTest) {
-    return (
+    return <>
       <div className="h-screen flex justify-center items-center">
-        <Spinner size="lg" color="warning" />
+        < SpinnerCircle />
       </div>
-    );
+    </>;
   }
 
   const {

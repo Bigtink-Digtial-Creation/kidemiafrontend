@@ -1,6 +1,10 @@
+import { atom } from "jotai"
 import { createJSONStorage, atomWithStorage } from "jotai/utils";
 import { StoredKeys } from "../utils/storedKeys";
 import type { LoginResponse } from "../sdk/generated";
+
+import { ApiSDK } from "../sdk";
+
 export interface UserT {
   id?: string;
   first_name?: string;
@@ -36,3 +40,14 @@ export const loggedinUserAtom = atomWithStorage(
 );
 
 export const userAtom = atomWithStorage<UserT | null>("userDetail", null);
+
+export const userRoleAtom = atom<string | null>(null);
+
+export const userWalletAtom = atom(async () => {
+  const response = await ApiSDK.WalletService.getMyWalletApiV1WalletGet();
+  return {
+    "symbol": response.currency,
+    "isLocked": response.is_locked,
+    "balance": response.balance
+  };
+});

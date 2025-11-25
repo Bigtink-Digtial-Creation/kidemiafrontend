@@ -8,7 +8,6 @@ import {
   Button,
   Form,
   Input,
-  Spinner,
   Textarea,
 } from "@heroui/react";
 import { SidebarRoutes } from "../../routes";
@@ -29,6 +28,7 @@ import { ProfileSchema } from "../../schema/contact.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { UserUpdate } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
+import SpinnerCircle from "../../components/Spinner/Circle";
 
 export default function ProfilePage() {
   const queryClient = useQueryClient();
@@ -127,11 +127,11 @@ export default function ProfilePage() {
   };
 
   if (isUserLoading) {
-    return (
+    return <>
       <div className="h-screen flex justify-center items-center">
-        <Spinner size="lg" color="warning" />
+        < SpinnerCircle color="#ff0000" />
       </div>
-    );
+    </>;
   }
   return (
     <>

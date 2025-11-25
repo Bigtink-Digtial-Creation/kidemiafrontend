@@ -4,10 +4,10 @@ import {
   ModalBody,
   ModalContent,
   ModalFooter,
-  Spinner,
 } from "@heroui/react";
 import { useNavigate } from "react-router";
 import { SidebarRoutes } from "../../../routes";
+import SpinnerCircle from "../../../components/Spinner/Circle";
 
 type ResultWaitingModalProps = {
   isOpen: boolean;
@@ -32,8 +32,7 @@ export default function ResultWaiting({
     >
       <ModalContent>
         <ModalBody className="flex flex-col items-center justify-center space-y-6 text-center py-8">
-          <Spinner size="lg" color="warning" />
-
+          < SpinnerCircle />
           <div className="space-y-2">
             <h2 className="text-2xl font-semibold text-kidemia-black">
               Thank you for completing the test 🎉

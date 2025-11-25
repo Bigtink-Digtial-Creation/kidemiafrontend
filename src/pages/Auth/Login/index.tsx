@@ -18,6 +18,8 @@ import {
   storedAuthTokenAtom,
 } from "../../../store/user.atom";
 import { apiErrorParser } from "../../../utils/errorParser";
+import { userRoleAtom } from "../../../store/user.atom"
+
 
 export default function LoginPage() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -25,6 +27,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const setStoredToken = useSetAtom(storedAuthTokenAtom);
   const setLoggedInUser = useSetAtom(loggedinUserAtom);
+  const setRole = useSetAtom(userRoleAtom);
 
   const {
     register,
@@ -43,6 +46,7 @@ export default function LoginPage() {
         ApiSDK.OpenAPI.TOKEN = token;
         setStoredToken(token);
         setLoggedInUser(data);
+        setRole(data.user?.roles?.[0].name ?? null);
         navigate(SidebarRoutes.dashboard, { replace: true });
         addToast({
           title: "Login Successful",
@@ -65,9 +69,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="py-4 w-full md:w-2xl space-y-6 md:px-12">
+    <div className="py-4 w-full md:w-2xl space-y-4 md:px-12">
       <div className="space-y-3">
-        <h2 className="text-3xl text-kidemia-black font-semibold text-center">
+        <h2 className="hidden  text-3xl text-kidemia-black font-semibold text-center">
           Welcome Back
         </h2>
         <p className="text-lg text-kidemia-black2 text-center font-medium">

@@ -5,6 +5,7 @@ import {
   MdManageHistory,
   MdOutlineDashboard,
   MdLeaderboard,
+  MdPeople,
 } from "react-icons/md";
 import { CgPerformance } from "react-icons/cg";
 
@@ -39,5 +40,11 @@ export const sidebarLinks: SidebarLinkT[] = [
     icon: MdLeaderboard,
     allowedRoles: [UserRole.SCHOOL, UserRole.STUDENT, UserRole.GUARDIAN],
     pathname: SidebarRoutes.leaderboard,
+  },
+  {
+    title: "Communities",
+    icon: MdPeople,
+    allowedRoles: [UserRole.SCHOOL, UserRole.STUDENT],
+    pathname: SidebarRoutes.community,
   },
 ];

@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Spinner,
   Pagination,
   Breadcrumbs,
   BreadcrumbItem,
@@ -12,6 +11,7 @@ import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import type { SubjectResponse } from "../../sdk/generated"; // ✅ UPDATED: import type
 import { SidebarRoutes, TestRoutes } from "../../routes";
+import SpinnerCircle from "../../components/Spinner/Circle";
 
 export default function TestSubjectsPage() {
   const [page, setPage] = useState(1);
@@ -23,11 +23,11 @@ export default function TestSubjectsPage() {
   });
 
   if (isLoading) {
-    return (
+    return <>
       <div className="h-screen flex justify-center items-center">
-        <Spinner size="lg" color="warning" />
+        < SpinnerCircle />
       </div>
-    );
+    </>;
   }
 
   // Normalize response into an array

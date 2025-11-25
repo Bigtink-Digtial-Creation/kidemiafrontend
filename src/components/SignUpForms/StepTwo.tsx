@@ -67,7 +67,7 @@ export default function StepTwo() {
               <input
                 {...register("role")}
                 type="radio"
-                value="school"
+                value="institution_admin"
                 id="school"
                 className="sr-only peer"
               />
