@@ -57,6 +57,7 @@ import CommunityPage from "./pages/Community/Feed";
 
 import ErrorPage from "./pages/ErrorPage";
 import UnauthorizedPage from "./pages/Auth/Login/unauthorized";
+import { CorrectionPage } from "./pages/Correction";
 
 export const router = createBrowserRouter([
   {
@@ -120,13 +121,19 @@ export const router = createBrowserRouter([
           { path: AssessmentRoutes.assesmentAttempt, element: <AssessmentAttempt /> },
           { path: AssessmentRoutes.assessmentQuestion, element: <AssessmentQuestions /> },
         ],
-      }
+      },
+      {
+        path: AssessmentRoutes.assessmentResult,
+        element: <AssessmentResult />,
+      },
+      {
+        path: AssessmentRoutes.assessmentCorrection,
+        element: <CorrectionPage />,
+      },
     ]
+
   },
-  {
-    path: AssessmentRoutes.assessmentResult,
-    element: <AssessmentResult />,
-  },
+
   { path: AuthRoutes.unauthorized, element: <UnauthorizedPage /> },
 
   {

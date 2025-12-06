@@ -4,8 +4,8 @@ import { StepTwoSchema } from "../../schema/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAtom, useSetAtom } from "jotai";
 import { signupFormData, signupInfoStep } from "../../store/auth.atom";
-import Student from "@/assets/student.svg";
-import School from "@/assets/school.svg";
+import Student from "@/assets/images/general/student-icon.svg";
+import School from "@/assets/images/general/school.svg";
 
 export default function StepTwo() {
   const setStep = useSetAtom(signupInfoStep);

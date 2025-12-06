@@ -3,7 +3,7 @@ import { Avatar, AvatarGroup, Button } from "@heroui/react";
 import { useNavigate } from "react-router";
 import { AuthRoutes, HomeRoutes } from "../../routes";
 import { FaLongArrowAltRight } from "react-icons/fa";
-import hero from "../../assets/images/hero.svg";
+import hero from "../../assets/images/general/hero.svg";
 import { containerVariants, itemVariants } from "./homeVariants";
 
 export default function Hero() {

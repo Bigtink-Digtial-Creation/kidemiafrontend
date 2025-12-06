@@ -4,6 +4,7 @@ import { Home, LayoutDashboard } from "lucide-react";
 import AppLogo from "../../assets/images/logo/appDarkLogo.png";
 import { attemptResultAtom } from "../../store/test.atom";
 import { useAtomValue } from "jotai";
+import { SidebarRoutes } from "../../routes";
 // import { useResetAtom } from "jotai/utils";
 
 const gradeRemarkMap: Record<string, string> = {
@@ -33,7 +34,7 @@ export default function AssessmentResult() {
             </p>
             <Button
               className="mt-6 bg-[#D2691E] text-white hover:bg-[#C85A3C]"
-              onClick={() => navigate("/")}
+              onClick={() => navigate(SidebarRoutes.dashboard)}
             >
               Go to Dashboard
             </Button>
@@ -95,7 +96,7 @@ export default function AssessmentResult() {
             <Button
               size="lg"
               className="w-full sm:w-auto bg-[#D2691E] hover:bg-[#C85A3C] text-white font-semibold px-8 sm:px-12 py-5 sm:py-6 text-base sm:text-lg rounded-xl sm:rounded-2xl shadow-lg transition-colors"
-              onClick={() => navigate("/corrections")}
+              onClick={() => navigate(`/assessment/${result.attempt_id}/corrections`)}
             >
               View Corrections
             </Button>
@@ -105,7 +106,7 @@ export default function AssessmentResult() {
                 size="lg"
                 variant="light"
                 className="text-[#2C3E50] hover:text-[#1a252f] font-semibold px-4 sm:px-6 py-5 sm:py-6 text-base sm:text-lg flex items-center gap-2 transition-colors"
-                onClick={() => navigate("/")}
+                onClick={() => navigate(SidebarRoutes.dashboard)}
               >
                 <Home className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="hidden sm:inline">Home</span>
@@ -115,7 +116,7 @@ export default function AssessmentResult() {
                 size="lg"
                 variant="light"
                 className="text-[#2C3E50] hover:text-[#1a252f] font-semibold px-4 sm:px-6 py-5 sm:py-6 text-base sm:text-lg flex items-center gap-2 transition-colors"
-                onClick={() => navigate("/dashboard")}
+                onClick={() => navigate(SidebarRoutes.dashboard)}
               >
                 <LayoutDashboard className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="hidden sm:inline">Dashboard</span>

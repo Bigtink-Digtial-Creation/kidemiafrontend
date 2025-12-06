@@ -8,6 +8,7 @@
 export type QuestionOptionPublicResponse = {
   id: string;
   option_text: string;
+  is_correct?: (boolean | null);
   option_order: number;
   image_url?: (string | null);
   match_pair_id?: (string | null);
