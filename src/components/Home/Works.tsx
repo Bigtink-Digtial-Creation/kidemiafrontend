@@ -1,8 +1,8 @@
 import { forGuardian, forStudents, forTeachers } from "../../staticData/home";
 import { StepItem } from "../Cards/StepItem";
-import parents from "../../assets/images/parents.svg";
-import student from "../../assets/images/student.svg";
-import teacher from "../../assets/images/teacher.svg";
+import parents from "../../assets/images/general/parents.svg";
+import student from "../../assets/images/general/student.svg";
+import teacher from "../../assets/images/general/teacher.svg";
 
 export default function Works() {
   return (

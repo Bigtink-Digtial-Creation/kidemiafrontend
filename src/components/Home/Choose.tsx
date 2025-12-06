@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Image } from "@heroui/react";
-import dash from "../../assets/images/dash.png";
+import dash from "../../assets/images/general/dash.png";
 import ChoiceCard from "../Cards/ChoiceCard";
 import { containerVariants, itemVariants } from "./homeVariants";
 

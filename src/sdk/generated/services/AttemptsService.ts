@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AnswerCorrectionResponse } from '../models/AnswerCorrectionResponse';
 import type { AttemptListResponse } from '../models/AttemptListResponse';
 import type { AttemptProgressResponse } from '../models/AttemptProgressResponse';
 import type { AttemptResultResponse } from '../models/AttemptResultResponse';
@@ -140,6 +141,26 @@ export class AttemptsService {
       },
       query: {
         'include_answers': includeAnswers,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Get attempt correction
+   * @param attemptId
+   * @returns AnswerCorrectionResponse Successful Response
+   * @throws ApiError
+   */
+  public static getCorrectionApiV1AttemptsAttemptIdCorrectionGet(
+    attemptId: string,
+  ): CancelablePromise<AnswerCorrectionResponse> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/attempts/{attempt_id}/correction',
+      path: {
+        'attempt_id': attemptId,
       },
       errors: {
         422: `Validation Error`,
