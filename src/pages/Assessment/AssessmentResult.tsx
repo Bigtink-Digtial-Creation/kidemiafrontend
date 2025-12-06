@@ -96,7 +96,7 @@ export default function AssessmentResult() {
             <Button
               size="lg"
               className="w-full sm:w-auto bg-[#D2691E] hover:bg-[#C85A3C] text-white font-semibold px-8 sm:px-12 py-5 sm:py-6 text-base sm:text-lg rounded-xl sm:rounded-2xl shadow-lg transition-colors"
-              onClick={() => navigate(`/assessment/${result.attempt_id}/corrections`)}
+              onClick={() => navigate(`/assessment/${result.id}/corrections`)}
             >
               View Corrections
             </Button>
