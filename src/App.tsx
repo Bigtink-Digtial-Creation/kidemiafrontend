@@ -37,7 +37,7 @@ import PerformancePage from "./pages/Performance";
 import TakeTestPage from "./pages/TakeTest";
 import TestSubjectsPage from "./pages/TakeTest/TestSubjects";
 import TestTopicsPage from "./pages/TakeTest/TestTopics";
-import TestInstrusctionsPage from "./pages/TakeTest/TestInstrusctions";
+import TestInstructionsPage from "./pages/TakeTest/TestInstructions";
 import QuestionsPage from "./pages/TakeTest/Questions";
 import ResultPage from "./pages/TakeTest/Result";
 import ReviewSubmission from "./pages/TakeTest/ReviewSubmission";
@@ -111,17 +111,17 @@ export const router = createBrowserRouter([
           { path: TestRoutes.takeTest, element: <TakeTestPage /> },
           { path: TestRoutes.testSubjects, element: <TestSubjectsPage /> },
           { path: TestRoutes.subjectTopics, element: <TestTopicsPage /> },
-          { path: TestRoutes.testInstructions, element: <TestInstrusctionsPage /> },
+          { path: TestRoutes.testInstructions, element: <TestInstructionsPage /> },
           { path: TestRoutes.testDetails, element: <TestDetails /> },
           { path: TestRoutes.testAttempt, element: <TestAttempt /> },
           { path: TestRoutes.questions, element: <QuestionsPage /> },
-          { path: TestRoutes.results, element: <ResultPage /> },
           { path: TestRoutes.review, element: <ReviewSubmission /> },
           { path: AssessmentRoutes.assessmentInstructions, element: <AssessmentInstruction /> },
           { path: AssessmentRoutes.assesmentAttempt, element: <AssessmentAttempt /> },
           { path: AssessmentRoutes.assessmentQuestion, element: <AssessmentQuestions /> },
         ],
       },
+      { path: TestRoutes.results, element: <ResultPage /> },
       {
         path: AssessmentRoutes.assessmentResult,
         element: <AssessmentResult />,

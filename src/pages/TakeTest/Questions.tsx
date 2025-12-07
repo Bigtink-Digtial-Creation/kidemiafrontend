@@ -5,7 +5,6 @@ import {
   Pagination,
   Radio,
   RadioGroup,
-  Spinner,
 } from "@heroui/react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useAtom, useSetAtom } from "jotai";
@@ -21,7 +20,7 @@ import { formatTime } from "../../utils";
 import type { SaveAnswerRequest } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
 import { useResetAtom } from "jotai/utils";
-import SpinnerCircle from "../../components/Spinner/Circle";
+import LoadingSequence from "../../components/Loading/LoadingSequence";
 
 type AnswerOption = string;
 
@@ -74,11 +73,14 @@ export default function QuestionsPage() {
         requestBody,
       );
     },
-    onSuccess: (data) => {
-      console.log("❌ Answer saved:", data);
-    },
+    // onSuccess: (data) => {
+    //   console.log("❌ Answer saved:", data);
+    // },
     onError: (error) => {
-      console.error("❌ Failed to submit answer:", error);
+      addToast({
+        title: error.message,
+        color: "warning",
+      });
     },
   });
 
@@ -193,33 +195,43 @@ export default function QuestionsPage() {
 
   if (isLoading || !currentQuestion) {
     return (
-      <div className="h-screen flex flex-col justify-center items-center">
-        <Spinner size="sm" color="warning" />
-        <p className="pt-2 text-base italic text-kidemia-black text-center">
-          Loading Questions...
-        </p>
-      </div>
+      <LoadingSequence
+        lines={[
+          {
+            text: "Loading your questions...",
+            className: "text-lg md:text-xl text-kidemia-primary",
+          },
+          {
+            text: "Don't back out. LOL",
+          },
+        ]}
+      />
     );
   }
 
   if (isSubmitting || submitAttemptMutation.isPending || isTimeUp) {
     return (
-      <div className="h-screen flex flex-col justify-center items-center text-center space-y-4 px-4">
-        < SpinnerCircle color="#ff0000" />
-        <h2 className="text-2xl md:text-3xl font-semibold text-kidemia-black">
-          {isTimeUp
-            ? "⏰ Time's up! Submitting your test..."
-            : "Relax, your result is cooking 🍳"}
-        </h2>
-        <p className="text-lg text-kidemia-grey max-w-md">
-          {isTimeUp
-            ? "Don't worry,we're saving all your progress and wrapping things up for you."
-            : "We're adding the final touches to your test assessment. Hang tight while we finish up!"}
-        </p>
-        <p className="text-base text-kidemia-secondary italic">
-          Please don't close or refresh this page.
-        </p>
-      </div>
+      <LoadingSequence
+        lines={[
+          {
+            text: isTimeUp
+              ? "⏰ Time's up! Submitting your test..."
+              : "Relax, your result is cooking 🍳",
+            className: "text-2xl md:text-3xl font-semibold text-kidemia-black",
+          },
+          {
+            text: isTimeUp
+              ? "Don't worry, we're saving all your progress and wrapping things up for you."
+              : "We're adding the final touches to your test assessment. Hang tight while we finish up!",
+            className: "text-lg text-kidemia-grey max-w-md text-center",
+          },
+          {
+            text: "Please don't close or refresh this page.",
+            className: "text-base text-kidemia-secondary italic",
+          },
+        ]}
+      />
+
     );
   }
 

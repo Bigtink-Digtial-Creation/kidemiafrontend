@@ -1,153 +1,167 @@
 import { useAtomValue } from "jotai";
 import { useNavigate, useParams } from "react-router";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
-  selectedSubjectIdeAtom,
-  selectedTopicsAtom,
-} from "../../store/test.atom";
-import { useQuery } from "@tanstack/react-query";
-import { ApiSDK } from "../../sdk";
-import {
-  BreadcrumbItem,
-  Breadcrumbs,
   Button,
   Card,
   CardBody,
   CardFooter,
 } from "@heroui/react";
-import { SidebarRoutes, TestRoutes } from "../../routes";
-import { FiClock } from "react-icons/fi";
-import { BiPlayCircle } from "react-icons/bi";
+import { BiArrowBack, BiPlayCircle, BiQuestionMark } from "react-icons/bi";
+import { BsClock } from "react-icons/bs";
+
+import { ApiSDK } from "../../sdk";
 import { QueryKeys } from "../../utils/queryKeys";
-import SpinnerCircle from "../../components/Spinner/Circle";
+import { selectedTopicsAtom } from "../../store/test.atom";
+import LoadingSequence from "../../components/Loading/LoadingSequence";
 
 export default function TestDetails() {
   const { id } = useParams<{ id: string }>();
-  const subjectId = useAtomValue(selectedSubjectIdeAtom);
-  const selectedTopics = useAtomValue(selectedTopicsAtom);
-  const topicIds = selectedTopics.map((topic) => topic.id);
   const navigate = useNavigate();
+  const selectedTopics = useAtomValue(selectedTopicsAtom);
+
+  const topicIds = selectedTopics.map((t) => t.id);
+
 
   const { data: testDetails, isLoading } = useQuery({
     queryKey: [QueryKeys.testDetails, id, topicIds],
     queryFn: ({ queryKey }) => {
-      const [, assessmentId, topicIds] = queryKey;
-      return ApiSDK.AssessmentsService.autoGenerateAssessmentApiV1AssessmentsAutoGeneratePost(
-        {
-          subject_id: assessmentId as string,
-          topic_ids: topicIds as string[],
-        },
+      const [, subjectId, topicIds] = queryKey as [
+        string,
+        string,
+        string[],
+      ];
+
+      return ApiSDK.AssessmentsService
+        .autoGenerateAssessmentApiV1AssessmentsAutoGeneratePost({
+          subject_id: subjectId,
+          topic_ids: topicIds,
+        });
+    },
+    enabled: !!id && !!topicIds.length,
+  });
+
+
+  const startAttemptMutation = useMutation({
+    mutationFn: () =>
+      ApiSDK.AttemptsService
+        .startAttemptApiV1AttemptsAssessmentIdStartPost(
+          testDetails!.assessment_id,
+          {},
+        ),
+    onSuccess: (data) => {
+      navigate(
+        `/take-a-test/${data.assessment_id}/${data.attempt_id}/questions`,
       );
     },
-    enabled: !!id && !!topicIds?.length,
   });
 
   if (isLoading || !testDetails) {
-    return <>
-      <div className="h-screen flex justify-center items-center">
-        < SpinnerCircle />
-      </div>
-    </>;
+    return (
+      <LoadingSequence
+        lines={[
+          {
+            text: "Creating your Assessment...",
+            className: "text-lg md:text-xl text-kidemia-primary",
+          },
+          {
+            text: "Getting everything together. Hang on",
+          },
+        ]}
+      />
+    );
   }
 
   return (
-    <section className="max-w-5xl w-full mx-auto mt-8 px-4 sm:px-6 lg:px-8">
-      <div className="absolute top-4 left-0 px-4">
-        <div>
-          <Breadcrumbs variant="light" color="foreground">
-            <BreadcrumbItem href={SidebarRoutes.dashboard}>
-              Dashboard
-            </BreadcrumbItem>
-            <BreadcrumbItem href={TestRoutes.takeTest}>
-              Take a Test
-            </BreadcrumbItem>
-            <BreadcrumbItem href={TestRoutes.testSubjects}>
-              Pick a Subject
-            </BreadcrumbItem>
+    <section className="max-w-4xl mx-auto mt-10 px-4 sm:px-6 lg:px-8">
+      <Card
+        shadow="none"
+        className="border border-kidemia-grey/20 rounded-xl bg-white"
+      >
+        <CardBody className="px-6 py-10 space-y-10">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-kidemia-black">
+              Test Information
+            </h2>
+            <p className="text-sm text-kidemia-grey mt-1">
+              Review the test details before you begin.
+            </p>
+          </div>
 
-            <BreadcrumbItem href={`/take-a-test/subjects/${subjectId}`}>
-              Pick Subject Topics
-            </BreadcrumbItem>
-
-            <BreadcrumbItem href={`/take-a-test/${subjectId}/instructions`}>
-              Test Instructions
-            </BreadcrumbItem>
-            <BreadcrumbItem color="warning">Test Details</BreadcrumbItem>
-          </Breadcrumbs>
-        </div>
-      </div>
-
-      <div className="flex-1 py-4 space-y-12">
-        <Card
-          shadow="none"
-          className="border border-kidemia-grey/20 bg-kidemia-white"
-        >
-          <CardBody className="space-y-6 py-6 px-8">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl sm:text-3xl font-bold text-kidemia-black">
-                Test Details
-              </h2>
-              <div className="hidden sm:flex items-center gap-2 text-kidemia-grey/70">
-                <FiClock className="w-5 h-5 text-kidemia-secondary" />
-                <span className="text-sm font-medium text-kidemia-secondary">
-                  {testDetails?.duration_minutes} mins
-                </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+            <div className="flex items-start gap-3">
+              <BsClock className="w-4 h-4 text-kidemia-secondary mt-1" />
+              <div>
+                <p className="font-medium text-kidemia-black">Duration</p>
+                <p>{testDetails.duration_minutes} minutes</p>
               </div>
             </div>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <p className="font-medium text-kidemia-black">Title:</p>
-                <p className="font-medium text-kidemia-black">
-                  {testDetails?.title || "N/A"}
-                </p>
-              </div>
 
-              <div className="flex items-center gap-3">
-                <p className="font-medium text-kidemia-black">Message:</p>
+            <div className="flex items-start gap-3">
+              <BiQuestionMark className="w-5 h-5 text-kidemia-secondary mt-1" />
+              <div>
                 <p className="font-medium text-kidemia-black">
-                  {testDetails?.message || "N/A"}
+                  Total Questions
                 </p>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <p className="font-medium text-kidemia-black">
-                  Total Question:
-                </p>
-                <p className="font-medium text-kidemia-black">
-                  {testDetails?.total_questions || "N/A"} questions
-                </p>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <p className="font-medium text-kidemia-black whitespace-nowrap">
-                  Topics Covered:
-                </p>
-                <p className="font-medium text-kidemia-black">
-                  {testDetails?.topics_covered?.join(", ") || "N/A"}
-                </p>
+                <p>{testDetails.total_questions}</p>
               </div>
             </div>
-          </CardBody>
+          </div>
 
-          <CardFooter className="bg-kidemia-biege/10 border-t border-kidemia-grey/10 px-6 py-4">
-            <div className="w-full flex justify-between items-center">
-              <p className="text-xs text-kidemia-grey/70 hidden sm:block">
-                Click to begin your test
+          <div className="space-y-4">
+            <div>
+              <p className="font-semibold text-kidemia-black">Title</p>
+              <p className="text-sm text-kidemia-grey">
+                {testDetails.title || "N/A"}
               </p>
+            </div>
+
+            <div>
+              <p className="font-semibold text-kidemia-black">Message</p>
+              <p className="text-sm text-kidemia-grey">
+                {testDetails.message || "No message provided."}
+              </p>
+            </div>
+
+            <div>
+              <p className="font-semibold text-kidemia-black">
+                Topics Covered
+              </p>
+              <p className="text-sm text-kidemia-grey">
+                {testDetails.topics_covered?.join(", ") || "N/A"}
+              </p>
+            </div>
+          </div>
+        </CardBody>
+
+        {/* Footer actions */}
+        <CardFooter className="border-t border-kidemia-grey/10 bg-kidemia-biege/10 px-6 py-6">
+          <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-kidemia-grey/70 hidden sm:block">
+              Click below to begin your test.
+            </p>
+
+            <div className="flex gap-4">
               <Button
-                className="bg-kidemia-secondary text-white font-semibold shadow-md hover:shadow-lg"
-                size="lg"
-                radius="md"
-                startContent={<BiPlayCircle className="w-5 h-5" />}
-                onPress={() => {
-                  navigate(`/take-a-test/start/${testDetails?.assessment_id}`);
-                }}
+                onPress={() => navigate(-1)}
+                className="bg-kidemia-secondary"
               >
-                Proceed
+                <BiArrowBack className="w-5 h-5 text-white" />
+              </Button>
+
+              <Button
+                className="bg-kidemia-secondary text-white font-semibold px-6 py-3"
+                startContent={<BiPlayCircle className="w-5 h-5" />}
+                isLoading={startAttemptMutation.isPending}
+                isDisabled={startAttemptMutation.isPending}
+                onPress={() => startAttemptMutation.mutate()}
+              >
+                Start Test
               </Button>
             </div>
-          </CardFooter>
-        </Card>
-      </div>
+          </div>
+        </CardFooter>
+      </Card>
     </section>
   );
 }

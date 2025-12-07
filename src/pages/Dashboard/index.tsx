@@ -26,7 +26,7 @@ export default function DashboardPage() {
               type="button"
               onPress={() => navigate(TestRoutes.takeTest)}
             >
-              Take a Test
+              Practice
             </Button>
 
             <Button
