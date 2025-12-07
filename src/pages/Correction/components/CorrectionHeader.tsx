@@ -10,7 +10,7 @@ export default function CorrectionHeader({ attempt }: { attempt: AttemptSummaryR
     const secs = (attempt.time_spent_seconds || 0) % 60;
 
     return (
-        <header className="px-4 md:px-6 py-4 bg-kidemia-primary">
+        <header className="px-4 md:px-6 py-4 bg-kidemia-primary radius">
             <div className="flex items-start justify-between">
                 <AppImage
                     src={AppLogo}
@@ -20,7 +20,7 @@ export default function CorrectionHeader({ attempt }: { attempt: AttemptSummaryR
                 <div className="flex flex-col items-end gap-2">
                     <button
                         onClick={() => navigate(SidebarRoutes.dashboard)}
-                        className="px-5 py-2.5 rounded bg-kidemia-secondary text-white text-sm font-medium hover:opacity-90 transition-opacity"
+                        className="px-5 py-2.5 rounded-[10px] bg-kidemia-secondary text-white text-sm font-medium hover:opacity-90 transition-opacity"
                     >
                         Dashboard
                     </button>

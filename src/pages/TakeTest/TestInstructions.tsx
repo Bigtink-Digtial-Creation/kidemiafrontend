@@ -8,7 +8,7 @@ import {
   selectedTopicsAtom,
 } from "../../store/test.atom";
 
-export default function TestInstrusctionsPage() {
+export default function TestInstructionsPage() {
   const { id } = useParams<{ id: string }>();
 
   const subjectTitle = useAtomValue(selectedSubjectTitleAtom);

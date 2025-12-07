@@ -49,21 +49,17 @@ export default function AssessmentInstructions() {
     return (
       <div className="h-screen w-full flex justify-center items-center bg-gray-50 px-4">
         <div className="flex flex-col items-center gap-6 p-8 sm:p-12 bg-white rounded-2xl shadow-xl max-w-md sm:max-w-lg md:max-w-2xl animate-fade-in">
-          {/* Spinner */}
           <SpinnerCircle />
 
-          {/* Heading */}
           <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-700 text-center">
             Preparing Your Assessment...
           </h2>
 
-          {/* Subtext */}
           <p className="text-sm sm:text-base md:text-lg text-gray-500 text-center max-w-md">
             Please wait while we load your assessment instructions. This should
             only take a few seconds.
           </p>
 
-          {/* Animated dots */}
           <div className="flex space-x-2 mt-2">
             <span className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce delay-75"></span>
             <span className="w-2 h-2 bg-yellow-400 rounded-full animate-bounce delay-150"></span>

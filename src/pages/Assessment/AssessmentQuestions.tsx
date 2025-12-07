@@ -21,6 +21,7 @@ import type { SaveAnswerRequest } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
 import { formatTime } from "../../utils";
 import SpinnerCircle from "../../components/Spinner/Circle";
+import LoadingSequence from "../../components/Loading/LoadingSequence";
 
 type OptionT = string;
 
@@ -210,22 +211,27 @@ export default function AssessmentQuestions() {
 
   if (isSubmitting || submitAttemptMutation.isPending || isTimeUp) {
     return (
-      <div className="h-screen flex flex-col justify-center items-center text-center space-y-4 px-4">
-        <SpinnerCircle />
-        <h2 className="text-2xl md:text-3xl font-semibold text-kidemia-black">
-          {isTimeUp
-            ? "⏰ Time's up! Submitting your test..."
-            : "Relax, your result is cooking 🍳"}
-        </h2>
-        <p className="text-lg text-kidemia-grey max-w-md">
-          {isTimeUp
-            ? "Don't worry,we're saving all your progress and wrapping things up for you."
-            : "We're adding the final touches to your test assessment. Hang tight while we finish up!"}
-        </p>
-        <p className="text-base text-kidemia-secondary italic">
-          Please don't close or refresh this page.
-        </p>
-      </div>
+      <LoadingSequence
+        lines={[
+          {
+            text: isTimeUp
+              ? "⏰ Time's up! Submitting your test..."
+              : "Relax, your result is cooking 🍳",
+            className: "text-2xl md:text-3xl font-semibold text-kidemia-black",
+          },
+          {
+            text: isTimeUp
+              ? "Don't worry, we're saving all your progress and wrapping things up for you."
+              : "We're adding the final touches to your test assessment. Hang tight while we finish up!",
+            className: "text-lg text-kidemia-grey max-w-md text-center",
+          },
+          {
+            text: "Please don't close or refresh this page.",
+            className: "text-base text-kidemia-secondary italic",
+          },
+        ]}
+      />
+
     );
   }
 
