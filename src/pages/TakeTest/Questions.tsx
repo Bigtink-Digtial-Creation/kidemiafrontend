@@ -21,6 +21,7 @@ import type { SaveAnswerRequest } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
 import { useResetAtom } from "jotai/utils";
 import LoadingSequence from "../../components/Loading/LoadingSequence";
+import { useInvalidateQueries } from "../../hooks/use-invalidate-queries";
 
 type AnswerOption = string;
 
@@ -126,6 +127,7 @@ export default function QuestionsPage() {
     }
   };
 
+  const invalidateQueries = useInvalidateQueries();
   // submit mutation
   const submitAttemptMutation = useMutation({
     mutationFn: (attemptId: string) =>
@@ -137,6 +139,7 @@ export default function QuestionsPage() {
     },
     onSuccess(data) {
       setAttemptResult(data);
+      invalidateQueries([QueryKeys.leaderboard,])
       addToast({
         description: "Attempt Submitted Successfull",
         color: "success",

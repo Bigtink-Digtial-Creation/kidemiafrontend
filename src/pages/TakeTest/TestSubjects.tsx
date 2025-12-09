@@ -9,9 +9,9 @@ import {
 import SubjectCard from "../../components/Cards/SubjectCard";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
-import type { SubjectResponse } from "../../sdk/generated"; // ✅ UPDATED: import type
+import type { SubjectResponse } from "../../sdk/generated";
 import { SidebarRoutes, TestRoutes } from "../../routes";
-import SpinnerCircle from "../../components/Spinner/Circle";
+import LoadingSequence from "../../components/Loading/LoadingSequence";
 
 export default function TestSubjectsPage() {
   const [page, setPage] = useState(1);
@@ -24,9 +24,21 @@ export default function TestSubjectsPage() {
 
   if (isLoading) {
     return <>
-      <div className="h-screen flex justify-center items-center">
-        < SpinnerCircle />
-      </div>
+      <LoadingSequence
+        lines={[
+          {
+            text: "Loading Practice subjects...",
+            className: "text-lg md:text-xl text-kidemia-primary",
+          },
+          {
+            text: "It is taking longer than expected.",
+            className: "text-lg md:text-xl text-kidemia-secondary",
+          },
+          {
+            text: "Putting Finishing touched",
+          },
+        ]}
+      />
     </>;
   }
 

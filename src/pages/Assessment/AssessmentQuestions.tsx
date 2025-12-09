@@ -22,6 +22,7 @@ import { apiErrorParser } from "../../utils/errorParser";
 import { formatTime } from "../../utils";
 import SpinnerCircle from "../../components/Spinner/Circle";
 import LoadingSequence from "../../components/Loading/LoadingSequence";
+import { useInvalidateQueries } from "../../hooks/use-invalidate-queries";
 
 type OptionT = string;
 
@@ -110,7 +111,6 @@ export default function AssessmentQuestions() {
         },
       });
 
-      // Only move to next question on success
       if (currentIndex < allQuestions.length - 1) {
         setCurrentIndex((prev) => prev + 1);
       }
@@ -130,7 +130,7 @@ export default function AssessmentQuestions() {
     }
   };
 
-  // submit mutation
+  const invalidateQueries = useInvalidateQueries();
   const submitAttemptMutation = useMutation({
     mutationFn: (attemptId: string) =>
       ApiSDK.AttemptsService.submitAttemptApiV1AttemptsAttemptIdSubmitPost(
@@ -141,6 +141,7 @@ export default function AssessmentQuestions() {
     },
     onSuccess(data) {
       setAttemptResult(data);
+      invalidateQueries([QueryKeys.leaderboard,])
       addToast({
         description: "Attempt Submitted Successfull",
         color: "success",
