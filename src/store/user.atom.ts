@@ -10,6 +10,7 @@ export interface UserT {
   first_name?: string;
   last_name?: string;
   email?: string;
+  is_email_verified?: boolean;
   profile_picture_url?: string;
 }
 
@@ -42,6 +43,11 @@ export const loggedinUserAtom = atomWithStorage(
 export const userAtom = atomWithStorage<UserT | null>("userDetail", null);
 
 export const userRoleAtom = atom<string | null>(null);
+
+export const emailVerifiedAtom = atom<boolean>((get) => {
+  const user = get(loggedinUserAtom);
+  return user?.user?.is_email_verified ?? false;
+});
 
 export const userWalletAtom = atom(async () => {
   const response = await ApiSDK.WalletService.getMyWalletApiV1WalletGet();

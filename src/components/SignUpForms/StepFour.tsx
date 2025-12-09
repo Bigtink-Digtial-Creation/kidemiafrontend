@@ -36,7 +36,7 @@ export default function StepFour() {
       ApiSDK.AuthenticationService.registerApiV1AuthRegisterPost(formData),
     onSuccess(data) {
       if (data) {
-        navigate(AuthRoutes.login);
+        navigate(AuthRoutes.verifyEmail);
         addToast({
           title: data?.message,
           color: "success",

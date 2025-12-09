@@ -1,29 +1,45 @@
 import { useAtomValue } from "jotai";
-import { Navigate, Outlet } from "react-router";
-import { userRoleAtom } from "../store/user.atom";
+import { Navigate, Outlet, useLocation } from "react-router";
+import { userRoleAtom, emailVerifiedAtom } from "../store/user.atom";
 import { AuthRoutes } from "../routes";
 import { useAuthRedirect } from "../hooks/use-auth-redirect";
 import SpinnerCircle from "./Spinner/Circle";
 
 type ProtectedRouteProps = {
     allowedRoles: string[];
+    requireEmailVerification?: boolean;
 };
 
-export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
+export function ProtectedRoute({
+    allowedRoles,
+    requireEmailVerification = true,
+}: ProtectedRouteProps) {
+    const location = useLocation();
 
-    const { loggedInUser, authToken, isValidating } = useAuthRedirect(true);
+    const isOnVerificationPage = location.pathname === AuthRoutes.emailVerificationRequired;
 
-    // console.log(loggedInUser?.user?.student?.category_id)
+    const { loggedInUser, authToken, isValidating } = useAuthRedirect(
+        true,
+        requireEmailVerification && !isOnVerificationPage
+    );
+
     const userRole = useAtomValue(userRoleAtom);
+    const isEmailVerified = useAtomValue(emailVerifiedAtom);
+
     if (isValidating) {
-        return <>
+        return (
             <div className="h-screen flex justify-center items-center">
-                < SpinnerCircle />
+                <SpinnerCircle />
             </div>
-        </>;
+        );
     }
+
     if (!authToken || !loggedInUser) {
         return null;
+    }
+
+    if (requireEmailVerification && !isEmailVerified && !isOnVerificationPage) {
+        return <Navigate to={AuthRoutes.emailVerificationRequired} replace />;
     }
 
     if (!userRole) {

@@ -23,8 +23,8 @@ import AboutUs from "./pages/Home/AboutUs";
 
 // auth pages
 import LoginPage from "./pages/Auth/Login";
-import ForgotPasswordPage from "./pages/Auth/ForgotPassword";
-import ChangePasswordPage from "./pages/Auth/ChangePassword";
+import ForgotPasswordPage from "./pages/Auth/Password/ForgotPassword";
+import ChangePasswordPage from "./pages/Auth/Password/ChangePassword";
 import SignUpPage from "./pages/Auth/Signup";
 import GuardianSignup from "./pages/Auth/Guardian";
 
@@ -42,7 +42,6 @@ import QuestionsPage from "./pages/TakeTest/Questions";
 import ResultPage from "./pages/TakeTest/Result";
 import ReviewSubmission from "./pages/TakeTest/ReviewSubmission";
 import HistoryPage from "./pages/History";
-import ProfilePage from "./pages/Profile";
 import SettingsPage from "./pages/Settings";
 import AssessmentPage from "./pages/Assessment";
 import AssessmentInstruction from "./pages/Assessment/AssessmentInstruction";
@@ -58,6 +57,10 @@ import CommunityPage from "./pages/Community/Feed";
 import ErrorPage from "./pages/ErrorPage";
 import UnauthorizedPage from "./pages/Auth/Login/unauthorized";
 import { CorrectionPage } from "./pages/Correction";
+import ProfilePage from "./pages/Profile";
+import ResetPasswordPage from "./pages/Auth/Password/ResetPassword";
+import VerifyEmailPage from "./pages/Auth/Password/VerifyEmail";
+import EmailVerificationRequiredPage from "./pages/Auth/Password/EmailVerificationRequired";
 
 export const router = createBrowserRouter([
   {
@@ -75,13 +78,17 @@ export const router = createBrowserRouter([
       { path: AuthRoutes.login, element: <LoginPage /> },
       { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> },
       { path: AuthRoutes.changePassword, element: <ChangePasswordPage /> },
+
+      { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> },
+      { path: AuthRoutes.resetPassword, element: <ResetPasswordPage /> },
+      { path: AuthRoutes.verifyEmail, element: <VerifyEmailPage /> },
       { path: AuthRoutes.signup, element: <SignUpPage /> },
       { path: AuthRoutes.guardian, element: <GuardianSignup /> },
     ],
   },
   {
     element: (
-      <ProtectedRoute allowedRoles={["student"]} />
+      <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={true} />
     ),
     children: [
       {
@@ -102,7 +109,7 @@ export const router = createBrowserRouter([
   },
   {
     element: (
-      <ProtectedRoute allowedRoles={["student"]} />
+      <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={true} />
     ),
     children: [
       {
@@ -131,10 +138,18 @@ export const router = createBrowserRouter([
         element: <CorrectionPage />,
       },
     ]
-
   },
 
   { path: AuthRoutes.unauthorized, element: <UnauthorizedPage /> },
+  {
+    element: (
+      <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={false} />
+    ),
+    children: [{
+      path: AuthRoutes.emailVerificationRequired,
+      element: <EmailVerificationRequiredPage />
+    },]
+  },
 
   {
     path: PaymentRoutes.checkout,
