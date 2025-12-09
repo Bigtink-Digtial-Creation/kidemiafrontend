@@ -32,12 +32,10 @@ export function CorrectionPage() {
         } catch { return 0; }
     });
 
-    // persist
     useEffect(() => {
         try { localStorage.setItem(storageKey, String(currentIndex)); } catch { }
     }, [currentIndex, storageKey]);
 
-    // keyboard navigation
     useEffect(() => {
         function onKey(e: KeyboardEvent) {
             if (e.key === "ArrowRight") setCurrentIndex(i => Math.min(i + 1, answers.length - 1));
@@ -51,7 +49,6 @@ export function CorrectionPage() {
         return () => window.removeEventListener("keydown", onKey);
     }, [answers.length]);
 
-    // swipe handlers (mobile)
     const handlers = useSwipeable({
         onSwipedLeft: () => setCurrentIndex(i => Math.min(i + 1, answers.length - 1)),
         onSwipedRight: () => setCurrentIndex(i => Math.max(i - 1, 0)),
@@ -60,7 +57,6 @@ export function CorrectionPage() {
 
     const goTo = useCallback((n: number) => setCurrentIndex(Math.max(0, Math.min(n, answers.length - 1))), [answers.length]);
 
-    // Early returns AFTER all hooks
     if (isLoading) return (
         <div className="min-h-screen bg-kidemia-white flex flex-col items-center justify-center space-y-4">
             <SpinnerCircle />
@@ -106,8 +102,7 @@ export function CorrectionPage() {
                             </AnimatePresence>
                         </div>
 
-                        {/* Navigation buttons */}
-                        <div className="mb-6">
+                        <div className="mb-6 hidden sm:block">
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => goTo(currentIndex - 1)}
@@ -126,7 +121,6 @@ export function CorrectionPage() {
                             </div>
                         </div>
 
-                        {/* Question number grid */}
                         <div className="pb-6">
                             <QuestionNumberGrid answers={answers} currentIndex={currentIndex} onChange={goTo} />
                         </div>

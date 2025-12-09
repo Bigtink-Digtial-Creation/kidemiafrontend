@@ -15,6 +15,12 @@ import { request as __request } from '../core/request';
 export class AttemptsService {
   /**
    * Start an assessment attempt
+   * Start a new assessment attempt.
+   *
+   * - Validates assessment availability
+   * - Checks attempt limits
+   * - Verifies payment for exams
+   * - Creates or resumes attempt
    * @param assessmentId
    * @param requestBody
    * @returns AttemptStartResponse Successful Response

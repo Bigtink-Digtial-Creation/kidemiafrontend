@@ -8,4 +8,6 @@ export const QueryKeys = {
   assesstmentAttempt: "assesstmentAttempt",
   testDetails: "testDetails",
   testAttempt: "testAttempt",
+  categories: "categories",
+  leaderboard: "leaderboard",
 } as const;

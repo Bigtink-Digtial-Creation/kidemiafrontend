@@ -1,341 +1,306 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from "react";
-import {
-  addToast,
-  Avatar,
-  BreadcrumbItem,
-  Breadcrumbs,
-  Button,
-  Form,
-  Input,
-  Textarea,
-} from "@heroui/react";
-import { SidebarRoutes } from "../../routes";
-import { MdOutlineDashboard, MdOutlineEmail } from "react-icons/md";
-import { FaCamera, FaUser } from "react-icons/fa";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { QueryKeys } from "../../utils/queryKeys";
-import { ApiSDK } from "../../sdk";
-import { useAtomValue } from "jotai";
-import { loggedinUserAtom } from "../../store/user.atom";
-import { BiDetail, BiUser } from "react-icons/bi";
-import { getNameIntials } from "../../utils";
-import { BsCalendarDate } from "react-icons/bs";
-import { GrUserWorker } from "react-icons/gr";
-import { SlScreenSmartphone } from "react-icons/sl";
-import { useForm } from "react-hook-form";
 import { ProfileSchema } from "../../schema/contact.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { UserUpdate } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
 import SpinnerCircle from "../../components/Spinner/Circle";
+import { loggedinUserAtom } from "../../store/user.atom";
+import { useAtomValue } from "jotai";
+import { useForm } from "react-hook-form";
+import { useInvalidateQueries } from "../../hooks/use-invalidate-queries";
+import { QueryKeys } from "../../utils/queryKeys";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+    addToast,
+    Avatar,
+    Input,
+    Button,
+    useDisclosure,
+    Select,
+    SelectItem,
+} from "@heroui/react";
+import { ApiSDK } from "../../sdk";
+import ProfileRow from "./components/ProfileRow";
+import { useEffect, useState } from "react";
+import { getNameIntials } from "../../utils";
+import { uploadToGCS } from "../../services/storage/uploadToGCS";
+import ProfileAvatarModal from "./components/ProfileAvatarModal";
+import ChangePasswordModal from "./components/ChangePasswordModal";
 
 export default function ProfilePage() {
-  const queryClient = useQueryClient();
-  const storedUser = useAtomValue(loggedinUserAtom);
+    const avatarModal = useDisclosure();
+    const passwordModal = useDisclosure();
 
-  const form = useForm<ProfileSchema>({
-    resolver: zodResolver(ProfileSchema),
-  });
+    const mockUpdateUserCategoryApi = (
+        userId: string,
+        payload: { category: string }
+    ) =>
+        new Promise<{ category: string; status: "pending" }>((resolve) => {
+            console.log("MOCK category update:", userId, payload);
+            setTimeout(() => {
+                resolve({
+                    category: payload.category,
+                    status: "pending",
+                });
+            }, 1200);
+        });
 
-  const { data: user, isLoading: isUserLoading } = useQuery({
-    queryKey: [QueryKeys.user],
-    queryFn: () =>
-      ApiSDK.UsersService.getUserApiV1UsersUserIdGet(
-        storedUser?.user?.id as string,
-      ),
-  });
-  const [avatarUrl, setAvatarUrl] = useState<string>(
-    user?.profile_picture_url as string,
-  );
+    const storedUser = useAtomValue(loggedinUserAtom);
 
-  const fullName = [user?.first_name, user?.last_name]
-    .filter(Boolean)
-    .join(" ");
+    const form = useForm<ProfileSchema>({
+        resolver: zodResolver(ProfileSchema),
+    });
 
-  useEffect(() => {
-    if (user) {
-      form.reset({
-        first_name: user.first_name || "",
-        last_name: user.last_name || "",
-        middle_name: user.middle_name || "",
-        profile_picture_url: user.profile_picture_url || avatarUrl,
-        phone_number: user.phone_number || "",
-        date_of_birth: user.date_of_birth || "",
-        email: user.email || "",
-        bio: user.bio || "",
-      });
+    const { data: user, isLoading } = useQuery({
+        queryKey: [QueryKeys.user],
+        queryFn: () =>
+            ApiSDK.UsersService.getUserApiV1UsersUserIdGet(
+                storedUser?.user?.id as string,
+            ),
+    });
+
+    const {
+        data: categoriesData,
+        isLoading: categoriesLoading,
+    } = useQuery({
+        queryKey: [QueryKeys.categories],
+        queryFn: async () => {
+            return ApiSDK.AssessmentCategoriesService.getCategoryConfigsApiV1CategoriesGet();
+        },
+    });
+
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<string>("");
+
+    useEffect(() => {
+        if (!user) return;
+
+        setAvatarUrl(user.profile_picture_url ?? null);
+        setSelectedCategory(user.student?.category?.category_name ?? "");
+
+        form.reset({
+            first_name: user.first_name ?? "",
+            middle_name: user.middle_name ?? "",
+            last_name: user.last_name ?? "",
+            bio: user.bio ?? "",
+            date_of_birth: user.date_of_birth ?? "",
+            phone_number: user.phone_number ?? "",
+        });
+    }, [user]);
+
+    const invalidateQueries = useInvalidateQueries();
+
+    const updateProfile = useMutation({
+        mutationFn: (data: UserUpdate) =>
+            ApiSDK.AuthenticationService.updateAccountApiV1AuthAccountUserIdPatch(
+                user!.id,
+                data,
+            ),
+        onSuccess() {
+            invalidateQueries([QueryKeys.user]);
+            addToast({ color: "success", description: "Changes saved successfully" });
+        },
+        onError(error) {
+            addToast({
+                color: "danger",
+                description: apiErrorParser(error).message,
+            });
+        },
+    });
+
+    const updateCategoryMutation = useMutation({
+        mutationFn: (category: string) =>
+            mockUpdateUserCategoryApi(user!.id, { category }),
+        // Replace with actual API call when ready:
+        // ApiSDK.UsersService.updateUserCategoryApiV1UsersCategoryPatch(
+        //   user!.id,
+        //   { category },
+        // ),
+        onSuccess() {
+            addToast({
+                color: "success",
+                description: "Category change submitted for approval",
+            });
+            invalidateQueries([QueryKeys.user]);
+        },
+        onError(error) {
+            addToast({
+                color: "danger",
+                description: apiErrorParser(error).message,
+            });
+        },
+    });
+
+    const handleCategoryUpdate = () => {
+        if (!selectedCategory) {
+            addToast({
+                color: "warning",
+                description: "Please select a category",
+            });
+            return;
+        }
+        updateCategoryMutation.mutate(selectedCategory);
+    };
+
+    const handleAvatarUpload = async (file: File) => {
+        try {
+            const imageUrl = await uploadToGCS(file);
+            updateProfile.mutate({ profile_picture_url: imageUrl });
+            setAvatarUrl(imageUrl);
+            avatarModal.onClose();
+        } catch {
+            addToast({ color: "danger", description: "Upload failed" });
+        }
+    };
+
+    if (isLoading) {
+        return (
+            <div className="h-screen flex items-center justify-center">
+                <SpinnerCircle color="#f97316" />
+            </div>
+        );
     }
-  }, [avatarUrl, form, user]);
 
-  const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append("profilepicture", file);
+    const fullName = [
+        user?.first_name,
+        user?.middle_name,
+        user?.last_name,
+    ]
+        .filter(Boolean)
+        .join(" ");
 
-    // create a preview from uploaded file
-    const previewUrl = URL.createObjectURL(file);
-    setAvatarUrl(previewUrl);
-  };
+    const submitAll = () => {
+        const values = form.getValues();
+        updateProfile.mutate(values);
+    };
 
-  const updateProfileMutation = useMutation({
-    mutationFn: (userData: UserUpdate) =>
-      ApiSDK.UsersService.updateUserApiV1UsersUserIdPatch(
-        user?.id as string,
-        userData,
-      ),
-    async onMutate(updatedUser) {
-      await queryClient.cancelQueries({ queryKey: [QueryKeys.user] });
-      const previousUser = queryClient.getQueryData([QueryKeys.user]);
+    return (
+        <>
+            <div className="min-h-[100dvh] w-full flex justify-center px-4 py-6">
+                <div className="w-full max-w-3xl rounded-2xl bg-gray-50/80 backdrop-blur-md px-6 py-8 shadow-sm transition-all duration-300 hover:shadow-md">
+                    <div className="flex flex-col items-center gap-3">
+                        <Avatar
+                            src={avatarUrl ?? undefined}
+                            className="w-28 h-28 text-3xl cursor-pointer transition-transform duration-200 hover:scale-105"
+                            isBordered
+                            name={getNameIntials(fullName) as string}
+                            onClick={avatarModal.onOpen}
+                        />
+                        <button
+                            onClick={avatarModal.onOpen}
+                            className="text-sm text-kidemia-secondary transition-colors duration-200 hover:text-kidemia-primary"
+                        >
+                            Tap to{" "}
+                            <span className="text-kidemia-primary font-medium">upload</span>{" "}
+                            picture
+                        </button>
+                    </div>
 
-      queryClient.setQueryData([QueryKeys.user], (old: any) => ({
-        ...old,
-        ...updatedUser,
-      }));
-
-      return { previousUser };
-    },
-
-    onSuccess(data) {
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.user] });
-      addToast({
-        description: `${data.first_name} profile updated successfully`,
-        color: "success",
-      });
-    },
-
-    onError(error, _, context) {
-      const parsedError = apiErrorParser(error);
-      addToast({
-        title: "An Error Occurred",
-        description: parsedError.message,
-        color: "danger",
-      });
-
-      if (context?.previousUser) {
-        queryClient.setQueryData([QueryKeys.user], context.previousUser);
-      }
-    },
-    onSettled() {
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.user] });
-    },
-  });
-
-  const onSubmit = (profileData: ProfileSchema) => {
-    updateProfileMutation.mutate(profileData);
-  };
-
-  if (isUserLoading) {
-    return <>
-      <div className="h-screen flex justify-center items-center">
-        < SpinnerCircle color="#ff0000" />
-      </div>
-    </>;
-  }
-  return (
-    <>
-      <div className="space-y-6">
-        <div>
-          <Breadcrumbs variant="light" color="foreground">
-            <BreadcrumbItem
-              href={SidebarRoutes.dashboard}
-              startContent={<MdOutlineDashboard />}
-            >
-              Dashboard
-            </BreadcrumbItem>
-            <BreadcrumbItem
-              href={SidebarRoutes.profile}
-              startContent={<FaUser />}
-            >
-              Profile
-            </BreadcrumbItem>
-          </Breadcrumbs>
-        </div>
-        <div className="h-full w-full shadow-none md:shadow-sm bg-kidemia-biege2 rounded-2xl overflow-y-auto">
-          <div className="flex flex-col justify-center items-center gap-3 py-4 px-6 md:px-12 lg:px-20">
-            <Form
-              className="space-y-4 w-full max-w-2xl flex  justify-center items-center"
-              {...form}
-              onSubmit={form.handleSubmit(onSubmit)}
-            >
-              <div className="group flex justify-center items-center relative">
-                <Avatar
-                  src={
-                    (avatarUrl as string) ||
-                    (user?.profile_picture_url as string)
-                  }
-                  className="w-40 h-40 self-center cursor-pointer uppercase font-extrabold text-kidemia-primary text-4xl"
-                  isBordered
-                  showFallback
-                  name={getNameIntials(fullName) as string}
-                />
-
-                <div className="hidden group-hover:block z-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-200">
-                  <div className="relative flex justify-center items-center">
-                    <FaCamera
-                      size={30}
-                      className="text-yellow-300 cursor-pointer"
+                    <ProfileAvatarModal
+                        isOpen={avatarModal.isOpen}
+                        onClose={avatarModal.onClose}
+                        onSave={handleAvatarUpload}
                     />
-                    <label
-                      htmlFor="profile"
-                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-200 z-50 w-full h-full"
-                    ></label>
-                  </div>
-                  <Input
-                    id="profile"
-                    type="file"
-                    className="hidden"
-                    onChange={(e) => handleUpload(e)}
-                  />
+
+                    <div className="mt-8 space-y-4">
+                        {([
+                            ["First Name", "first_name"],
+                            ["Middle Name", "middle_name"],
+                            ["Last Name", "last_name"],
+                            ["Bio", "bio"],
+                            ["Date of Birth", "date_of_birth", "date"],
+                            ["Phone Number", "phone_number"],
+                        ] as const).map(([label, field, type]) => (
+                            <ProfileRow
+                                key={field}
+                                label={label}
+                                value={(user as any)?.[field] || "-"}
+                            >
+                                <Input
+                                    type={type ?? "text"}
+                                    variant="underlined"
+                                    classNames={{
+                                        input: "transition-all duration-200",
+                                    }}
+                                    {...form.register(field)}
+                                />
+                            </ProfileRow>
+                        ))}
+
+                        <ProfileRow
+                            label="Email"
+                            value={user?.email}
+                            disabled
+                        />
+
+                        <ProfileRow
+                            label="Category"
+                            value={user?.student?.category?.display_name}
+                            status="pending"
+                            isUpdating={updateCategoryMutation.isPending}
+                            onUpdate={handleCategoryUpdate}
+                        >
+                            <Select
+                                variant="underlined"
+                                placeholder="Select a category"
+                                selectedKeys={selectedCategory ? [selectedCategory] : []}
+                                onSelectionChange={(keys) => {
+                                    const selected = Array.from(keys)[0] as string;
+                                    setSelectedCategory(selected);
+                                }}
+                                isLoading={categoriesLoading}
+                                classNames={{
+                                    trigger: "transition-all duration-200",
+                                }}
+                            >
+                                {(categoriesData || []).map((category) => (
+                                    <SelectItem
+                                        key={category.category_name}
+                                    >
+                                        {category.display_name}
+                                    </SelectItem>
+                                ))}
+                            </Select>
+                        </ProfileRow>
+
+                        <ProfileRow
+                            label="Guardian Email"
+                            value={user?.student?.guardian_email ?? "-"}
+                        />
+
+                        <ProfileRow label="School" value="-" />
+
+                        <div className="pt-8 flex flex-col gap-4">
+                            <Button
+                                className="bg-kidemia-primary text-white rounded-lg font-medium transition-all duration-200 hover:bg-kidemia-primary/90 hover:shadow-md active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+                                isLoading={updateProfile.isPending}
+                                onPress={submitAll}
+                                size="lg"
+                                spinner={
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    </div>
+                                }
+                            >
+                                {updateProfile.isPending ? "Saving..." : "Save Changes"}
+                            </Button>
+
+                            <Button
+                                variant="light"
+                                onPress={passwordModal.onOpen}
+                                className="text-kidemia-secondary font-medium transition-all duration-200 hover:bg-gray-100"
+                                size="lg"
+                            >
+                                Change Password
+                            </Button>
+                        </div>
+                    </div>
                 </div>
-              </div>
+            </div>
 
-              <div className="pb-2 w-full">
-                <Input
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <MdOutlineEmail className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  type="email"
-                  label="Your Email"
-                  labelPlacement="inside"
-                  {...form.register("email")}
-                  defaultValue={user?.email}
-                  isDisabled
-                />
-              </div>
-              <div className="pb-2 w-full">
-                <Input
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <GrUserWorker className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  type="text"
-                  label="User Type"
-                  labelPlacement="inside"
-                  defaultValue={user?.user_type}
-                  isDisabled
-                />
-              </div>
-
-              <div className="pb-2 w-full flex items-center gap-4">
-                <Input
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <BiUser className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  label="Firstname"
-                  type="text"
-                  labelPlacement="inside"
-                  {...form.register("first_name")}
-                  defaultValue={user?.first_name}
-                  isDisabled={updateProfileMutation.isPending}
-                />
-                <Input
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <BiUser className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  label="Lastname"
-                  type="text"
-                  labelPlacement="inside"
-                  {...form.register("last_name")}
-                  defaultValue={user?.last_name}
-                  isDisabled={updateProfileMutation.isPending}
-                />
-              </div>
-
-              <div className="pb-2 w-full">
-                <Input
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <BiUser className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  type="text"
-                  label="Middle Name"
-                  labelPlacement="inside"
-                  {...form.register("middle_name")}
-                  defaultValue={user?.middle_name || ""}
-                  isDisabled={updateProfileMutation.isPending}
-                />
-              </div>
-              <div className="pb-2 w-full">
-                <Input
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <SlScreenSmartphone className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  type="text"
-                  label="Phone Number"
-                  labelPlacement="inside"
-                  {...form.register("phone_number")}
-                  defaultValue={user?.phone_number || ""}
-                  isDisabled={updateProfileMutation.isPending}
-                />
-              </div>
-
-              <div className="pb-2 w-full">
-                <Input
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <BsCalendarDate className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  type="text"
-                  label="Date of Birth"
-                  labelPlacement="inside"
-                  {...form.register("date_of_birth")}
-                  defaultValue={user?.date_of_birth || ""}
-                  isDisabled={updateProfileMutation.isPending}
-                />
-              </div>
-
-              <div className="pb-2 w-full">
-                <Textarea
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <BiDetail className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  label="Bio"
-                  {...form.register("bio")}
-                  defaultValue={user?.bio || ""}
-                  isDisabled={updateProfileMutation.isPending}
-                />
-              </div>
-
-              <div className="py-4 w-full">
-                <Button
-                  type="submit"
-                  variant="solid"
-                  size="lg"
-                  className="bg-kidemia-secondary text-kidemia-white font-semibold w-full"
-                  radius="sm"
-                  isDisabled={updateProfileMutation.isPending}
-                  isLoading={updateProfileMutation.isPending}
-                >
-                  Update Profile
-                </Button>
-              </div>
-            </Form>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+            <ChangePasswordModal
+                isOpen={passwordModal.isOpen}
+                onClose={passwordModal.onClose}
+            />
+        </>
+    );
 }

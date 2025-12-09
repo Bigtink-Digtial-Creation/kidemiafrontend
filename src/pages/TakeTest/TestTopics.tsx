@@ -17,7 +17,7 @@ import {
   selectedSubjectTitleAtom,
   selectedTopicsAtom,
 } from "../../store/test.atom";
-import SpinnerCircle from "../../components/Spinner/Circle";
+import LoadingSequence from "../../components/Loading/LoadingSequence";
 
 export default function TestTopicsPage() {
   const [selectedTopics, setSelectedTopics] = useAtom(selectedTopicsAtom);
@@ -39,9 +39,21 @@ export default function TestTopicsPage() {
 
   if (isLoading) {
     return <>
-      <div className="h-screen flex justify-center items-center">
-        < SpinnerCircle />
-      </div>
+      <LoadingSequence
+        lines={[
+          {
+            text: "Loading Practice topics...",
+            className: "text-lg md:text-xl text-kidemia-primary",
+          },
+          {
+            text: "This will take a short time.",
+            className: "text-lg md:text-xl text-kidemia-secondary",
+          },
+          {
+            text: "Getting ready for practice",
+          },
+        ]}
+      />
     </>;
   }
 

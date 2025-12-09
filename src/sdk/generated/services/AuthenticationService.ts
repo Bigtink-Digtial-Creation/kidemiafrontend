@@ -14,6 +14,7 @@ import type { ResetPasswordRequest } from '../models/ResetPasswordRequest';
 import type { SuccessResponse } from '../models/SuccessResponse';
 import type { TokenResponse } from '../models/TokenResponse';
 import type { UserResponse } from '../models/UserResponse';
+import type { UserUpdate } from '../models/UserUpdate';
 import type { VerifyEmailRequest } from '../models/VerifyEmailRequest';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -158,6 +159,41 @@ export class AuthenticationService {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/v1/auth/me',
+    });
+  }
+  /**
+   * Update user
+   * Update user details.
+   *
+   * - **first_name**: Updated first name
+   * - **last_name**: Updated last name
+   * - **middle_name**: Updated middle name
+   * - **phone_number**: Updated phone number
+   * - **date_of_birth**: Updated date of birth
+   * - **profile_picture_url**: Profile picture URL
+   * - **bio**: User bio
+   * - **language**: Preferred language
+   * - **timezone**: User's timezone
+   * @param userId
+   * @param requestBody
+   * @returns UserResponse Successful Response
+   * @throws ApiError
+   */
+  public static updateAccountApiV1AuthAccountUserIdPatch(
+    userId: string,
+    requestBody: UserUpdate,
+  ): CancelablePromise<UserResponse> {
+    return __request(OpenAPI, {
+      method: 'PATCH',
+      url: '/api/v1/auth/account/{user_id}',
+      path: {
+        'user_id': userId,
+      },
+      body: requestBody,
+      mediaType: 'application/json',
+      errors: {
+        422: `Validation Error`,
+      },
     });
   }
   /**
