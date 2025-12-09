@@ -4,9 +4,13 @@ import { AuthRoutes, SidebarRoutes } from "../../../routes";
 import { useMutation } from "@tanstack/react-query";
 import { ApiSDK } from "../../../sdk";
 import { apiErrorParser } from "../../../utils/errorParser";
-import { MdOutlineEmail, MdWarning } from "react-icons/md";
+import { MdOutlineEmail } from "react-icons/md";
 import { useAtom, useAtomValue } from "jotai";
-import { loggedinUserAtom, storedAuthTokenAtom, userRoleAtom } from "../../../store/user.atom";
+import {
+    loggedinUserAtom,
+    storedAuthTokenAtom,
+    userRoleAtom,
+} from "../../../store/user.atom";
 
 export default function EmailVerificationRequiredPage() {
     const navigate = useNavigate();
@@ -17,28 +21,26 @@ export default function EmailVerificationRequiredPage() {
 
     const resendVerificationMutation = useMutation({
         mutationFn: () =>
-            ApiSDK.AuthenticationService.resendVerificationApiV1AuthResendVerificationPost(),
+            ApiSDK.AuthenticationService
+                .resendVerificationApiV1AuthResendVerificationPost(),
         onSuccess(data) {
             addToast({
-                title: "Email Sent!",
+                title: "Email sent",
                 description:
-                    data?.message || "Check your inbox for the verification link",
+                    data?.message ||
+                    "Check your inbox for the verification link.",
                 color: "success",
             });
         },
         onError(error) {
             const parsedError = apiErrorParser(error);
             addToast({
-                title: "Failed to Send Email",
+                title: "Couldn’t send email",
                 description: parsedError.message,
                 color: "danger",
             });
         },
     });
-
-    const handleResend = () => {
-        resendVerificationMutation.mutate();
-    };
 
     const handleLogout = () => {
         setAuthToken(null);
@@ -47,92 +49,65 @@ export default function EmailVerificationRequiredPage() {
         navigate(AuthRoutes.login);
     };
 
-    const handleCheckVerification = () => {
-        // Refresh the page or fetch user data to check if verified
-        window.location.href = SidebarRoutes.dashboard;
-    };
-
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-            <div className="py-8 w-full max-w-md space-y-6 px-8 bg-white rounded-lg shadow-lg">
-                <div className="space-y-6">
-                    <div className="flex justify-center">
-                        <div className="rounded-full bg-orange-100 p-6">
-                            <MdWarning className="text-orange-600 text-6xl" />
-                        </div>
-                    </div>
-
-                    <div className="space-y-3">
-                        <h2 className="text-3xl text-kidemia-black font-semibold text-center">
-                            Verify Your Email
-                        </h2>
-                        <p className="text-lg text-kidemia-black2 text-center font-medium">
-                            We sent a verification email to
-                        </p>
-                        <p className="text-lg text-kidemia-secondary text-center font-semibold">
-                            {loggedInUser?.user?.email}
-                        </p>
-                        <p className="text-base text-kidemia-black2 text-center">
-                            You need to verify your email before you can access your account.
-                        </p>
-                    </div>
-
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-2">
-                        <div className="flex items-start gap-2">
-                            <MdOutlineEmail className="text-blue-600 text-xl mt-0.5 shrink-0" />
-                            <div className="space-y-1">
-                                <p className="text-blue-900 text-sm font-medium">
-                                    Check your inbox and click the verification link
-                                </p>
-                                <p className="text-blue-800 text-sm">
-                                    Don't forget to check your spam folder
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {resendVerificationMutation.isSuccess && (
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                            <p className="text-green-800 text-center font-medium">
-                                ✓ Verification email sent! Check your inbox.
-                            </p>
-                        </div>
-                    )}
-
-                    <div className="w-full space-y-2">
-                        <Button
-                            onPress={handleCheckVerification}
-                            variant="solid"
-                            size="lg"
-                            className="bg-green-600 text-white font-semibold w-full"
-                            radius="sm"
-                        >
-                            I've Verified My Email
-                        </Button>
-
-                        <Button
-                            onClick={handleResend}
-                            variant="solid"
-                            size="lg"
-                            className="bg-kidemia-secondary text-kidemia-white font-semibold w-full"
-                            radius="sm"
-                            isDisabled={resendVerificationMutation.isPending}
-                            isLoading={resendVerificationMutation.isPending}
-                        >
-                            Resend Verification Email
-                        </Button>
-
-                        <Button
-                            onClick={handleLogout}
-                            variant="bordered"
-                            size="lg"
-                            className="border-kidemia-secondary text-kidemia-secondary font-semibold w-full"
-                            radius="sm"
-                        >
-                            Logout
-                        </Button>
-                    </div>
+        <div className="w-full max-w-md mx-auto py-8 px-6 space-y-6">
+            {/* Icon */}
+            <div className="flex justify-center">
+                <div className="rounded-full bg-kidemia-secondary/5 p-4">
+                    <MdOutlineEmail className="text-kidemia-secondary text-3xl" />
                 </div>
+            </div>
+
+            {/* Title */}
+            <div className="space-y-1 text-center">
+                <h2 className="text-xl font-semibold text-kidemia-black">
+                    Verify your email
+                </h2>
+                <p className="text-sm text-kidemia-black2">
+                    We have sent a verification link to
+                </p>
+                <p className="text-sm font-medium text-kidemia-black">
+                    {loggedInUser?.user?.email}
+                </p>
+            </div>
+
+            {/* Primary action */}
+            <Button
+                onPress={() =>
+                    (window.location.href = SidebarRoutes.dashboard)
+                }
+                size="lg"
+                className="bg-kidemia-secondary text-white w-full font-medium"
+                radius="sm"
+            >
+                I have verified my email
+            </Button>
+
+            {/* Secondary action */}
+            <Button
+                onPress={() => resendVerificationMutation.mutate()}
+                size="lg"
+                variant="bordered"
+                className="border-kidemia-secondary/50 text-kidemia-secondary w-full font-medium"
+                radius="sm"
+                isLoading={resendVerificationMutation.isPending}
+                isDisabled={resendVerificationMutation.isPending}
+            >
+                Resend verification email
+            </Button>
+
+            {/* Links */}
+            <div className="text-center space-y-3 pt-2">
+                <button
+                    onClick={handleLogout}
+                    className="text-sm text-kidemia-secondary hover:underline font-medium"
+                >
+                    Log out and use another email
+                </button>
+
+                <p className="text-xs text-kidemia-black2">
+                    Don’t see the email? Check spam or promotions folders.
+                </p>
             </div>
         </div>
     );
