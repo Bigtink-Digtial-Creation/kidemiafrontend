@@ -13,6 +13,11 @@ export const AuthRoutes = {
   guardian: "/auth/signup/guardian",
   forgotPassword: "/auth/forgot-password",
   changePassword: "/auth/change-password",
+  resetPassword: "/auth/reset-password",
+  verifyEmail: "/auth/verify-email",
+  emailVerificationRequired: "/auth/verification-required",
+
+  resendVerification: "/auth/resend-verification",
 };
 
 export const SidebarRoutes = {

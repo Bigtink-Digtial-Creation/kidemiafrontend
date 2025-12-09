@@ -48,11 +48,12 @@ export default function ForgotPasswordPage() {
   return (
     <div className="py-4 w-full md:w-2xl space-y-6 md:px-12">
       <div className="space-y-3">
-        <h2 className="text-3xl text-kidemia-black font-semibold text-center">
-          Forgot Password
-        </h2>
+
         <p className="text-lg text-kidemia-black2 text-center font-medium">
-          Enter your email to receive you reset link
+          Forgot your password?
+        </p>
+        <p className="text-lg text-kidemia-black2 text-center font-medium">
+          Enter your email below and we will send you reset link
         </p>
       </div>
 

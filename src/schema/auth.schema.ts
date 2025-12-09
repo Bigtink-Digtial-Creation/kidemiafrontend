@@ -27,6 +27,24 @@ export const ChangePasswordSchema = z.object({
     ),
 });
 
+export const ResetPasswordSchema = z.object({
+  token: z.string().min(1, "Token is required"),
+  new_password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number"),
+  confirm_password: z.string(),
+}).refine((data) => data.new_password === data.confirm_password, {
+  message: "Passwords don't match",
+  path: ["confirm_password"],
+});
+
+export const VerifyEmailSchema = z.object({
+  token: z.string().min(1, "Token is required"),
+});
+
 export const StepOneSchema = z
   .object({
     first_name: z
@@ -102,3 +120,5 @@ export type StepTwoSchema = z.infer<typeof StepTwoSchema>;
 export type StepThreeSchema = z.infer<typeof StepThreeSchema>;
 export type StepFourSchema = z.infer<typeof StepFourSchema>;
 export type GuardianSignupSchema = z.infer<typeof GuardianSignupSchema>;
+export type ResetPasswordSchema = z.infer<typeof ResetPasswordSchema>;
+export type VerifyEmailSchema = z.infer<typeof VerifyEmailSchema>;
