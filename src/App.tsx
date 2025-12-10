@@ -88,7 +88,7 @@ export const router = createBrowserRouter([
   },
   {
     element: (
-      <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={true} />
+      <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={false} />
     ),
     children: [
       {
@@ -109,7 +109,7 @@ export const router = createBrowserRouter([
   },
   {
     element: (
-      <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={true} />
+      <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={false} />
     ),
     children: [
       {
