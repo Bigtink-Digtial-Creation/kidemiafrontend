@@ -36,6 +36,7 @@ export function ProtectedRoute({
 
     if (!authToken || !loggedInUser) {
         return null;
+
     }
 
     if (requireEmailVerification && !isEmailVerified && !isOnVerificationPage) {
