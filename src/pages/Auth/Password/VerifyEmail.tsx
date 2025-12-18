@@ -1,22 +1,23 @@
 import { useNavigate, useSearchParams } from "react-router";
 import { addToast, Button } from "@heroui/react";
-import { AuthRoutes } from "../../../routes";
+import { AuthRoutes, SidebarRoutes } from "../../../routes";
 import { useMutation } from "@tanstack/react-query";
 import type { VerifyEmailRequest } from "../../../sdk/generated";
 import { ApiSDK } from "../../../sdk";
 import { apiErrorParser } from "../../../utils/errorParser";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { MdCheckCircle, MdError } from "react-icons/md";
 import { verifyEmailAtom } from "../../../store/auth.atom";
-import { useSetAtom } from "jotai";
-
+import { useAtomValue, useSetAtom } from "jotai";
+import { loggedinUserAtom } from "../../../store/user.atom";
 
 export default function VerifyEmailPage() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [token, setToken] = useState<string | null>(null);
     const verifyEmail = useSetAtom(verifyEmailAtom);
-
+    const loggedInUser = useAtomValue(loggedinUserAtom); // ← Use useAtomValue
+    const hasAttemptedVerification = useRef(false);
 
     useEffect(() => {
         const urlToken = searchParams.get("token");
@@ -38,12 +39,22 @@ export default function VerifyEmailPage() {
                 formData
             ),
         onSuccess(data) {
-            verifyEmail()
             addToast({
-                title: "Email Verified!",
-                description: data?.message,
+                title: "Email verification completed!",
+                description: data?.message || "Your email has been verified successfully.",
                 color: "success",
             });
+
+            // Check if user is logged in at the time of success
+            // Note: We need to get the fresh value, not the closure value
+            if (loggedInUser?.user) {
+                verifyEmail();
+                setTimeout(() => {
+                    navigate(SidebarRoutes.dashboard);
+                }, 1500);
+            }
+            // If not logged in, user will click "Continue to Login" button
+            // Don't auto-navigate to login - let them see the success message
         },
         onError(error) {
             const parsedError = apiErrorParser(error);
@@ -66,17 +77,17 @@ export default function VerifyEmailPage() {
             });
         },
         onError(error) {
-            const parsedError = apiErrorParser(error);
             addToast({
                 title: "Failed to Send Email",
-                description: parsedError.message,
+                description: error?.message || "Could not resend verification email. Please try again later.",
                 color: "danger",
             });
         },
     });
 
     useEffect(() => {
-        if (token && !verifyEmailMutation.isSuccess && !verifyEmailMutation.isError) {
+        if (token && !hasAttemptedVerification.current) {
+            hasAttemptedVerification.current = true;
             verifyEmailMutation.mutate({ token });
         }
     }, [token]);
@@ -113,20 +124,24 @@ export default function VerifyEmailPage() {
                             Email Verified!
                         </h2>
                         <p className="text-lg text-kidemia-black2 text-center font-medium">
-                            Your email has been successfully verified. You can now log in to
-                            your account.
+                            Your email has been successfully verified.{" "}
+                            {loggedInUser?.user
+                                ? "Redirecting to your dashboard..."
+                                : "You can now log in to your account."}
                         </p>
-                        <div className="py-4 w-full">
-                            <Button
-                                onPress={handleContinue}
-                                variant="solid"
-                                size="lg"
-                                className="bg-kidemia-secondary text-kidemia-white font-semibold w-full"
-                                radius="sm"
-                            >
-                                Continue to Login
-                            </Button>
-                        </div>
+                        {!loggedInUser?.user && (
+                            <div className="py-4 w-full">
+                                <Button
+                                    onPress={handleContinue}
+                                    variant="solid"
+                                    size="lg"
+                                    className="bg-kidemia-secondary text-kidemia-white font-semibold w-full"
+                                    radius="sm"
+                                >
+                                    Continue to Login
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -139,7 +154,7 @@ export default function VerifyEmailPage() {
                             Verification Failed
                         </h2>
                         <p className="text-lg text-kidemia-black2 text-center font-medium">
-                            {apiErrorParser(verifyEmailMutation.error).message ||
+                            {verifyEmailMutation.error?.message ||
                                 "The verification link is invalid or has expired."}
                         </p>
 
