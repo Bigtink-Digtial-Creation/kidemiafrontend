@@ -1,4 +1,4 @@
-import type { StatsCardProps } from "../../pages/Dashboard/dashboard.interface";
+import type { StatsCardProps } from "../dashboard.interface";
 import { Card, CardBody, CardHeader } from "@heroui/react";
 
 export default function StatCard({ icon, title, figure, sub }: StatsCardProps) {

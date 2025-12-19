@@ -107,4 +107,16 @@ export class LeaderboardService {
       url: '/api/v1/leaderboard/me/statistics',
     });
   }
+  /**
+   * Get dashboard statistics
+   * Get dashboard data for the current user.
+   * @returns any Successful Response
+   * @throws ApiError
+   */
+  public static getDashboardStatApiV1LeaderboardMeStatDashboardGet(): CancelablePromise<Record<string, any>> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/leaderboard/me/stat/dashboard',
+    });
+  }
 }

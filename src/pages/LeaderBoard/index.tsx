@@ -18,7 +18,6 @@ export default function StudentLeaderboard() {
   const currentUserId = storedUser?.user?.student?.id;
 
 
-  console.log(storedUser?.user.is_email_verified);
   const {
     data: categoriesData,
     isLoading: categoriesLoading,
