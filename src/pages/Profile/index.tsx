@@ -22,7 +22,6 @@ import { ApiSDK } from "../../sdk";
 import ProfileRow from "./components/ProfileRow";
 import { useEffect, useState } from "react";
 import { getNameIntials } from "../../utils";
-import { uploadToGCS } from "../../services/storage/uploadToGCS";
 import ProfileAvatarModal from "./components/ProfileAvatarModal";
 import ChangePasswordModal from "./components/ChangePasswordModal";
 
@@ -110,7 +109,7 @@ export default function ProfilePage() {
     const updateCategoryMutation = useMutation({
         mutationFn: (category: string) =>
             mockUpdateUserCategoryApi(user!.id, { category }),
-        // Replace with actual API call when ready:
+        // Remember: Replace with actual API call:
         // ApiSDK.UsersService.updateUserCategoryApiV1UsersCategoryPatch(
         //   user!.id,
         //   { category },
@@ -130,6 +129,38 @@ export default function ProfilePage() {
         },
     });
 
+    const uploadAvatarMutation = useMutation({
+        mutationFn: async (file: File) => {
+            const formData = {
+                file: file
+            };
+
+            const response = await ApiSDK.UploadService.updateAvatarApiV1ApiUploadAccountAvatarPatch(
+                formData
+            );
+
+            return response;
+        },
+        onSuccess: (response) => {
+            updateProfile.mutate({
+                profile_picture_url: response.url
+            });
+            setAvatarUrl(response.url);
+            avatarModal.onClose();
+
+            addToast({
+                color: "success",
+                description: "Profile picture updated successfully"
+            });
+        },
+        onError: (error) => {
+            addToast({
+                color: "danger",
+                description: apiErrorParser(error).message || "Upload failed"
+            });
+        },
+    });
+
     const handleCategoryUpdate = () => {
         if (!selectedCategory) {
             addToast({
@@ -141,15 +172,28 @@ export default function ProfilePage() {
         updateCategoryMutation.mutate(selectedCategory);
     };
 
-    const handleAvatarUpload = async (file: File) => {
-        try {
-            const imageUrl = await uploadToGCS(file);
-            updateProfile.mutate({ profile_picture_url: imageUrl });
-            setAvatarUrl(imageUrl);
-            avatarModal.onClose();
-        } catch {
-            addToast({ color: "danger", description: "Upload failed" });
+    const handleAvatarUpload = async (file: File): Promise<void> => {
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            addToast({
+                color: "danger",
+                description: "Please select a valid image file (JPG, PNG, GIF, WEBP)",
+            });
+            return;
         }
+
+        // Validate file size (10MB max)
+        const maxSize = 10 * 1024 * 1024;
+        if (file.size > maxSize) {
+            addToast({
+                color: "danger",
+                description: "File size must be less than 10MB",
+            });
+            return;
+        }
+
+        // Trigger the upload mutation using mutateAsync to return a promise
+        await uploadAvatarMutation.mutateAsync(file);
     };
 
     if (isLoading) {
@@ -178,19 +222,29 @@ export default function ProfilePage() {
             <div className="min-h-[100dvh] w-full flex justify-center px-4 py-6">
                 <div className="w-full max-w-3xl rounded-2xl bg-gray-50/80 backdrop-blur-md px-6 py-8 shadow-sm transition-all duration-300 hover:shadow-md">
                     <div className="flex flex-col items-center gap-3">
-                        <Avatar
-                            src={avatarUrl ?? undefined}
-                            className="w-28 h-28 text-3xl cursor-pointer transition-transform duration-200 hover:scale-105"
-                            isBordered
-                            name={getNameIntials(fullName) as string}
-                            onClick={avatarModal.onOpen}
-                        />
+                        <div className="relative">
+                            <Avatar
+                                src={avatarUrl ?? undefined}
+                                className="w-28 h-28 text-3xl cursor-pointer transition-transform duration-200 hover:scale-105"
+                                isBordered
+                                name={getNameIntials(fullName) as string}
+                                onClick={avatarModal.onOpen}
+                            />
+                            {uploadAvatarMutation.isPending && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
+                                    <div className="w-8 h-8 border-3 border-white border-t-transparent rounded-full animate-spin" />
+                                </div>
+                            )}
+                        </div>
                         <button
                             onClick={avatarModal.onOpen}
-                            className="text-sm text-kidemia-secondary transition-colors duration-200 hover:text-kidemia-primary"
+                            className="text-sm text-kidemia-secondary transition-colors duration-200 hover:text-kidemia-primary disabled:opacity-50"
+                            disabled={uploadAvatarMutation.isPending}
                         >
                             Tap to{" "}
-                            <span className="text-kidemia-primary font-medium">upload</span>{" "}
+                            <span className="text-kidemia-primary font-medium">
+                                {uploadAvatarMutation.isPending ? "uploading..." : "upload"}
+                            </span>{" "}
                             picture
                         </button>
                     </div>
@@ -199,6 +253,7 @@ export default function ProfilePage() {
                         isOpen={avatarModal.isOpen}
                         onClose={avatarModal.onClose}
                         onSave={handleAvatarUpload}
+                        isUploading={uploadAvatarMutation.isPending}
                     />
 
                     <div className="mt-8 space-y-4">

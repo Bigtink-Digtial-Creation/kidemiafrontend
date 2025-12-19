@@ -199,8 +199,6 @@ export class AuthenticationService {
   /**
    * Request password reset
    * Request password reset link via email.
-   *
-   * - **email**: User's email address
    * @param requestBody
    * @returns MessageResponse Successful Response
    * @throws ApiError
@@ -221,9 +219,6 @@ export class AuthenticationService {
   /**
    * Reset password with token
    * Reset password using reset token.
-   *
-   * - **token**: Password reset token from email
-   * - **new_password**: New password
    * @param requestBody
    * @returns MessageResponse Successful Response
    * @throws ApiError
@@ -244,8 +239,6 @@ export class AuthenticationService {
   /**
    * Verify email address
    * Verify user's email address.
-   *
-   * - **token**: Email verification token
    * @param requestBody
    * @returns MessageResponse Successful Response
    * @throws ApiError
