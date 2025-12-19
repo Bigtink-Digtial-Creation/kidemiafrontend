@@ -74,6 +74,7 @@ export const router = createBrowserRouter([
   },
   {
     element: <AuthLayout />,
+    errorElement: <ErrorPage />,
     children: [
       { path: AuthRoutes.login, element: <LoginPage /> },
       { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> },
@@ -90,6 +91,7 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={true} />
     ),
+    errorElement: <ErrorPage />,
     children: [
       {
         path: SidebarRoutes.dashboard,
@@ -111,6 +113,7 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={true} />
     ),
+    errorElement: <ErrorPage />,
     children: [
       {
         element: <TestLayout />,
@@ -145,6 +148,7 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={false} />
     ),
+    errorElement: <ErrorPage />,
     children: [{
       path: AuthRoutes.emailVerificationRequired,
       element: <EmailVerificationRequiredPage />
@@ -154,5 +158,6 @@ export const router = createBrowserRouter([
   {
     path: PaymentRoutes.checkout,
     element: <SubscriptionPage />,
+    errorElement: <ErrorPage />,
   },
 ]);

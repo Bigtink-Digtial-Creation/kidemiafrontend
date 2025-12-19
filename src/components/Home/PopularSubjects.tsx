@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import StatCard from "../Dashboard/StatCard";
+import StatCard from "../../pages/Dashboard/components/StatCard";
 import { topSubjects } from "../../staticData/home";
 import {
   cardVariants,
