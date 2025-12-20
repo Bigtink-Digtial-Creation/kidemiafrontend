@@ -10,4 +10,5 @@ export const QueryKeys = {
   testAttempt: "testAttempt",
   categories: "categories",
   leaderboard: "leaderboard",
+  analytics: "analytics",
 } as const;

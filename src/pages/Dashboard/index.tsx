@@ -22,8 +22,7 @@ export default function DashboardPage() {
     isLoading: statsLoading,
     error: statsError,
   } = useQuery({
-    // remember to change back
-    queryKey: [QueryKeys.allSubjects],
+    queryKey: [QueryKeys.analytics],
     queryFn: async () => {
       return ApiSDK.LeaderboardService.getDashboardStatApiV1LeaderboardMeStatDashboardGet();
     },

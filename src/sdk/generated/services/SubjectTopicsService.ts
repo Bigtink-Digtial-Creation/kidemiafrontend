@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { MessageResponse } from '../models/MessageResponse';
+import type { src__domains__content__schemas__subject__TopicResponse } from '../models/src__domains__content__schemas__subject__TopicResponse';
 import type { TopicCreate } from '../models/TopicCreate';
 import type { TopicListResponse } from '../models/TopicListResponse';
-import type { TopicResponse } from '../models/TopicResponse';
 import type { TopicUpdate } from '../models/TopicUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -34,12 +34,12 @@ export class SubjectTopicsService {
    * - 400 Bad Request: Invalid input data.
    * - 404 Not Found: Subject or parent topic not found.
    * @param requestBody
-   * @returns TopicResponse Successful Response
+   * @returns src__domains__content__schemas__subject__TopicResponse Successful Response
    * @throws ApiError
    */
   public static createTopicApiV1TopicsPost(
     requestBody: TopicCreate,
-  ): CancelablePromise<TopicResponse> {
+  ): CancelablePromise<src__domains__content__schemas__subject__TopicResponse> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/v1/topics/',
@@ -77,12 +77,12 @@ export class SubjectTopicsService {
    * - 400 Bad Request: If any topic input is invalid.
    * - 404 Not Found: If a subject or parent topic is missing.
    * @param requestBody
-   * @returns TopicResponse Successful Response
+   * @returns src__domains__content__schemas__subject__TopicResponse Successful Response
    * @throws ApiError
    */
   public static bulkCreateTopicsApiV1TopicsBulkPost(
     requestBody: Array<TopicCreate>,
-  ): CancelablePromise<Array<TopicResponse>> {
+  ): CancelablePromise<Array<src__domains__content__schemas__subject__TopicResponse>> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/v1/topics/bulk',
@@ -129,7 +129,7 @@ export class SubjectTopicsService {
    * @param subjectId
    * @param skip
    * @param limit
-   * @returns TopicResponse Successful Response
+   * @returns src__domains__content__schemas__subject__TopicResponse Successful Response
    * @throws ApiError
    */
   public static searchTopicsApiV1TopicsSearchGet(
@@ -137,7 +137,7 @@ export class SubjectTopicsService {
     subjectId?: (string | null),
     skip?: number,
     limit: number = 20,
-  ): CancelablePromise<Array<TopicResponse>> {
+  ): CancelablePromise<Array<src__domains__content__schemas__subject__TopicResponse>> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/v1/topics/search',
@@ -156,12 +156,12 @@ export class SubjectTopicsService {
    * Get topic by ID
    * Get a specific topic by ID.
    * @param topicId
-   * @returns TopicResponse Successful Response
+   * @returns src__domains__content__schemas__subject__TopicResponse Successful Response
    * @throws ApiError
    */
   public static getTopicApiV1TopicsTopicIdGet(
     topicId: string,
-  ): CancelablePromise<TopicResponse> {
+  ): CancelablePromise<src__domains__content__schemas__subject__TopicResponse> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/v1/topics/{topic_id}',
@@ -180,13 +180,13 @@ export class SubjectTopicsService {
    * Requires `content:update` permission.
    * @param topicId
    * @param requestBody
-   * @returns TopicResponse Successful Response
+   * @returns src__domains__content__schemas__subject__TopicResponse Successful Response
    * @throws ApiError
    */
   public static updateTopicApiV1TopicsTopicIdPut(
     topicId: string,
     requestBody: TopicUpdate,
-  ): CancelablePromise<TopicResponse> {
+  ): CancelablePromise<src__domains__content__schemas__subject__TopicResponse> {
     return __request(OpenAPI, {
       method: 'PUT',
       url: '/api/v1/topics/{topic_id}',

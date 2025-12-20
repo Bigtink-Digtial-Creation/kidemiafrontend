@@ -1,27 +1,42 @@
-import { BreadcrumbItem, Breadcrumbs, Tab, Tabs } from "@heroui/react";
-import { SidebarRoutes } from "../../routes";
-import { MdOutlineDashboard, MdManageHistory } from "react-icons/md";
-import HistoryTable from "../../components/History/HistoryTable";
+import { Tab, Tabs } from "@heroui/react";
+import HistoryTable from "./components/HistoryTable";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { QueryKeys } from "../../utils/queryKeys";
+import { ApiSDK } from "../../sdk";
 
 export default function HistoryPage() {
+
+  const [searchQuery] = useState("");
+
+  const {
+    data: statsData,
+    isLoading: statsLoading,
+    error: statsError,
+  } = useQuery({
+    queryKey: [QueryKeys.analytics],
+    queryFn: async () => {
+      return ApiSDK.LeaderboardService.getDashboardStatApiV1LeaderboardMeStatDashboardGet();
+    },
+  });
+
+  // Filter data based on search query
+  const filterData = (data: any[]) => {
+    if (!searchQuery) return data;
+    return data.filter((item) =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  };
+
+  const subjectHistory = statsData?.subject_history || [];
+  const examHistory = statsData?.exam_history || [];
+
+  const filteredSubjects = filterData(subjectHistory);
+  const filteredExams = filterData(examHistory);
   return (
     <div className="space-y-8">
       <div>
-        <Breadcrumbs variant="light" color="foreground">
-          <BreadcrumbItem
-            href={SidebarRoutes.dashboard}
-            startContent={<MdOutlineDashboard />}
-          >
-            Dashboard
-          </BreadcrumbItem>
-          <BreadcrumbItem
-            href={SidebarRoutes.history}
-            startContent={<MdManageHistory />}
-            color="warning"
-          >
-            History
-          </BreadcrumbItem>
-        </Breadcrumbs>
+
       </div>
 
       <div className="space-y-3">
@@ -34,17 +49,23 @@ export default function HistoryPage() {
             classNames={{
               tabList:
                 "gap-6 w-full relative rounded-none p-0 border-b border-divider",
-              cursor: "w-full bg-[#BF4C20]",
+              cursor: "w-full bg-kidemia-primary",
               tab: "max-w-fit- w-full px-0 h-10",
               tabContent:
-                "text-sm  group-data-[selected=true]:text-[#BF4C20] group-data-[selected=true]:font-semibold",
+                "text-sm  group-data-[selected=true]:text-kidemia-primary group-data-[selected=true]:font-semibold",
             }}
           >
             <Tab key="test" title="Test History">
-              <HistoryTable />
+              <HistoryTable
+                data={filteredSubjects}
+                isLoading={statsLoading}
+                error={statsError} />
             </Tab>
             <Tab key="exam" title="Exam History">
-              <HistoryTable />
+              <HistoryTable
+                data={filteredExams}
+                isLoading={statsLoading}
+                error={statsError} />
             </Tab>
           </Tabs>
         </div>

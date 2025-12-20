@@ -5,6 +5,7 @@
 import type { AnswerCorrectionResponse } from '../models/AnswerCorrectionResponse';
 import type { AttemptListResponse } from '../models/AttemptListResponse';
 import type { AttemptProgressResponse } from '../models/AttemptProgressResponse';
+import type { AttemptResponse } from '../models/AttemptResponse';
 import type { AttemptResultResponse } from '../models/AttemptResultResponse';
 import type { AttemptStartRequest } from '../models/AttemptStartRequest';
 import type { AttemptStartResponse } from '../models/AttemptStartResponse';
@@ -174,6 +175,27 @@ export class AttemptsService {
     });
   }
   /**
+   * Get attempt details
+   * Get attempt details for the current user.
+   * @param attemptId
+   * @returns AttemptResponse Successful Response
+   * @throws ApiError
+   */
+  public static getSingleAttemptApiV1AttemptsAttemptIdAttemptGet(
+    attemptId: string,
+  ): CancelablePromise<AttemptResponse> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/attempts/{attempt_id}/attempt',
+      path: {
+        'attempt_id': attemptId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
    * Get my attempts
    * Get all attempts for the current user.
    * @param skip
@@ -199,8 +221,6 @@ export class AttemptsService {
   }
   /**
    * Delete attempts
-   * Delete attempt for the current user.
-   * This is for development purpose only
    * @param attemptId
    * @returns any Successful Response
    * @throws ApiError

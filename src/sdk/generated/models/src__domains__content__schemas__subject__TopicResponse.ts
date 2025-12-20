@@ -5,7 +5,7 @@
 /**
  * Schema for topic response
  */
-export type TopicResponse = {
+export type src__domains__content__schemas__subject__TopicResponse = {
   created_at: string;
   updated_at: string;
   id: string;
