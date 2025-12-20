@@ -1,44 +1,56 @@
-import { BreadcrumbItem, Breadcrumbs, Input, Tab, Tabs } from "@heroui/react";
-import { SidebarRoutes } from "../../routes";
-import { MdOutlineDashboard } from "react-icons/md";
-import { CgPerformance } from "react-icons/cg";
+import { Input, Tab, Tabs } from "@heroui/react";
 import { TbReportSearch } from "react-icons/tb";
-import PerformanceTable from "../../components/Perfomance/PerformanceTable";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import PerformanceTable from "./components/PerformanceTable";
+import { QueryKeys } from "../../utils/queryKeys";
+import { ApiSDK } from "../../sdk";
 
 export default function PerformancePage() {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const {
+    data: statsData,
+    isLoading: statsLoading,
+    error: statsError,
+  } = useQuery({
+    queryKey: [QueryKeys.analytics],
+    queryFn: async () => {
+      return ApiSDK.LeaderboardService.getDashboardStatApiV1LeaderboardMeStatDashboardGet();
+    },
+  });
+
+  // Filter data based on search query
+  const filterData = (data: any[]) => {
+    if (!searchQuery) return data;
+    return data.filter((item) =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  };
+
+  const subjectHistory = statsData?.subject_history || [];
+  const examHistory = statsData?.exam_history || [];
+
+  const filteredSubjects = filterData(subjectHistory);
+  const filteredExams = filterData(examHistory);
+
   return (
     <div className="space-y-8">
-      <div>
-        <Breadcrumbs variant="light" color="foreground">
-          <BreadcrumbItem
-            href={SidebarRoutes.dashboard}
-            startContent={<MdOutlineDashboard />}
-          >
-            Dashboard
-          </BreadcrumbItem>
-          <BreadcrumbItem
-            href={SidebarRoutes.performance}
-            startContent={<CgPerformance />}
-            color="warning"
-          >
-            Performance
-          </BreadcrumbItem>
-        </Breadcrumbs>
-      </div>
-
       <div className="space-y-3">
         <div className="flex justify-end items-center">
           <div>
             <Input
               startContent={
-                <TbReportSearch className="text-xl  text-kidemia-secondary" />
+                <TbReportSearch className="text-xl text-kidemia-secondary" />
               }
               variant="flat"
               size="lg"
               radius="sm"
-              placeholder="Search by subjects or topics"
+              placeholder="Search by subjects or exams"
               fullWidth
               isClearable
+              value={searchQuery}
+              onValueChange={setSearchQuery}
             />
           </div>
         </div>
@@ -54,14 +66,22 @@ export default function PerformancePage() {
               cursor: "w-full bg-[#BF4C20]",
               tab: "max-w-fit- w-full px-0 h-10",
               tabContent:
-                "text-sm  group-data-[selected=true]:text-[#BF4C20] group-data-[selected=true]:font-semibold",
+                "text-sm group-data-[selected=true]:text-[#BF4C20] group-data-[selected=true]:font-semibold",
             }}
           >
             <Tab key="subjects" title="Subjects">
-              <PerformanceTable />
+              <PerformanceTable
+                data={filteredSubjects}
+                isLoading={statsLoading}
+                error={statsError}
+              />
             </Tab>
-            <Tab key="topics" title="Topics">
-              <PerformanceTable />
+            <Tab key="exams" title="Exams">
+              <PerformanceTable
+                data={filteredExams}
+                isLoading={statsLoading}
+                error={statsError}
+              />
             </Tab>
           </Tabs>
         </div>

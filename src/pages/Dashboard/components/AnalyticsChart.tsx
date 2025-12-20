@@ -110,7 +110,7 @@ export default function AnalyticsChart({
     const computedYMax = rawData.length ? Math.ceil(Math.max(...rawData)) + 1 : 100;
 
     return {
-      colors: ["#16732D", "#F28729", "#BF4C20", "#2A3740"],
+      colors: ["#BF4C20", "#F28729", "#16732D", "#2A3740"],
       chart: {
         height: 350,
         type: "bar",
