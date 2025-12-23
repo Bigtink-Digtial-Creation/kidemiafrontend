@@ -2,13 +2,18 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { SubscriptionPlan } from './SubscriptionPlan';
+import type { BillingCycle } from './BillingCycle';
 /**
- * Schema for creating subscription
+ * Schema for creating a subscription
  */
 export type SubscriptionCreate = {
-  plan: SubscriptionPlan;
-  billing_cycle: string;
+  /**
+   * Plan code (e.g., 'student', 'family')
+   */
+  plan: string;
+  billing_cycle: BillingCycle;
   auto_renew?: boolean;
+  institution_id?: (string | null);
+  promo_code?: (string | null);
 };
 

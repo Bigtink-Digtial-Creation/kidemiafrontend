@@ -8,8 +8,8 @@ import {
 } from "@heroui/react";
 import { NavLink } from "react-router";
 import { motion } from "framer-motion";
-import { SidebarRoutes } from "../../routes";
-import { FiLogOut, FiSettings } from "react-icons/fi";
+import { PaymentRoutes, SidebarRoutes } from "../../routes";
+import { FiLogOut, FiSettings, FiZap } from "react-icons/fi";
 import { sidebarLinks } from "./sidebarLink.ts";
 import SidebarLink from "./SidebarLink.tsx";
 import { AppDarkLogo } from "../../assets/images";
@@ -82,9 +82,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
       )}
       <aside
         ref={sidebarRef}
-        className={`w-2xs absolute left-0 top-0 z-50 flex flex-col items-start justify-start overflow-y-clip bg-[#f5f6fa]/30 shadow-md transition-transform duration-300 ease-linear dark:bg-dark lg:static lg:translate-x-0 h-screen ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`w-2xs absolute left-0 top-0 z-50 flex flex-col items-start justify-start overflow-y-clip bg-[#f5f6fa]/30 shadow-md transition-transform duration-300 ease-linear dark:bg-dark lg:static lg:translate-x-0 h-screen ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="w-full flex justify-start">
           <div className="w-full flex  items-center justify-between px-6 py-4">
@@ -144,6 +143,15 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
           >
             <Divider />
             <ul className="flex flex-col gap-1 mb-2 space-y-2">
+              <li className="group">
+                <SidebarLink
+                  pathname={PaymentRoutes.upgradePlan}
+                  title="Upgrade Plan"
+                  icon={FiZap}
+                  sidebarOpen={sidebarOpen}
+                  setSidebarOpen={closeSidebar}
+                />
+              </li>
               <li className="group">
                 <SidebarLink
                   pathname={SidebarRoutes.settings}

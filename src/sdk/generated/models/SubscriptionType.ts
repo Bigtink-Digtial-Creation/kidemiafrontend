@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Subscription plan types
+ * Subscription type for grouping
  */
-export type SubscriptionPlan = 'free' | 'basic' | 'premium' | 'institution';
+export type SubscriptionType = 'individual' | 'family' | 'institution';

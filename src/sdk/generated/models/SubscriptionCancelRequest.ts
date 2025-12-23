@@ -3,12 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Schema for upgrading subscription
+ * Schema for cancelling subscription
  */
-export type SubscriptionUpgradeRequest = {
-  /**
-   * New plan code to upgrade to
-   */
-  new_plan: string;
+export type SubscriptionCancelRequest = {
+  reason?: (string | null);
+  cancel_immediately?: boolean;
 };
 

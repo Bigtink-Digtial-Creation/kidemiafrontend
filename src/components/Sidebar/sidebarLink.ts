@@ -1,11 +1,12 @@
 import type { IconType } from "react-icons";
 import { UserRole } from "../../utils/enums";
-import { SidebarRoutes } from "../../routes";
+import { PaymentRoutes, SidebarRoutes } from "../../routes";
 import {
   MdManageHistory,
   MdOutlineDashboard,
   MdLeaderboard,
   MdPeople,
+  MdWallet,
 } from "react-icons/md";
 import { CgPerformance } from "react-icons/cg";
 
@@ -46,5 +47,12 @@ export const sidebarLinks: SidebarLinkT[] = [
     icon: MdPeople,
     allowedRoles: [UserRole.SCHOOL, UserRole.STUDENT],
     pathname: SidebarRoutes.community,
+  },
+
+  {
+    title: "Buy Token",
+    icon: MdWallet,
+    allowedRoles: [UserRole.SCHOOL, UserRole.STUDENT],
+    pathname: PaymentRoutes.buytoken,
   },
 ];

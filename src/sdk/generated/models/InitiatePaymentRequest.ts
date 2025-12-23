@@ -8,7 +8,8 @@ import type { PaymentMethod } from './PaymentMethod';
  */
 export type InitiatePaymentRequest = {
   assessment_id?: (string | null);
-  subscription_plan?: (string | null);
+  institution_id?: (string | null);
+  plan_code?: (string | null);
   amount: (number | string);
   payment_method: PaymentMethod;
   callback_url?: (string | null);

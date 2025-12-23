@@ -11,4 +11,6 @@ export const QueryKeys = {
   categories: "categories",
   leaderboard: "leaderboard",
   analytics: "analytics",
+  pricing: "pricing",
+  wallet: "wallet",
 } as const;

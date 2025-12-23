@@ -28,8 +28,6 @@ import ChangePasswordPage from "./pages/Auth/Password/ChangePassword";
 import SignUpPage from "./pages/Auth/Signup";
 import GuardianSignup from "./pages/Auth/Guardian";
 
-// Payment pages
-import SubscriptionPage from "./pages/payment/Checkout";
 
 // dashboard pages
 import DashboardPage from "./pages/Dashboard";
@@ -61,6 +59,10 @@ import ProfilePage from "./pages/Profile";
 import ResetPasswordPage from "./pages/Auth/Password/ResetPassword";
 import VerifyEmailPage from "./pages/Auth/Password/VerifyEmail";
 import EmailVerificationRequiredPage from "./pages/Auth/Password/EmailVerificationRequired";
+import BuyUnitsPage from "./pages/payment/BuyUnitsPage";
+import PricingUpgradePage from "./pages/payment/PricingUpgrade";
+import WalletCallbackPage from "./pages/payment/WalletCallbackPage";
+import CheckOutPage from "./pages/payment/Checkout";
 
 export const router = createBrowserRouter([
   {
@@ -105,6 +107,9 @@ export const router = createBrowserRouter([
           { path: SidebarRoutes.profile, element: <ProfilePage /> },
           { path: SidebarRoutes.settings, element: <SettingsPage /> },
           { path: SidebarRoutes.takeAssessment, element: <AssessmentPage /> },
+          { path: PaymentRoutes.buytoken, element: <BuyUnitsPage /> },
+          { path: PaymentRoutes.upgradePlan, element: <PricingUpgradePage /> },
+
         ],
       }
     ]
@@ -156,8 +161,20 @@ export const router = createBrowserRouter([
   },
 
   {
+    element: (
+      <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={true} />
+    ),
+    errorElement: <ErrorPage />,
+    children: [{
+      path: PaymentRoutes.walletCallBack,
+      element: <WalletCallbackPage />,
+    },
+
+    ]
+  },
+  {
     path: PaymentRoutes.checkout,
-    element: <SubscriptionPage />,
+    element: <CheckOutPage />,
     errorElement: <ErrorPage />,
   },
 ]);

@@ -2,8 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AchievementResponse } from '../models/AchievementResponse';
-import type { BadgeResponse } from '../models/BadgeResponse';
 import type { GamificationProfileResponse } from '../models/GamificationProfileResponse';
 import type { src__domains__gamification__schemas__schemas__LeaderboardResponse } from '../models/src__domains__gamification__schemas__schemas__LeaderboardResponse';
 import type { StudentAchievementResponse } from '../models/StudentAchievementResponse';
@@ -46,18 +44,6 @@ export class GamificationService {
     });
   }
   /**
-   * Get All Badges
-   * Get all available badges
-   * @returns BadgeResponse Successful Response
-   * @throws ApiError
-   */
-  public static getAllBadgesApiV1GamificationBadgesGet(): CancelablePromise<Array<BadgeResponse>> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/gamification/badges',
-    });
-  }
-  /**
    * Get My Badges
    * Get current student's earned badges
    * @returns StudentBadgeResponse Successful Response
@@ -70,39 +56,6 @@ export class GamificationService {
     });
   }
   /**
-   * Get Student Badges
-   * Get a specific student's earned badges
-   * @param studentId
-   * @returns StudentBadgeResponse Successful Response
-   * @throws ApiError
-   */
-  public static getStudentBadgesApiV1GamificationBadgesStudentIdGet(
-    studentId: string,
-  ): CancelablePromise<Array<StudentBadgeResponse>> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/gamification/badges/{student_id}',
-      path: {
-        'student_id': studentId,
-      },
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-  /**
-   * Get All Achievements
-   * Get all available achievements
-   * @returns AchievementResponse Successful Response
-   * @throws ApiError
-   */
-  public static getAllAchievementsApiV1GamificationAchievementsGet(): CancelablePromise<Array<AchievementResponse>> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/gamification/achievements',
-    });
-  }
-  /**
    * Get My Achievements
    * Get current student's achievements with progress
    * @returns StudentAchievementResponse Successful Response
@@ -112,27 +65,6 @@ export class GamificationService {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/v1/gamification/achievements/mine',
-    });
-  }
-  /**
-   * Get Student Achievements
-   * Get a specific student's achievements with progress
-   * @param studentId
-   * @returns StudentAchievementResponse Successful Response
-   * @throws ApiError
-   */
-  public static getStudentAchievementsApiV1GamificationAchievementsStudentIdGet(
-    studentId: string,
-  ): CancelablePromise<Array<StudentAchievementResponse>> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/gamification/achievements/{student_id}',
-      path: {
-        'student_id': studentId,
-      },
-      errors: {
-        422: `Validation Error`,
-      },
     });
   }
   /**
