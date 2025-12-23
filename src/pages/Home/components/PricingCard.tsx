@@ -29,7 +29,7 @@ export default function PricingCard({
 
   const handlePlanPurchase = () => {
     const planName = planCode.toLowerCase().replace(/\s+/g, "-");
-    navigate(`/checkout/${planName}/plan?billing=${billingCycle}`);
+    navigate(`/payment/checkout/${planName}/plan?billing=${billingCycle}`);
   };
 
   const price = billingCycle === "annual" ? `${currency}${priceYearly}` : `${currency}${priceMonthly}`;
