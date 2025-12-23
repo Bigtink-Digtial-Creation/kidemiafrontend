@@ -81,7 +81,7 @@ export default function PricingCard({
             {/* Promo Code */}
             <div className="mt-8">
                 <label className="text-sm opacity-70 block mb-2">Have a promo code?</label>
-                <div className="flex">
+                <div className="flex flex-col gap-2">
                     <input
                         type="text"
                         value={promoCode}
@@ -92,7 +92,7 @@ export default function PricingCard({
                     <button
                         onClick={onApplyPromo}
                         disabled={isApplyingPromo}
-                        className="bg-kidemia-secondary hover:bg-kidemia-primary px-6 py-2 rounded-xl text-sm font-medium transition disabled:opacity-50 ms-2"
+                        className="bg-kidemia-secondary hover:bg-kidemia-primary px-6 py-2 rounded-xl text-sm font-medium transition disabled:opacity-50"
                     >
                         {isApplyingPromo ? "..." : "Apply"}
                     </button>
