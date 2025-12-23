@@ -187,7 +187,6 @@ export default function PricingUpgradePage() {
     const currentPlanCode = activeSubscription?.plan_code;
 
     const handleUpgrade = (planCode: string) => {
-        console.log("Upgrading to:", planCode);
         const id = planCode.toLowerCase().replace(/\s+/g, "-");
         navigate(`/payment/checkout/${id}/plan?billing=${billingCycle}`);
     };
@@ -220,7 +219,7 @@ export default function PricingUpgradePage() {
             <div className="mx-auto max-w-5xl">
                 {/* Header */}
                 <header className="mb-12 text-center">
-                    <h1 className="text-md md:text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                    <h1 className="text-xl md:text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                         Choose Your Plan
                     </h1>
                     <p className="mt-3 text-lg text-gray-600">
