@@ -3,6 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Subscription status
+ * Schema for removing a member
  */
-export type SubscriptionStatus = 'active' | 'inactive' | 'cancelled' | 'expired' | 'suspended';
+export type RemoveMemberRequest = {
+  member_id: string;
+  reason?: (string | null);
+};
+

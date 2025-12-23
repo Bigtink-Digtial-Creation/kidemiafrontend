@@ -8,10 +8,24 @@ import type { AchievementUpdate } from '../models/AchievementUpdate';
 import type { BadgeCreate } from '../models/BadgeCreate';
 import type { BadgeResponse } from '../models/BadgeResponse';
 import type { BadgeUpdate } from '../models/BadgeUpdate';
+import type { StudentAchievementResponse } from '../models/StudentAchievementResponse';
+import type { StudentBadgeResponse } from '../models/StudentBadgeResponse';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class AdminGamificationService {
+  /**
+   * Get All Badges
+   * Get all available badges
+   * @returns BadgeResponse Successful Response
+   * @throws ApiError
+   */
+  public static getAllBadgesApiV1AdminGamificationBadgesGet(): CancelablePromise<Array<BadgeResponse>> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/admin/gamification/badges',
+    });
+  }
   /**
    * Create Badge
    * Create a new badge
@@ -27,6 +41,27 @@ export class AdminGamificationService {
       url: '/api/v1/admin/gamification/badges',
       body: requestBody,
       mediaType: 'application/json',
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Get Student Badges
+   * Get a specific student's earned badges
+   * @param studentId
+   * @returns StudentBadgeResponse Successful Response
+   * @throws ApiError
+   */
+  public static getStudentBadgesApiV1AdminGamificationBadgesStudentIdGet(
+    studentId: string,
+  ): CancelablePromise<Array<StudentBadgeResponse>> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/admin/gamification/badges/{student_id}',
+      path: {
+        'student_id': studentId,
+      },
       errors: {
         422: `Validation Error`,
       },
@@ -79,6 +114,18 @@ export class AdminGamificationService {
     });
   }
   /**
+   * Get All Achievements
+   * Get all available achievements
+   * @returns AchievementResponse Successful Response
+   * @throws ApiError
+   */
+  public static getAllAchievementsApiV1AdminGamificationAchievementsGet(): CancelablePromise<Array<AchievementResponse>> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/admin/gamification/achievements',
+    });
+  }
+  /**
    * Create Achievement
    * Create a new achievement
    * @param requestBody
@@ -93,6 +140,27 @@ export class AdminGamificationService {
       url: '/api/v1/admin/gamification/achievements',
       body: requestBody,
       mediaType: 'application/json',
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Get Student Achievements
+   * Get a specific student's achievements with progress
+   * @param studentId
+   * @returns StudentAchievementResponse Successful Response
+   * @throws ApiError
+   */
+  public static getStudentAchievementsApiV1AdminGamificationAchievementsStudentIdGet(
+    studentId: string,
+  ): CancelablePromise<Array<StudentAchievementResponse>> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/admin/gamification/achievements/{student_id}',
+      path: {
+        'student_id': studentId,
+      },
       errors: {
         422: `Validation Error`,
       },

@@ -53,7 +53,10 @@ export const AssessmentRoutes = {
 };
 
 export const PaymentRoutes = {
-  checkout: "/checkout/:id/plan",
+  checkout: "/payment/checkout/:id/plan",
+  buytoken: "/dashboard/token/top-up",
+  walletCallBack: '/wallet/callback',
+  upgradePlan: '/dashboard/plan/upgrade'
 };
 
 export type HomeRoutes = (typeof HomeRoutes)[keyof typeof HomeRoutes];

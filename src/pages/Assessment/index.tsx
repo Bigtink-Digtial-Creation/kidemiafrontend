@@ -6,8 +6,10 @@ import AssessmentCard from "../../components/Cards/AssessmentCard";
 import { useMemo, useState } from "react";
 import SpinnerCircle from "../../components/Spinner/Circle";
 import { useAtomValue } from "jotai";
-import { userWalletAtom, loggedinUserAtom } from "../../store/user.atom";
+import { useUserWallet, loggedinUserAtom } from "../../store/user.atom";
 import type { AssessmentCategory } from "../../sdk/generated";
+import { useNavigate } from "react-router";
+import { PaymentRoutes } from "../../routes";
 
 export enum AssessmentType {
   TEST = "test",
@@ -25,8 +27,8 @@ export enum AssessmentStatus {
 
 
 export default function AssessmentPage() {
-
-  const wallet = useAtomValue(userWalletAtom);
+  const navigate = useNavigate();
+  const { data: wallet } = useUserWallet();
   const loggedInUser = useAtomValue(loggedinUserAtom);
   const [page, setPage] = useState<number>(1);
   const pageSize = 10;
@@ -75,13 +77,15 @@ export default function AssessmentPage() {
             color="primary"
             className="text-sm font-semibold whitespace-nowrap"
           >
-            Unit balance : ({wallet.symbol}) {wallet.balance}
+            Unit balance : ({wallet?.symbol}) {wallet?.balance}
           </Chip>
           <Button
             className="bg-kidemia-secondary text-kidemia-white font-medium w-full px-8"
             size="sm"
             radius="sm"
             type="button"
+
+            onPress={() => navigate(PaymentRoutes.buytoken)}
           >
             Buy Unit
           </Button>
