@@ -10,4 +10,15 @@ export default defineConfig({
     alias: [{ find: "@", replacement: path.resolve(__dirname, ".", "src") }],
   },
   plugins: [react(), tsconfigPaths(), tailwindcss()],
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router'],
+        },
+      },
+    },
+  },
 });

@@ -38,8 +38,8 @@ export default function PricingCard({
                 <button
                     onClick={() => onBillingToggle("monthly")}
                     className={`px-5 py-2 rounded-full text-sm transition-all ${billing === "monthly"
-                            ? "bg-white/20 backdrop-blur-md font-semibold text-white"
-                            : "opacity-60 text-gray-300 hover:opacity-80"
+                        ? "bg-white/20 backdrop-blur-md font-semibold text-white"
+                        : "opacity-60 text-gray-300 hover:opacity-80"
                         }`}
                 >
                     Monthly
@@ -47,8 +47,8 @@ export default function PricingCard({
                 <button
                     onClick={() => onBillingToggle("annual")}
                     className={`px-5 py-2 rounded-full text-sm flex items-center gap-2 transition-all ${billing === "annual"
-                            ? "bg-white/20 backdrop-blur-md font-semibold text-white"
-                            : "opacity-60 text-gray-300 hover:opacity-80"
+                        ? "bg-white/20 backdrop-blur-md font-semibold text-white"
+                        : "opacity-60 text-gray-300 hover:opacity-80"
                         }`}
                 >
                     Annual
@@ -81,18 +81,18 @@ export default function PricingCard({
             {/* Promo Code */}
             <div className="mt-8">
                 <label className="text-sm opacity-70 block mb-2">Have a promo code?</label>
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-2">
                     <input
                         type="text"
                         value={promoCode}
                         onChange={(e) => setPromoCode(e.target.value)}
                         placeholder="Enter code"
-                        className="flex-1 bg-white/5 border border-white/10 py-2 px-2 rounded-xl text-sm focus:outline-none focus:border-[#FF8C22]/50"
+                        className="flex-1 bg-white/5 border border-white/10 py-2 px-2 rounded-xl text-sm focus:outline-none focus:border-kidemia-primary/50"
                     />
                     <button
                         onClick={onApplyPromo}
                         disabled={isApplyingPromo}
-                        className="bg-[#FF8C22] hover:bg-[#ff9d3d] px-6 py-2 rounded-xl text-sm font-medium transition disabled:opacity-50"
+                        className="bg-kidemia-secondary hover:bg-kidemia-primary px-6 py-2 rounded-xl text-sm font-medium transition disabled:opacity-50"
                     >
                         {isApplyingPromo ? "..." : "Apply"}
                     </button>
