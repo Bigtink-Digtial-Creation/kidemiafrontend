@@ -17,7 +17,7 @@ import {
   loggedinUserAtom,
   storedAuthTokenAtom,
 } from "../../../store/user.atom";
-import { apiErrorParser } from "../../../utils/errorParser";
+// import { apiErrorParser } from "../../../utils/errorParser";
 import { userRoleAtom } from "../../../store/user.atom"
 
 
@@ -55,10 +55,10 @@ export default function LoginPage() {
       }
     },
     onError(error) {
-      const parsedError = apiErrorParser(error);
+      // const parsedError = apiErrorParser(error);
       addToast({
         title: "An Error Occured",
-        description: parsedError.message,
+        description: error.message,
         color: "danger",
       });
     },
