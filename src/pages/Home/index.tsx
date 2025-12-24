@@ -14,7 +14,7 @@ export default function KidemiaLandingPage({ onSignup }: Props) {
 
         <StatsAndTestimonial />
 
-        <PricingAndHighlights />
+
 
         <PartnersSection />
 
