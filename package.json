@@ -12,6 +12,9 @@
     "preview": "vite preview",
     "gen-sdk": "openapi --client axios -i ./src/sdk/openapi.json -o ./src/sdk/generated --indent 2 --useUnionTypes"
   },
+  "engines": {
+    "node": "22.x.x"
+  },
   "dependencies": {
     "@heroui/react": "^2.8.3",
     "@hookform/resolvers": "^5.2.1",
