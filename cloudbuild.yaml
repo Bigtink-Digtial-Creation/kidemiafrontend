@@ -1,31 +1,21 @@
 steps:
-  # Install dependencies
-  - name: 'node:22-slim'
-    entrypoint: npm
-    args: ['ci', '--prefer-offline', '--no-audit']
-    id: 'install'
-
-  # Build the Vite app with environment variables
-  - name: 'node:22-slim'
-    entrypoint: npm
-    args: ['run', 'build']
-    id: 'build'
-    waitFor: ['install']
-    env:
-      - 'NODE_ENV=production'
-      - 'VITE_BASE_URL=https://kidemia-service-1007453817746.europe-west1.run.app'
-
-  # Build container using Buildpacks
-  - name: 'gcr.io/k8s-skaffold/pack'
+  # Build Docker image with build argument
+  - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
+      - '--build-arg'
+      - 'VITE_BASE_URL=https://kidemia-service-1007453817746.europe-west1.run.app'
+      - '-t'
       - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/kidemiafrontend/kidemia:$SHORT_SHA'
-      - '--builder=gcr.io/buildpacks/builder:v1'
-      - '--path=.'
-      - '--env=GOOGLE_RUNTIME=nodejs'
-      - '--env=GOOGLE_RUNTIME_VERSION=22'
-      - '--env=GOOGLE_SKIP_BUILD=true'  # ✅ Skip buildpack's npm build (we already did it)
-    id: 'buildpack'
+      - '.'
+    id: 'build'
+
+  # Push the image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: 
+      - 'push'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/kidemiafrontend/kidemia:$SHORT_SHA'
+    id: 'push'
     waitFor: ['build']
 
   # Deploy to Cloud Run
@@ -35,24 +25,21 @@ steps:
       - 'deploy'
       - 'kidemia'
       - '--image=europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/kidemiafrontend/kidemia:$SHORT_SHA'
-      - '--region=europe-west1'  # ✅ Changed to europe-west1
+      - '--region=europe-west1'
       - '--platform=managed'
       - '--allow-unauthenticated'
       - '--memory=512Mi'
-      - '--cpu=1'
-      - '--max-instances=10'
-      - '--min-instances=0'
       - '--port=8080'
-      - '--timeout=60'
+      - '--min-instances=0'
+      - '--max-instances=10'
     id: 'deploy'
-    waitFor: ['buildpack']
+    waitFor: ['push']
 
 images:
   - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/kidemiafrontend/kidemia:$SHORT_SHA'
 
-timeout: 2400s
+timeout: 1200s
 
 options:
   machineType: 'E2_HIGHCPU_8'
   logging: CLOUD_LOGGING_ONLY
-  substitutionOption: 'ALLOW_LOOSE'
