@@ -56,9 +56,10 @@ export default function LoginPage() {
     },
     onError(error) {
       // const parsedError = apiErrorParser(error);
+      console.log(error)
       addToast({
         title: "An Error Occured",
-        description: error.message,
+        description: error.message || "Login Error",
         color: "danger",
       });
     },
