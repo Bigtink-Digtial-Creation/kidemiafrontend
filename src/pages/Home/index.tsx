@@ -1,6 +1,6 @@
 import Hero from "./components/Hero";
 import StatsAndTestimonial from "./components/Testimonial";
-import PricingAndHighlights from "./components/PricingAndHighlights";
+// import PricingAndHighlights from "./components/PricingAndHighlights";
 import PartnersSection from "./components/PartnersSection";
 import SubscribeBar from "./components/SubscribeBar";
 
