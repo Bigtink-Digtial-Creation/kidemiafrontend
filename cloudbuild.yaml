@@ -20,7 +20,7 @@ steps:
   - name: 'gcr.io/k8s-skaffold/pack'
     args:
       - build
-      - 'gcr.io/$PROJECT_ID/kidemia-frontend:$SHORT_SHA'
+      - 'gcr.io/$PROJECT_ID/kidemia:$SHORT_SHA'
       - '--builder=gcr.io/buildpacks/builder:v1'
       - '--path=.'
       - '--env=GOOGLE_RUNTIME=nodejs'
@@ -33,8 +33,8 @@ steps:
     args:
       - 'run'
       - 'deploy'
-      - 'kidemia-frontend'
-      - '--image=gcr.io/$PROJECT_ID/kidemia-frontend:$SHORT_SHA'
+      - 'kidemia'
+      - '--image=gcr.io/$PROJECT_ID/kidemia:$SHORT_SHA'
       - '--region=us-central1'
       - '--platform=managed'
       - '--allow-unauthenticated'
@@ -42,14 +42,14 @@ steps:
       - '--cpu=1'
       - '--max-instances=10'
       - '--min-instances=0'
-      - '--port=3000'
+      - '--port=8080'
       - '--timeout=60'
       - '--set-env-vars=VITE_BASE_URL=https://kidemia-service-1007453817746.europe-west1.run.app'
     id: 'deploy'
     waitFor: ['buildpack']
 
 images:
-  - 'gcr.io/$PROJECT_ID/kidemia-frontend:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/kidemia:$SHORT_SHA'
 
 # Build timeout
 timeout: 2400s
