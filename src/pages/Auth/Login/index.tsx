@@ -17,7 +17,7 @@ import {
   loggedinUserAtom,
   storedAuthTokenAtom,
 } from "../../../store/user.atom";
-// import { apiErrorParser } from "../../../utils/errorParser";
+import { apiErrorParser } from "../../../utils/errorParser";
 import { userRoleAtom } from "../../../store/user.atom"
 
 
@@ -41,11 +41,9 @@ export default function LoginPage() {
     mutationFn: (formData: LoginRequest) =>
       ApiSDK.AuthenticationService.loginApiV1AuthLoginPost(formData),
     onSuccess(data) {
-      console.log(data)
       if (data) {
         const token = data.access_token;
         ApiSDK.OpenAPI.TOKEN = token;
-        console.log(ApiSDK.OpenAPI.TOKEN)
         setStoredToken(token);
         setLoggedInUser(data);
         setRole(data.user?.roles?.[0].name ?? null);
@@ -57,11 +55,10 @@ export default function LoginPage() {
       }
     },
     onError(error) {
-      // const parsedError = apiErrorParser(error);
-      console.log(error)
+      const parsedError = apiErrorParser(error);
       addToast({
         title: "An Error Occured",
-        description: error.message || "Login Error",
+        description: parsedError.message || "Login Error",
         color: "danger",
       });
     },
