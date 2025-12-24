@@ -6,6 +6,9 @@ import { Provider as JotaiProvider } from "jotai";
 import { RouterProvider } from "react-router";
 import { router } from "./App.tsx";
 import "./index.css";
+import { configureAPI } from "./lib/apiConfig.ts";
+
+configureAPI();
 
 const queryClient = new QueryClient();
 
