@@ -56,3 +56,4 @@ cloudbuild.yaml
 .editorconfig
 .prettierrc
 .eslintrc*
+.emsnf
