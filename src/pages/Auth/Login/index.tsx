@@ -41,9 +41,11 @@ export default function LoginPage() {
     mutationFn: (formData: LoginRequest) =>
       ApiSDK.AuthenticationService.loginApiV1AuthLoginPost(formData),
     onSuccess(data) {
+      console.log(data)
       if (data) {
         const token = data.access_token;
         ApiSDK.OpenAPI.TOKEN = token;
+        console.log(ApiSDK.OpenAPI.TOKEN)
         setStoredToken(token);
         setLoggedInUser(data);
         setRole(data.user?.roles?.[0].name ?? null);
