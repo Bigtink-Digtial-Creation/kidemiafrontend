@@ -29,6 +29,7 @@ export const SidebarRoutes = {
   profile: "/dashboard/profile",
   takeAssessment: "/dashboard/assessment",
   community: "/dashboard/community",
+  postPage: "/dashboard/community/post/:postId",
 
 };
 

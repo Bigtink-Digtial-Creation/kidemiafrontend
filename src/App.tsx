@@ -63,6 +63,7 @@ import BuyUnitsPage from "./pages/payment/BuyUnitsPage";
 import PricingUpgradePage from "./pages/payment/PricingUpgrade";
 import WalletCallbackPage from "./pages/payment/WalletCallbackPage";
 import CheckOutPage from "./pages/payment/Checkout";
+import PostDetailPage from "./pages/Community/Feed/PostDetailPage";
 
 export const router = createBrowserRouter([
   {
@@ -104,6 +105,8 @@ export const router = createBrowserRouter([
           { path: SidebarRoutes.history, element: <HistoryPage /> },
           { path: SidebarRoutes.leaderboard, element: <LeaderboardPage /> },
           { path: SidebarRoutes.community, element: <CommunityPage /> },
+          { path: SidebarRoutes.postPage, element: <PostDetailPage /> },
+
           { path: SidebarRoutes.profile, element: <ProfilePage /> },
           { path: SidebarRoutes.settings, element: <SettingsPage /> },
           { path: SidebarRoutes.takeAssessment, element: <AssessmentPage /> },
