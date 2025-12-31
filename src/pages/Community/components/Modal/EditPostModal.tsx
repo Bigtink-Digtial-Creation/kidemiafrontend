@@ -61,7 +61,10 @@ export default function EditPostModal({ post, isOpen, onClose }: EditPostModalPr
             addToast({ color: "success", description: "Post updated successfully!" })
             onClose();
         } catch (error: any) {
-            addToast({ color: "danger", description: error?.response?.data?.detail || "Failed to update post" })
+            addToast({
+                color: "danger", description: error?.body?.detail || "Failed to update post",
+                timeout: 6000,
+            });
         }
     };
 
@@ -95,7 +98,7 @@ export default function EditPostModal({ post, isOpen, onClose }: EditPostModalPr
     return (
         <div className="fixed inset-0 z-50 overflow-y-auto">
             {/* Backdrop */}
-            <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose} />
+            <div className="fixed inset-0" onClick={onClose} />
 
             {/* Modal */}
             <div className="flex min-h-full items-center justify-center p-4">
@@ -277,7 +280,7 @@ export default function EditPostModal({ post, isOpen, onClose }: EditPostModalPr
                         <button
                             onClick={handleSubmit}
                             disabled={updatePost.isPending}
-                            className="inline-flex items-center px-6 py-2 bg-kidemia-primary text-white rounded-lg hover:bg-kidemia-primary/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="inline-flex items-center px-6 py-1 mb-2 bg-kidemia-primary text-white rounded-lg hover:bg-kidemia-primary/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {updatePost.isPending ? (
                                 <>

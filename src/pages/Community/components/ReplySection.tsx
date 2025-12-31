@@ -8,6 +8,7 @@ import DeleteConfirmModal from "../components/Modal/DeleteConfirmModal";
 import { type PostDetailResponse } from "../../../sdk/generated";
 import { addToast } from "@heroui/react";
 import ReplyCard from "../components/ReplyCard"
+import { AuthRoutes } from "../../../routes";
 
 
 interface ReplySectionProps {
@@ -35,7 +36,7 @@ export default function ReplySection({ post }: ReplySectionProps) {
         e.preventDefault();
 
         if (!user) {
-            navigate("/login");
+            navigate(AuthRoutes.login);
             return;
         }
 

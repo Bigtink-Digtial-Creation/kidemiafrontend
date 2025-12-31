@@ -10,11 +10,15 @@ export const FeedResponseSchema = z.object({
     has_more: z.boolean(),
     feed_type: z.enum([
         "all",
-        "personalized",
-        "discover",
-        "subject",
+        "trending",
+        "unanswered",
+        "popular",
+        "following",
+        "subjects",
         "tag",
     ]),
 });
+
+// "all" | "trending" | "unanswered" | "popular" | "following" | "subjects";
 
 export type FeedResponse = z.infer<typeof FeedResponseSchema>;

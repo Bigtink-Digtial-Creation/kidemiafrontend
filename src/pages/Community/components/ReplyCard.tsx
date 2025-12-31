@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import type { PostDetailResponse, ReplyResponse } from "../../../sdk/generated";
-import { useToggleReplyReaction } from "../hooks/useCommunity";
-import { AuthRoutes } from "../../../routes";
+import { useToggleReplyReaction, useUserProfile } from "../hooks/useCommunity";
+import { AuthRoutes, SidebarRoutes } from "../../../routes";
 import { formatNumber, formatTimeAgo, getAvatarColor, getInitials } from "../utils/community.utils";
 import { CheckCircle, Edit, MoreVertical, ThumbsUp, Trash2 } from "lucide-react";
 
@@ -60,6 +60,9 @@ export default function ReplyCard({
         });
     };
 
+    const { data: replyAuthorData,
+    } = useUserProfile(reply.author_id!);
+
     return (
         <div
             className={`bg-white rounded-lg border ${reply.is_accepted_answer
@@ -71,9 +74,9 @@ export default function ReplyCard({
             <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
                     {/* Avatar */}
-                    {reply.author?.avatar_url ? (
+                    {reply.author?.profile_picture_url ? (
                         <img
-                            src={reply.author.avatar_url}
+                            src={reply.author.profile_picture_url}
                             alt={reply.author.full_name}
                             className="w-10 h-10 rounded-full object-cover flex-shrink-0"
                         />
@@ -91,15 +94,15 @@ export default function ReplyCard({
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-2">
                             <button
-                                onClick={() => navigate(`/community/user/${reply.author_id}`)}
+                                onClick={() => navigate(SidebarRoutes.userProfile.replace(":userId", reply.author_id))}
                                 className="font-semibold text-gray-900 hover:text-kidemia-primary transition-colors truncate"
                             >
-                                {reply.author?.full_name || "Unknown"}
+                                {reply.author?.full_name || "Anonymous"}
                             </button>
-                            {reply.author?.reputation_points !== undefined &&
-                                reply.author.reputation_points! > 0 && (
+                            {replyAuthorData?.reputation_meta.total_points !== undefined &&
+                                replyAuthorData?.reputation_meta.total_points! > 0 && (
                                     <span className="text-xs text-gray-500 flex-shrink-0">
-                                        {formatNumber(reply.author.reputation_points!)} pts
+                                        {formatNumber(replyAuthorData?.reputation_meta.total_points!)} pts
                                     </span>
                                 )}
                         </div>

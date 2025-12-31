@@ -72,7 +72,7 @@ export default function FeedList({ feedType }: FeedListProps) {
     }
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             {/* Posts */}
             {allPosts.map((post) => (
                 <PostCard key={post.id} post={post} />

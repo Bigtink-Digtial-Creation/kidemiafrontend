@@ -22,7 +22,7 @@ export default function DeleteConfirmModal({
     return (
         <div className="fixed inset-0 z-50 overflow-y-auto">
             {/* Backdrop */}
-            <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose} />
+            <div className="fixed inset-0 " onClick={onClose} />
 
             {/* Modal */}
             <div className="flex min-h-full items-center justify-center p-4">
@@ -61,7 +61,7 @@ export default function DeleteConfirmModal({
                         <button
                             onClick={onConfirm}
                             disabled={isLoading}
-                            className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="inline-flex items-center px-4 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isLoading ? (
                                 <>

@@ -1,6 +1,6 @@
 export function PostCardSkeleton() {
     return (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5 animate-pulse">
+        <div className="rounded-lg border border-gray-200 p-4 sm:p-5 animate-pulse">
             {/* Header */}
             <div className="flex items-center space-x-3 mb-3">
                 <div className="w-10 h-10 bg-gray-200 rounded-full" />

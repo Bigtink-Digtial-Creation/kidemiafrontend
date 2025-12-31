@@ -24,11 +24,12 @@ import {
     useTogglePostReaction,
     useToggleBookmark,
     useToggleFollowPost,
+    useUserProfile,
 } from "../hooks/useCommunity";
 import type { PostDetailResponse } from "../../../sdk/generated";
 import { useAtomValue } from "jotai";
 import { loggedinUserAtom } from "../../../store/user.atom";
-import { AuthRoutes } from "../../../routes";
+import { AuthRoutes, SidebarRoutes } from "../../../routes";
 
 interface PostContentProps {
     post: PostDetailResponse;
@@ -62,11 +63,15 @@ export default function PostContent({ post }: PostContentProps) {
 
     const handleFollow = async () => {
         if (!user) {
-            navigate("/login");
+            navigate(AuthRoutes.login);
             return;
         }
         await toggleFollow.mutateAsync();
     };
+
+    const { data: userData,
+    } = useUserProfile(post.author_id!);
+
 
     return (
         <div className="bg-white rounded-lg  border border-gray-200">
@@ -75,9 +80,9 @@ export default function PostContent({ post }: PostContentProps) {
                 <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3 flex-1 min-w-0">
                         {/* Avatar */}
-                        {post.author?.avatar_url ? (
+                        {post.author?.profile_picture_url ? (
                             <img
-                                src={post.author.avatar_url}
+                                src={post.author.profile_picture_url}
                                 alt={post.author.full_name}
                                 className="w-12 h-12 rounded-full object-cover flex-shrink-0"
                             />
@@ -95,15 +100,15 @@ export default function PostContent({ post }: PostContentProps) {
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center space-x-2">
                                 <button
-                                    onClick={() => navigate(`/community/user/${post.author_id}`)}
+                                    onClick={() => navigate(SidebarRoutes.userProfile.replace(":userId", post.author_id))}
                                     className="font-semibold text-gray-900 hover:text-kidemia-primary transition-colors truncate"
                                 >
                                     {post.author?.full_name || "Unknown"}
                                 </button>
-                                {post.author?.reputation_points !== undefined &&
-                                    post.author.reputation_points! > 0 && (
+                                {userData?.reputation_meta.total_points !== undefined &&
+                                    userData.reputation_meta.total_points > 0 && (
                                         <span className="px-2 py-0.5 bg-kidemia-primary/10 text-kidemia-primary text-xs font-medium rounded-full flex-shrink-0">
-                                            {formatNumber(post.author.reputation_points!)} pts
+                                            {formatNumber(userData?.reputation_meta.total_points!)} pts
                                         </span>
                                     )}
                             </div>
@@ -113,7 +118,7 @@ export default function PostContent({ post }: PostContentProps) {
                                     <>
                                         <span>•</span>
                                         <button
-                                            onClick={() => navigate(`/community/subject/${post.subject_id}`)}
+                                            onClick={() => navigate(SidebarRoutes.subjectPage.replace(":subjectId", post.subject_id!))}
                                             className="hover:text-kidemia-primary transition-colors truncate"
                                         >
                                             {post.subject_id}
@@ -181,7 +186,7 @@ export default function PostContent({ post }: PostContentProps) {
                         {post.tags.map((tag) => (
                             <button
                                 key={tag.id}
-                                onClick={() => navigate(`/community/tag/${tag.id}`)}
+                                onClick={() => navigate(SidebarRoutes.tagPage.replace(":tagId", tag.id))}
                                 style={{
                                     backgroundColor: tag.color + "20",
                                     color: tag.color || "#BF4C20",

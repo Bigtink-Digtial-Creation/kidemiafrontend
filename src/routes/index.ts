@@ -1,3 +1,4 @@
+
 export const HomeRoutes = {
   home: "/",
   about: "/about-us",
@@ -22,16 +23,23 @@ export const AuthRoutes = {
 
 export const SidebarRoutes = {
   dashboard: "/dashboard",
-  settings: "/dashboard/settings",
-  performance: "/dashboard/performance",
-  history: "/dashboard/history",
-  leaderboard: "/dashboard/leaderboard",
-  profile: "/dashboard/profile",
-  takeAssessment: "/dashboard/assessment",
-  community: "/dashboard/community",
-  postPage: "/dashboard/community/post/:postId",
 
+  performance: "/performance",
+  history: "/history",
+  leaderboard: "/leaderboard",
+
+  community: "/community",
+  postPage: "/community/post/:postId",
+  tagPage: "/community/tag/:tagId",
+  userProfile: "/community/user/:userId",
+  subjectPage: "/community/subject/:subjectId",
+
+  profile: "/profile",
+  settings: "/settings",
+
+  takeAssessment: "/assessment",
 };
+
 
 export const TestRoutes = {
   takeTest: "/take-a-test",
@@ -55,10 +63,11 @@ export const AssessmentRoutes = {
 
 export const PaymentRoutes = {
   checkout: "/payment/checkout/:id/plan",
-  buytoken: "/dashboard/token/top-up",
-  walletCallBack: '/wallet/callback',
-  upgradePlan: '/dashboard/plan/upgrade'
+  buytoken: "/token/top-up",
+  upgradePlan: "/plan/upgrade",
+  walletCallBack: "/wallet/callback",
 };
+
 
 export type HomeRoutes = (typeof HomeRoutes)[keyof typeof HomeRoutes];
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];

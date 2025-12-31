@@ -21,9 +21,11 @@ import {
     Flame,
     Sparkles,
 } from "lucide-react";
+
 import { formatNumber } from "../utils/community.utils";
 import { useAtomValue } from "jotai";
 import { loggedinUserAtom } from "../../../store/user.atom";
+import { SidebarRoutes } from "../../../routes";
 
 export default function Sidebar() {
     const storedUser = useAtomValue(loggedinUserAtom);
@@ -39,7 +41,7 @@ export default function Sidebar() {
         <div className="space-y-4">
             {/* Stats Card */}
             {stats && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div className="bg-white rounded-lg border border-gray-200 p-4">
                     <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
                         <TrendingUp className="w-4 h-4 mr-2 text-kidemia-primary" />
                         Community Stats
@@ -71,7 +73,7 @@ export default function Sidebar() {
 
             {/* Recommended Posts (for authenticated users) */}
             {user && recommended && recommended.length > 0 && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div className="bg-white rounded-lg border border-gray-200 p-4">
                     <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
                         <Sparkles className="w-4 h-4 mr-2 text-kidemia-secondary" />
                         Recommended for You
@@ -80,7 +82,7 @@ export default function Sidebar() {
                         {recommended.map((post) => (
                             <button
                                 key={post.id}
-                                onClick={() => navigate(`/community/post/${post.id}`)}
+                                onClick={() => navigate(SidebarRoutes.postPage.replace(":postId", post.id))}
                                 className="w-full text-left group"
                             >
                                 <p className="text-sm font-medium text-gray-900 line-clamp-2 group-hover:text-kidemia-primary transition-colors">
@@ -104,7 +106,7 @@ export default function Sidebar() {
 
             {/* Trending Posts */}
             {trending && trending.length > 0 && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div className="bg-white rounded-lg border border-gray-200 p-4">
                     <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
                         <Flame className="w-4 h-4 mr-2 text-orange-500" />
                         Trending Now
@@ -113,7 +115,7 @@ export default function Sidebar() {
                         {trending.map((post, index) => (
                             <button
                                 key={post.id}
-                                onClick={() => navigate(`/community/post/${post.id}`)}
+                                onClick={() => navigate(SidebarRoutes.postPage.replace(":postId", post.id))}
                                 className="w-full text-left group"
                             >
                                 <div className="flex items-start space-x-2">
@@ -144,7 +146,7 @@ export default function Sidebar() {
 
             {/* Popular Tags */}
             {popularTags && popularTags.length > 0 && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div className="bg-white rounded-lg border border-gray-200 p-4">
                     <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
                         <Tag className="w-4 h-4 mr-2 text-kidemia-primary" />
                         Popular Tags
@@ -153,7 +155,7 @@ export default function Sidebar() {
                         {popularTags.map((tag) => (
                             <button
                                 key={tag.id}
-                                onClick={() => navigate(`/community/tag/${tag.id}`)}
+                                onClick={() => navigate(SidebarRoutes.tagPage.replace(":tagId", tag.id))}
                                 style={{ backgroundColor: tag.color + "20", color: tag.color }}
                                 className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium hover:opacity-80 transition-opacity"
                             >

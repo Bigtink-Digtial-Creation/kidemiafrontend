@@ -11,7 +11,7 @@ import type {
 } from "../types/community.types";
 
 import { ApiSDK } from "../../../sdk";
-import { type BookmarkCreate, type NotificationResponse, type PopularTag, type PostCreate, type PostDetailResponse, type PostUpdate, type ReactionCreate, type ReplyCreate, type ReplyUpdate, type TagResponse, type TrendingPost } from "../../../sdk/generated";
+import { type BookmarkCreate, type NotificationResponse, type PopularTag, type PostCreate, type PostDetailResponse, type PostUpdate, type ReactionCreate, type ReplyCreate, type ReplyUpdate, type TagResponse, type TrendingPost, type UserProfileResponse } from "../../../sdk/generated";
 import { FeedResponseSchema } from "../schema/feed.schema";
 
 export function usePersonalizedFeed(pageSize = 20) {
@@ -79,6 +79,7 @@ export function useTagFeed(tagId: string, pageSize = 20) {
       const res =
         await ApiSDK.ForumFeedService
           .getTagFeedApiV1FeedTagTagIdGet(tagId, pageParam, pageSize);
+      console.log(res)
       return FeedResponseSchema.parse(res);
     },
     getNextPageParam: (lastPage) =>
@@ -410,5 +411,39 @@ export function useMarkAllNotificationsRead() {
         queryKey: ["community", "notifications"],
       });
     },
+  });
+}
+
+
+export function useUserProfile(userId: string) {
+  return useQuery<UserProfileResponse>({
+    queryKey: ["community", "user", userId],
+    queryFn: () => ApiSDK.CommunityService.getUserProfileApiV1ForumUsersUserIdProfileGet(userId),
+    enabled: !!userId,
+  });
+}
+
+export function useUserActivityFeed(userId: string, pageSize: number = 20) {
+  return useInfiniteQuery({
+    queryKey: ["community", "user", userId, "posts"],
+    queryFn: ({ pageParam = 1 }) =>
+      ApiSDK.ForumFeedService.getUserActivityFeedApiV1FeedUserUserIdGet(
+        userId,
+        pageParam,
+        pageSize,
+      ),
+    getNextPageParam: (lastPage) => {
+      return lastPage.has_more ? lastPage.page + 1 : undefined;
+    },
+    initialPageParam: 1,
+    enabled: !!userId,
+  });
+}
+
+export function useUserReputation(userId: string) {
+  return useQuery({
+    queryKey: ["community", "user", userId, "reputation"],
+    queryFn: () => ApiSDK.CommunityService.getUserReputationApiV1ForumUsersUserIdReputationGet(userId),
+    enabled: !!userId,
   });
 }

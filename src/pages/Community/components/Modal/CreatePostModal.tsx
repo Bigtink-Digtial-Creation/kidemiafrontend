@@ -56,10 +56,16 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
                 tag_names: selectedTags,
             });
 
-            addToast({ color: "success", description: "Post created successfully!" });
+            addToast({
+                color: "success", description: "Post created successfully!",
+                timeout: 6000,
+            });
             onClose();
         } catch (error: any) {
-            addToast({ color: "danger", description: error?.detail || "Failed to create post" });
+            addToast({
+                color: "danger", description: error?.body?.detail || "Failed to create post",
+                timeout: 6000,
+            });
 
         }
     };
@@ -94,7 +100,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
     return (
         <div className="fixed inset-0 z-50 overflow-y-auto">
             {/* Backdrop */}
-            <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={onClose} />
+            <div className="fixed inset-0" onClick={onClose} />
 
             {/* Modal */}
             <div className="flex min-h-full items-center justify-center p-4">
@@ -289,7 +295,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
                         <button
                             onClick={handleSubmit}
                             disabled={createPost.isPending}
-                            className="inline-flex items-center px-6 py-2 bg-kidemia-primary text-white rounded-lg hover:bg-kidemia-primary/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="inline-flex items-center px-6 py-1 bg-kidemia-primary text-white rounded-lg hover:bg-kidemia-primary/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {createPost.isPending ? (
                                 <>
