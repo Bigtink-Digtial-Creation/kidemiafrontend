@@ -22,6 +22,7 @@ import type { ReputationResponse } from '../models/ReputationResponse';
 import type { TagCreate } from '../models/TagCreate';
 import type { TagResponse } from '../models/TagResponse';
 import type { TrendingPost } from '../models/TrendingPost';
+import type { UserProfileResponse } from '../models/UserProfileResponse';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -629,6 +630,26 @@ export class CommunityService {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/v1/forum/my-reputation',
+    });
+  }
+  /**
+   * Get User Profile
+   * @param userId
+   * @returns UserProfileResponse Successful Response
+   * @throws ApiError
+   */
+  public static getUserProfileApiV1ForumUsersUserIdProfileGet(
+    userId: string,
+  ): CancelablePromise<UserProfileResponse> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/forum/users/{user_id}/profile',
+      path: {
+        'user_id': userId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
     });
   }
 }

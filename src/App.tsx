@@ -64,6 +64,9 @@ import PricingUpgradePage from "./pages/payment/PricingUpgrade";
 import WalletCallbackPage from "./pages/payment/WalletCallbackPage";
 import CheckOutPage from "./pages/payment/Checkout";
 import PostDetailPage from "./pages/Community/Feed/PostDetailPage";
+import TagPage from "./pages/Community/Feed/TagPage";
+import UserProfilePage from "./pages/Community/Feed/UserProfilePage";
+import { SubjectPage } from "./pages/Community/Feed/SubjectPage";
 
 export const router = createBrowserRouter([
   {
@@ -97,7 +100,6 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        path: SidebarRoutes.dashboard,
         element: <DashboardLayout />,
         children: [
           { path: SidebarRoutes.dashboard, element: <DashboardPage /> },
@@ -106,7 +108,9 @@ export const router = createBrowserRouter([
           { path: SidebarRoutes.leaderboard, element: <LeaderboardPage /> },
           { path: SidebarRoutes.community, element: <CommunityPage /> },
           { path: SidebarRoutes.postPage, element: <PostDetailPage /> },
-
+          { path: SidebarRoutes.tagPage, element: <TagPage /> },
+          { path: SidebarRoutes.userProfile, element: <UserProfilePage /> },
+          { path: SidebarRoutes.subjectPage, element: <SubjectPage /> },
           { path: SidebarRoutes.profile, element: <ProfilePage /> },
           { path: SidebarRoutes.settings, element: <SettingsPage /> },
           { path: SidebarRoutes.takeAssessment, element: <AssessmentPage /> },

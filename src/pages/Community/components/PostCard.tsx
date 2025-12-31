@@ -59,16 +59,16 @@ export default function PostCard({ post }: PostCardProps) {
     return (
         <div
             onClick={handleCardClick}
-            className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all cursor-pointer overflow-hidden"
+            className="bg-white rounded-lg border border-gray-200 transition-all cursor-pointer overflow-hidden"
         >
             <div className="p-4 sm:p-5">
                 {/* Header */}
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-1">
                     <div className="flex items-center space-x-3 flex-1 min-w-0">
                         {/* Avatar */}
-                        {post.author?.avatar_url ? (
+                        {post.author?.profile_picture_url ? (
                             <img
-                                src={post.author.avatar_url}
+                                src={post.author.profile_picture_url}
                                 alt={post.author.full_name}
                                 className="w-10 h-10 rounded-full object-cover flex-shrink-0"
                             />
@@ -156,7 +156,7 @@ export default function PostCard({ post }: PostCardProps) {
                                 key={tag.id}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    navigate(`/community/tag/${tag.id}`);
+                                    navigate(SidebarRoutes.postPage.replace(":tagId", tag.id));
                                 }}
                                 className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
                             >

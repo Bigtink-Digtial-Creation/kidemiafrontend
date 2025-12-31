@@ -7,13 +7,13 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({ error, onRetry }: ErrorStateProps) {
-    const statusCode = error?.response?.status;
+    const statusCode = error?.status;
     const errorMessage = statusCode
         ? getHttpErrorMessage(statusCode)
         : "Unable to load posts. Please check your connection.";
 
     return (
-        <div className="bg-white rounded-lg shadow-sm border border-red-200 p-8">
+        <div className="bg-white rounded-lg border border-red-200 p-8">
             <div className="flex flex-col items-center text-center">
                 <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
                     <AlertCircle className="w-8 h-8 text-red-600" />
