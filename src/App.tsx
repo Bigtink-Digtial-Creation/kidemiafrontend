@@ -73,6 +73,7 @@ import { RefundPolicyPage } from "./pages/Home/RefundPolicyPage";
 import { PrivacyPolicyPage } from "./pages/Home/PrivacyPolicy";
 import { TermsOfServicePage } from "./pages/Home/TermsOfServicePage";
 import { FAQPage } from "./pages/Home/FAQPage";
+import EmailLayout from "./layouts/Email.layout";
 
 export const router = createBrowserRouter([
   {
@@ -98,7 +99,6 @@ export const router = createBrowserRouter([
 
       { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> },
       { path: AuthRoutes.resetPassword, element: <ResetPasswordPage /> },
-      { path: AuthRoutes.verifyEmail, element: <VerifyEmailPage /> },
       { path: AuthRoutes.signup, element: <SignUpPage /> },
       { path: AuthRoutes.guardian, element: <GuardianSignup /> },
     ],
@@ -196,4 +196,14 @@ export const router = createBrowserRouter([
     element: <CheckOutPage />,
     errorElement: <ErrorPage />,
   },
+
+  {
+    element: <EmailLayout />,
+    errorElement: <ErrorPage />,
+    children: [{
+      path: AuthRoutes.verifyEmail,
+      element: <VerifyEmailPage />,
+    },]
+  },
+
 ]);
