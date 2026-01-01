@@ -6,6 +6,8 @@ import {
   GooglePlayLogo,
   FooterMap,
 } from "../../assets/images";
+import { Link } from "react-router";
+import { HomeRoutes } from "../../routes";
 
 export default function Footer() {
   return (
@@ -34,22 +36,48 @@ export default function Footer() {
             <ul className="text-sm opacity-80 space-y-2">
               <li className="hover:opacity-100 cursor-pointer">About</li>
               <li className="hover:opacity-100 cursor-pointer">Careers</li>
-              <li className="hover:opacity-100 cursor-pointer">Contact</li>
+              <li className="hover:opacity-100 cursor-pointer">Help Center</li>
             </ul>
           </div>
 
           <div>
             <h6 className="font-bold text-base mb-3">Support</h6>
             <ul className="text-sm opacity-80 space-y-2">
-              <li className="hover:opacity-100 cursor-pointer">Help Center</li>
-              <li className="hover:opacity-100 cursor-pointer">
-                Terms of Service
+              <li>
+                <Link
+                  to={HomeRoutes.faq}
+                  className="hover:opacity-100 transition-opacity"
+                >
+                  FAQs
+                </Link>
               </li>
-              <li className="hover:opacity-100 cursor-pointer">
-                Privacy Policy
+              <li>
+                <Link
+                  to={HomeRoutes.terms}
+                  className="hover:opacity-100 transition-opacity"
+                >
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={HomeRoutes.privacy}
+                  className="hover:opacity-100 transition-opacity"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={HomeRoutes.refund}
+                  className="hover:opacity-100 transition-opacity"
+                >
+                  Refund Policy
+                </Link>
               </li>
             </ul>
           </div>
+
 
           <div>
             <h6 className="font-bold text-base mb-3">Get the app</h6>
