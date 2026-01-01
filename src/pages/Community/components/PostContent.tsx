@@ -74,7 +74,7 @@ export default function PostContent({ post }: PostContentProps) {
 
 
     return (
-        <div className="bg-white rounded-lg  border border-gray-200">
+        <div className="">
             <div className="p-6">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">

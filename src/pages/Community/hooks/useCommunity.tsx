@@ -182,11 +182,10 @@ export function useDeletePost() {
   });
 }
 
-// ============ REPLY HOOKS ============
+//  REPLY HOOKS
 
 export function useCreateReply(postId: string) {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: (data: ReplyCreate) =>
       ApiSDK.CommunityService.createReplyApiV1ForumPostsPostIdRepliesPost(

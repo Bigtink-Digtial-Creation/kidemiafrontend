@@ -33,7 +33,8 @@ export const SidebarRoutes = {
   tagPage: "/community/tag/:tagId",
   userProfile: "/community/user/:userId",
   subjectPage: "/community/subject/:subjectId",
-
+  notificationPage: "/community/notification",
+  communityGuideLines: "/community/guidelines",
   profile: "/profile",
   settings: "/settings",
 

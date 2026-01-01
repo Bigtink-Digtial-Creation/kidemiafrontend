@@ -22,7 +22,7 @@ export default function DeleteConfirmModal({
     return (
         <div className="fixed inset-0 z-50 overflow-y-auto">
             {/* Backdrop */}
-            <div className="fixed inset-0 " onClick={onClose} />
+            <div className="fixed inset-0 backdrop-blur-sm" onClick={onClose} />
 
             {/* Modal */}
             <div className="flex min-h-full items-center justify-center p-4">

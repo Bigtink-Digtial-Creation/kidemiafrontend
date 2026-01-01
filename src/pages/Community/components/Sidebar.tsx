@@ -174,7 +174,7 @@ export default function Sidebar() {
                     Browse our community guidelines or ask a question to get started.
                 </p>
                 <button
-                    onClick={() => navigate("/community/guidelines")}
+                    onClick={() => navigate(SidebarRoutes.communityGuideLines)}
                     className="w-full bg-white text-kidemia-primary px-4 py-2 rounded-lg font-medium text-sm hover:bg-gray-100 transition-colors"
                 >
                     View Guidelines

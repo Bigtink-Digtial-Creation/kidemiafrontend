@@ -67,6 +67,8 @@ import PostDetailPage from "./pages/Community/Feed/PostDetailPage";
 import TagPage from "./pages/Community/Feed/TagPage";
 import UserProfilePage from "./pages/Community/Feed/UserProfilePage";
 import { SubjectPage } from "./pages/Community/Feed/SubjectPage";
+import NotificationsPage from "./pages/Community/NotificationsPage";
+import CommunityGuidelinesPage from "./pages/Community/CommunityGuidelinesPage";
 
 export const router = createBrowserRouter([
   {
@@ -107,10 +109,12 @@ export const router = createBrowserRouter([
           { path: SidebarRoutes.history, element: <HistoryPage /> },
           { path: SidebarRoutes.leaderboard, element: <LeaderboardPage /> },
           { path: SidebarRoutes.community, element: <CommunityPage /> },
+          { path: SidebarRoutes.notificationPage, element: <NotificationsPage /> },
           { path: SidebarRoutes.postPage, element: <PostDetailPage /> },
           { path: SidebarRoutes.tagPage, element: <TagPage /> },
           { path: SidebarRoutes.userProfile, element: <UserProfilePage /> },
           { path: SidebarRoutes.subjectPage, element: <SubjectPage /> },
+          { path: SidebarRoutes.communityGuideLines, element: <CommunityGuidelinesPage /> },
           { path: SidebarRoutes.profile, element: <ProfilePage /> },
           { path: SidebarRoutes.settings, element: <SettingsPage /> },
           { path: SidebarRoutes.takeAssessment, element: <AssessmentPage /> },
