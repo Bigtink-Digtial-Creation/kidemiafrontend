@@ -69,6 +69,10 @@ import UserProfilePage from "./pages/Community/Feed/UserProfilePage";
 import { SubjectPage } from "./pages/Community/Feed/SubjectPage";
 import NotificationsPage from "./pages/Community/NotificationsPage";
 import CommunityGuidelinesPage from "./pages/Community/CommunityGuidelinesPage";
+import { RefundPolicyPage } from "./pages/Home/RefundPolicyPage";
+import { PrivacyPolicyPage } from "./pages/Home/PrivacyPolicy";
+import { TermsOfServicePage } from "./pages/Home/TermsOfServicePage";
+import { FAQPage } from "./pages/Home/FAQPage";
 
 export const router = createBrowserRouter([
   {
@@ -78,6 +82,10 @@ export const router = createBrowserRouter([
       { path: HomeRoutes.home, element: <Home /> },
       { path: HomeRoutes.contact, element: <ContactUs /> },
       { path: HomeRoutes.about, element: <AboutUs /> },
+      { path: HomeRoutes.refund, element: <RefundPolicyPage /> },
+      { path: HomeRoutes.privacy, element: <PrivacyPolicyPage /> },
+      { path: HomeRoutes.terms, element: <TermsOfServicePage /> },
+      { path: HomeRoutes.faq, element: <FAQPage /> },
     ],
   },
   {

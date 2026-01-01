@@ -5,6 +5,10 @@ export const HomeRoutes = {
   test: "/test",
   subjects: "/subjects",
   contact: "/contact-us",
+  privacy: "/privacy-policy",
+  refund: "/refund-policy",
+  terms: "/terms",
+  faq: "/faqs"
 };
 
 export const AuthRoutes = {

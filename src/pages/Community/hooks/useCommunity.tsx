@@ -330,13 +330,54 @@ export function useToggleFollowPost(postId: string) {
   return useMutation({
     mutationFn: () =>
       ApiSDK.CommunityService.toggleFollowPostApiV1ForumPostsPostIdFollowPost(postId),
-    onSuccess: () => {
+
+    // 1️⃣ Optimistic update
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: ["community", "post", postId],
+      });
+
+      const previousPost = queryClient.getQueryData<any>([
+        "community",
+        "post",
+        postId,
+      ]);
+
+      if (previousPost) {
+        queryClient.setQueryData(
+          ["community", "post", postId],
+          {
+            ...previousPost,
+            isFollowing: !previousPost.isFollowing,
+            followersCount: previousPost.isFollowing
+              ? previousPost.followersCount - 1
+              : previousPost.followersCount + 1,
+          }
+        );
+      }
+
+      return { previousPost };
+    },
+
+    // 2️⃣ Rollback if error
+    onError: (_err, _vars, context) => {
+      if (context?.previousPost) {
+        queryClient.setQueryData(
+          ["community", "post", postId],
+          context.previousPost
+        );
+      }
+    },
+
+    // 3️⃣ Optional background sync
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["community", "post", postId],
       });
     },
   });
 }
+
 
 // ============ TAG HOOKS ============
 
