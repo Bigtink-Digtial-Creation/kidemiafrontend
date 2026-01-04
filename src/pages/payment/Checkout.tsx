@@ -12,8 +12,7 @@ import PricingCard from "./components/PricingCard";
 import AuthenticatedView from "./components/AuthenticatedView";
 import LoginForm from "./components/LoginForm";
 import SignupFlow from "./components/SignupFlow";
-
-
+import { SidebarRoutes } from "../../routes";
 
 type Billing = "monthly" | "annual";
 
@@ -79,9 +78,40 @@ export default function CheckOutPage() {
     },
   });
 
+  const checkoutMutation = useMutation({
+    mutationFn: async (data: {
+      plan: string;
+      billing_cycle: BillingCycle;
+      auto_renew: boolean;
+      promo_code: string | null;
+      callback_url: string;
+    }) => {
+      return ApiSDK.SubscriptionsService.startSubscriptionCheckoutApiV1SubscriptionsCheckoutPost(data);
+    },
+    onSuccess: (response) => {
+      // Redirect to Paystack payment page
+      if (response.data.authorization_url) {
+        window.location.href = response.data.authorization_url;
+      } else {
+        addToast({
+          title: "Error",
+          description: "Payment URL not received. Please try again.",
+          color: "danger",
+        });
+      }
+    },
+    onError: (error: any) => {
+      addToast({
+        title: "Checkout Failed",
+        description: error?.message || "Failed to initialize payment. Please try again.",
+        color: "danger",
+      });
+    },
+  });
+
   const handleApplyPromo = () => {
     if (!promoCode.trim() || !id) return;
-    const billingCycle = billing === "annual" ? "yearly" : "monthly";
+    const billingCycle: BillingCycle = billing === "annual" ? "yearly" : "monthly";
     applyPromoMutation.mutate({
       promo_code: promoCode.trim(),
       plan_code: id,
@@ -100,17 +130,28 @@ export default function CheckOutPage() {
 
   const handleBillingToggle = (newBilling: Billing) => {
     setBilling(newBilling);
+    // Clear applied promo when billing changes
+    setAppliedPromo(null);
+    setPromoCode("");
     const newSearch = new URLSearchParams(location.search);
     newSearch.set("billing", newBilling);
     navigate(`${location.pathname}?${newSearch.toString()}`, { replace: true });
   };
 
   const handleContinueToPayment = () => {
-    addToast({
-      title: "Redirecting to Payment",
-      description: `${planData?.plan_name} (${billing}) — ${planData?.currency}${calculatePrice()}`,
-      color: "primary",
-    });
+    if (!id || !isAuthenticated) return;
+
+    const billingCycle: BillingCycle = billing === "annual" ? "yearly" : "monthly";
+    const callbackUrl = `${window.location.origin}/subscription/callback`;
+
+    const payload = {
+      plan: id,
+      billing_cycle: billingCycle,
+      auto_renew: true,
+      promo_code: appliedPromo?.promo_code || null,
+      callback_url: callbackUrl,
+    }
+    checkoutMutation.mutate(payload);
   };
 
   const handleLoginSuccess = () => {
@@ -144,8 +185,8 @@ export default function CheckOutPage() {
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Plan not found</h2>
           <button
-            onClick={() => navigate("/")}
-            className="bg-[#2AA2A0] px-6 py-3 rounded-xl"
+            onClick={() => navigate(SidebarRoutes.dashboard)}
+            className="bg-[#2AA2A0] px-6 py-3 rounded-xl hover:bg-[#2AA2A0]/80 transition"
           >
             Go back home
           </button>
@@ -192,6 +233,7 @@ export default function CheckOutPage() {
               <AuthenticatedView
                 user={loggedInUser}
                 onContinueToPayment={handleContinueToPayment}
+                isProcessing={checkoutMutation.isPending}
               />
             ) : showLogin ? (
               <LoginForm

@@ -2,15 +2,20 @@ import { useSetAtom } from "jotai";
 import { useNavigate, useLocation } from "react-router";
 import { loggedinUserAtom, storedAuthTokenAtom, userRoleAtom } from "../../../store/user.atom";
 import { ApiSDK } from "../../../sdk";
+import { Loader2 } from "lucide-react";
 
 interface AuthenticatedViewProps {
     user: any;
     onContinueToPayment: () => void;
+    isProcessing?: boolean;
+
 }
 
 export default function AuthenticatedView({
     user,
     onContinueToPayment,
+    isProcessing = false
+
 }: AuthenticatedViewProps) {
     const navigate = useNavigate();
     const location = useLocation();
@@ -39,9 +44,17 @@ export default function AuthenticatedView({
             </div>
             <button
                 onClick={onContinueToPayment}
-                className="w-full bg-gradient-to-r from-[#2AA2A0] to-[#1e8d8b] hover:from-[#1e8d8b] hover:to-[#2AA2A0] py-4 rounded-xl font-semibold text-base transition shadow-lg"
-            >
-                Continue to Payment
+                disabled={isProcessing}
+                className="w-full bg-[#2AA2A0] hover:bg-[#2AA2A0]/80 text-white font-bold py-4 px-8 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+
+            > {isProcessing ? (
+                <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Processing...
+                </>
+            ) : (
+                "Continue to Payment"
+            )}
             </button>
             <button
                 onClick={handleLogout}

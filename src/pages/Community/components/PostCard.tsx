@@ -9,6 +9,7 @@ import {
     Lock,
     Bell,
 } from "lucide-react";
+import { useState } from "react";
 
 import { loggedinUserAtom } from "../../../store/user.atom";
 import type { PostResponse } from "../../../sdk/generated";
@@ -18,8 +19,6 @@ import {
     getAvatarColor,
     getExcerpt,
     getInitials,
-    getPostTypeColor,
-    getPostTypeIcon,
 } from "../utils/community.utils";
 import { useAtomValue } from "jotai";
 import {
@@ -47,11 +46,15 @@ export default function PostCard({ post }: PostCardProps) {
         ? useUserProfile(post.author_id)
         : { data: undefined };
 
-    const handleFollowPost = async (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (!user) return;
-        await toggleFollowPost.mutateAsync();
-    };
+    /* ---------------- OPTIMISTIC STATE ---------------- */
+
+    const [liked, setLiked] = useState(post.user_has_upvoted);
+    const [likeCount, setLikeCount] = useState(post.upvote_count);
+
+    const [bookmarked, setBookmarked] = useState(post.user_has_bookmarked);
+    const [following, setFollowing] = useState(post.user_is_following);
+
+    /* ---------------- HANDLERS ---------------- */
 
     const handleCardClick = (e: React.MouseEvent) => {
         if ((e.target as HTMLElement).closest("button")) return;
@@ -61,14 +64,47 @@ export default function PostCard({ post }: PostCardProps) {
     const handleReaction = async (e: React.MouseEvent) => {
         e.stopPropagation();
         if (!user) return;
-        await toggleReaction.mutateAsync({ reaction_type: "like" });
+
+        // optimistic update
+        setLiked((prev) => !prev);
+        setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
+
+        try {
+            await toggleReaction.mutateAsync({ reaction_type: "like" });
+        } catch {
+            // rollback on failure
+            setLiked((prev) => !prev);
+            setLikeCount((prev) => (liked ? prev + 1 : prev - 1));
+        }
     };
 
     const handleBookmark = async (e: React.MouseEvent) => {
         e.stopPropagation();
         if (!user) return;
-        await toggleBookmark.mutateAsync({});
+
+        setBookmarked((prev) => !prev);
+
+        try {
+            await toggleBookmark.mutateAsync({});
+        } catch {
+            setBookmarked((prev) => !prev);
+        }
     };
+
+    const handleFollowPost = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!user) return;
+
+        setFollowing((prev) => !prev);
+
+        try {
+            await toggleFollowPost.mutateAsync();
+        } catch {
+            setFollowing((prev) => !prev);
+        }
+    };
+
+    /* ---------------- RENDER ---------------- */
 
     return (
         <article
@@ -85,7 +121,6 @@ export default function PostCard({ post }: PostCardProps) {
             {/* Header */}
             <div className="flex items-start justify-between gap-3 mb-2">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                    {/* Avatar */}
                     {post.author?.profile_picture_url ? (
                         <img
                             src={post.author.profile_picture_url}
@@ -102,56 +137,28 @@ export default function PostCard({ post }: PostCardProps) {
                         </div>
                     )}
 
-                    {/* Author meta */}
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                             <span className="font-semibold text-gray-900 truncate">
                                 {post.author?.full_name || "Unknown"}
                             </span>
 
-                            {userData?.reputation_meta?.total_points !== undefined &&
-                                userData.reputation_meta.total_points > 0 && (
-                                    <span className="text-xs text-gray-500 shrink-0">
-                                        {formatNumber(
-                                            userData.reputation_meta
-                                                .total_points
-                                        )}{" "}
-                                        pts
-                                    </span>
-                                )}
+                            {userData?.reputation_meta?.total_points! > 0 && (
+                                <span className="text-xs text-gray-500">
+                                    {formatNumber(
+                                        userData!.reputation_meta.total_points
+                                    )}{" "}
+                                    pts
+                                </span>
+                            )}
                         </div>
 
                         <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
-                            {userData?.reputation_meta?.badges !== undefined &&
-                                userData.reputation_meta.badges.length > 0 && (
-                                    <>
-                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 font-medium">
-                                            {
-                                                userData.reputation_meta.badges[
-                                                userData.reputation_meta
-                                                    .badges.length - 1
-                                                ]
-                                            }
-                                        </span>
-                                        <span>•</span>
-                                    </>
-                                )}
-
                             <span>{formatTimeAgo(post.created_at)}</span>
-
-                            {post.subject_id && (
-                                <>
-                                    <span>•</span>
-                                    <span className="truncate">
-                                        {post.subject_id}
-                                    </span>
-                                </>
-                            )}
                         </div>
                     </div>
                 </div>
 
-                {/* Status icons */}
                 <div className="flex items-center gap-1 shrink-0">
                     {post.is_pinned && (
                         <Pin className="w-4 h-4 text-kidemia-primary" />
@@ -165,24 +172,8 @@ export default function PostCard({ post }: PostCardProps) {
                 </div>
             </div>
 
-            {/* Post type */}
-            {post.post_type && (
-                <div className="mb-2">
-                    <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPostTypeColor(
-                            post.post_type
-                        )}`}
-                    >
-                        <span className="mr-1">
-                            {getPostTypeIcon(post.post_type)}
-                        </span>
-                        {post.post_type.replace("_", " ")}
-                    </span>
-                </div>
-            )}
-
             {/* Title */}
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 line-clamp-2 hover:text-kidemia-primary transition-colors">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
                 {post.title}
             </h3>
 
@@ -190,35 +181,6 @@ export default function PostCard({ post }: PostCardProps) {
             <p className="text-sm text-gray-600 line-clamp-2 mb-3">
                 {getExcerpt(post.content, 200)}
             </p>
-
-            {/* Tags */}
-            {post.tags && post.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-4">
-                    {post.tags.slice(0, 3).map((tag) => (
-                        <span
-                            key={tag.id}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                navigate(
-                                    SidebarRoutes.tagPage.replace(
-                                        ":tagId",
-                                        tag.id
-                                    )
-                                );
-                            }}
-                            className="px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
-                        >
-                            #{tag.name}
-                        </span>
-                    ))}
-
-                    {post.tags.length > 3 && (
-                        <span className="text-xs text-gray-500">
-                            +{post.tags.length - 3} more
-                        </span>
-                    )}
-                </div>
-            )}
 
             {/* Footer */}
             <div className="flex items-center justify-between pt-3">
@@ -236,22 +198,20 @@ export default function PostCard({ post }: PostCardProps) {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={handleReaction}
-                        disabled={toggleReaction.isPending}
                         className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition
-                            ${post.user_has_upvoted
+                            ${liked
                                 ? "bg-kidemia-primary text-white"
                                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                             }`}
                     >
                         <ThumbsUp className="w-4 h-4" />
-                        <span>{formatNumber(post.upvote_count)}</span>
+                        <span>{formatNumber(likeCount)}</span>
                     </button>
 
                     <button
                         onClick={handleBookmark}
-                        disabled={toggleBookmark.isPending}
                         className={`p-1.5 rounded-md transition
-                            ${post.user_has_bookmarked
+                            ${bookmarked
                                 ? "bg-kidemia-secondary text-white"
                                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                             }`}
@@ -261,19 +221,15 @@ export default function PostCard({ post }: PostCardProps) {
 
                     <button
                         onClick={handleFollowPost}
-                        disabled={toggleFollowPost.isPending}
                         className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition
-        ${post.user_is_following
+                            ${following
                                 ? "bg-amber-500 text-white"
                                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                             }`}
                     >
                         <Bell className="w-4 h-4" />
-                        <span>
-                            {post.user_is_following ? "Following" : "Follow"}
-                        </span>
+                        <span>{following ? "Following" : "Follow"}</span>
                     </button>
-
                 </div>
             </div>
         </article>

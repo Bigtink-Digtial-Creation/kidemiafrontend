@@ -60,7 +60,6 @@ import ResetPasswordPage from "./pages/Auth/Password/ResetPassword";
 import VerifyEmailPage from "./pages/Auth/Password/VerifyEmail";
 import EmailVerificationRequiredPage from "./pages/Auth/Password/EmailVerificationRequired";
 import BuyUnitsPage from "./pages/payment/BuyUnitsPage";
-import PricingUpgradePage from "./pages/payment/PricingUpgrade";
 import WalletCallbackPage from "./pages/payment/WalletCallbackPage";
 import CheckOutPage from "./pages/payment/Checkout";
 import PostDetailPage from "./pages/Community/Feed/PostDetailPage";
@@ -74,6 +73,8 @@ import { PrivacyPolicyPage } from "./pages/Home/PrivacyPolicy";
 import { TermsOfServicePage } from "./pages/Home/TermsOfServicePage";
 import { FAQPage } from "./pages/Home/FAQPage";
 import EmailLayout from "./layouts/Email.layout";
+import SubscriptionCallbackPage from "./pages/payment/SubscriptionCallbackPage";
+import SubscriptionDashboard from "./pages/payment/PricingUpgrade";
 
 export const router = createBrowserRouter([
   {
@@ -96,7 +97,6 @@ export const router = createBrowserRouter([
       { path: AuthRoutes.login, element: <LoginPage /> },
       { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> },
       { path: AuthRoutes.changePassword, element: <ChangePasswordPage /> },
-
       { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> },
       { path: AuthRoutes.resetPassword, element: <ResetPasswordPage /> },
       { path: AuthRoutes.signup, element: <SignUpPage /> },
@@ -127,12 +127,13 @@ export const router = createBrowserRouter([
           { path: SidebarRoutes.settings, element: <SettingsPage /> },
           { path: SidebarRoutes.takeAssessment, element: <AssessmentPage /> },
           { path: PaymentRoutes.buytoken, element: <BuyUnitsPage /> },
-          { path: PaymentRoutes.upgradePlan, element: <PricingUpgradePage /> },
-
+          { path: PaymentRoutes.subscriptionUpgrade, element: <SubscriptionDashboard /> },
+          { path: PaymentRoutes.subscriptionCallBack, element: <SubscriptionCallbackPage /> },
         ],
       }
     ]
   },
+
   {
     element: (
       <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={true} />
@@ -169,14 +170,8 @@ export const router = createBrowserRouter([
 
   { path: AuthRoutes.unauthorized, element: <UnauthorizedPage /> },
   {
-    element: (
-      <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={false} />
-    ),
-    errorElement: <ErrorPage />,
-    children: [{
-      path: AuthRoutes.emailVerificationRequired,
-      element: <EmailVerificationRequiredPage />
-    },]
+    path: AuthRoutes.emailVerificationRequired, element: <EmailVerificationRequiredPage />,
+    errorElement: <ErrorPage />
   },
 
   {
