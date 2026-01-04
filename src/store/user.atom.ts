@@ -4,9 +4,6 @@ import { StoredKeys } from "../utils/storedKeys";
 import type { LoginResponse } from "../sdk/generated";
 
 import { ApiSDK } from "../sdk";
-import { useQuery } from "@tanstack/react-query";
-import { QueryKeys } from "../utils/queryKeys";
-
 export interface UserT {
   id?: string;
   first_name?: string;
@@ -60,23 +57,5 @@ export const userWalletAtom = atom(async () => {
   };
 });
 
-export const useUserWallet = () => {
-  return useQuery({
-    queryKey: [QueryKeys.wallet],
-    queryFn: async () => {
-      const response =
-        await ApiSDK.WalletService.getMyWalletApiV1WalletGet();
 
-      return {
-        symbol: response.currency,
-        isLocked: response.is_locked,
-        balance: response.balance,
-      };
-    },
-    refetchInterval: 30000,
-    refetchOnWindowFocus: true,
-    staleTime: 10000,
-    refetchOnMount: 'always',
-  });
-};
 

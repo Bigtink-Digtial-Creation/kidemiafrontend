@@ -6,10 +6,12 @@ import AssessmentCard from "../../components/Cards/AssessmentCard";
 import { useMemo, useState } from "react";
 import SpinnerCircle from "../../components/Spinner/Circle";
 import { useAtomValue } from "jotai";
-import { useUserWallet, loggedinUserAtom } from "../../store/user.atom";
+import { loggedinUserAtom } from "../../store/user.atom";
 import type { AssessmentCategory } from "../../sdk/generated";
 import { useNavigate } from "react-router";
 import { PaymentRoutes } from "../../routes";
+import { useUserWallet } from "../../hooks/useUserWallet";
+import { formatBalance } from "../../utils";
 
 export enum AssessmentType {
   TEST = "test",
@@ -42,8 +44,8 @@ export default function AssessmentPage() {
     queryKey: [QueryKeys.allAssessment],
     queryFn: () =>
       ApiSDK.AssessmentsService.getAssessmentsApiV1AssessmentsGet(AssessmentType.EXAM,
-        category,   // category
-        undefined,   // subjectId
+        category,
+        undefined,
         AssessmentStatus.PUBLISHED),
   });
 
@@ -77,7 +79,7 @@ export default function AssessmentPage() {
             color="primary"
             className="text-sm font-semibold whitespace-nowrap"
           >
-            Unit balance : ({wallet?.symbol}) {wallet?.balance}
+            Unit bal : ({wallet?.symbol}) {formatBalance(wallet?.balance)}
           </Chip>
           <Button
             className="bg-kidemia-secondary text-kidemia-white font-medium w-full px-8"

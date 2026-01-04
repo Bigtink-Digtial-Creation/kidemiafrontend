@@ -140,3 +140,22 @@ export const useFormattedDateTime = (
 ): string => {
   return formatDateTime(isoString, format);
 };
+
+
+export const formatBalance = (balance: number | string | undefined): string => {
+  if (!balance) return '0';
+
+  const num = typeof balance === 'string' ? parseFloat(balance) : balance;
+
+  if (isNaN(num)) return '0';
+
+  if (num >= 1_000_000) {
+    return `${(num / 1_000_000).toFixed(1)}M`;
+  }
+
+  if (num >= 1_000) {
+    return `${(num / 1_000).toFixed(1)}K`;
+  }
+
+  return num.toLocaleString();
+};

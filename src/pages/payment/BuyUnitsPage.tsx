@@ -1,7 +1,6 @@
 import { addToast, Button, Card, CardBody, Input } from "@heroui/react";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useUserWallet } from "../../store/user.atom";
 import { Coins, CreditCard, Wallet, AlertCircle, CheckCircle2, Sparkles, Loader2 } from "lucide-react";
 import { ApiSDK } from "../../sdk";
 import { QueryKeys } from "../../utils/queryKeys";
@@ -9,16 +8,15 @@ import { useNavigate, useSearchParams } from "react-router";
 import { useEffect } from "react";
 import type { PaymentMethod } from "../../sdk/generated";
 import { PaymentRoutes } from "../../routes";
+import { useUserWallet } from "../../hooks/useUserWallet";
 
-// Price per unit/token in Naira
-const PRICE_PER_UNIT = 10; // ₦10 per token
+const PRICE_PER_UNIT = 10;
 
-// FIXED: Packages show units/tokens, not Naira amounts
 const UNIT_PACKAGES = [
-    { units: 100, bonus: 5, popular: false },      // 100 tokens + 5 bonus = 105 total (pay ₦1000)
-    { units: 250, bonus: 25, popular: true },      // 250 tokens + 25 bonus = 275 total (pay ₦2500)
-    { units: 500, bonus: 75, popular: false },     // 500 tokens + 75 bonus = 575 total (pay ₦5000)
-    { units: 1000, bonus: 200, popular: false },   // 1000 tokens + 200 bonus = 1200 total (pay ₦10000)
+    { units: 100, bonus: 5, popular: false },
+    { units: 250, bonus: 25, popular: true },
+    { units: 500, bonus: 75, popular: false },
+    { units: 1000, bonus: 200, popular: false },
 ];
 
 export default function BuyUnitsPage() {
@@ -37,7 +35,6 @@ export default function BuyUnitsPage() {
             amount: number;
             payment_method: PaymentMethod;
         }) => {
-            console.log(data)
             return ApiSDK.TransactionsService.initiatePaymentApiV1TransactionsInitiatePost({
                 amount: data.amount,
                 payment_method: data.payment_method,
@@ -45,7 +42,6 @@ export default function BuyUnitsPage() {
             });
         },
         onSuccess: (response) => {
-            console.log(response)
             if (response.payment_url) {
                 window.location.href = response.payment_url;
             } else {
@@ -72,11 +68,21 @@ export default function BuyUnitsPage() {
         onSuccess: (response) => {
             if (response.status === "completed") {
                 setPaymentSuccess(true);
+                queryClient.setQueryData([QueryKeys.wallet], (oldData: any) => {
+                    if (oldData) {
+                        return {
+                            ...oldData,
+                            balance: oldData.balance + totalUnits,
+                        };
+                    }
+                    return oldData;
+                });
                 queryClient.invalidateQueries({ queryKey: [QueryKeys.wallet] });
                 addToast({
                     title: "Tokens added to your wallet",
                     color: "success",
                 });
+
                 setTimeout(() => {
                     navigate(PaymentRoutes.buytoken);
                 }, 3000);
