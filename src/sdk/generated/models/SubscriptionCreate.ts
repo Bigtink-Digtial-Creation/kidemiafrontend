@@ -15,5 +15,6 @@ export type SubscriptionCreate = {
   auto_renew?: boolean;
   institution_id?: (string | null);
   promo_code?: (string | null);
+  callback_url: string;
 };
 

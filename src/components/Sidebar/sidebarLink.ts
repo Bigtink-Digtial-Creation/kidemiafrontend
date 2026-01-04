@@ -14,6 +14,7 @@ export type SidebarLinkT = {
   title: string;
   icon: IconType;
   allowedRoles?: UserRole[];
+  subText?: string;
   pathname: SidebarRoutes;
 };
 

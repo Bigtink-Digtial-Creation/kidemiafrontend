@@ -13,4 +13,5 @@ export const QueryKeys = {
   analytics: "analytics",
   pricing: "pricing",
   wallet: "wallet",
+  mysubscription: "mysubscription",
 } as const;

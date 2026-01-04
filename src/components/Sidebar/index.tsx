@@ -14,6 +14,7 @@ import { sidebarLinks } from "./sidebarLink.ts";
 import SidebarLink from "./SidebarLink.tsx";
 import { AppDarkLogo } from "../../assets/images";
 import LogoutModal from "./LogoutModal";
+import { useActiveSubscription } from "../../hooks/useActiveSubscription.ts";
 
 type SidebarProps = {
   sidebarOpen: boolean;
@@ -21,6 +22,11 @@ type SidebarProps = {
 };
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
+  const { currentPlanCode } = useActiveSubscription();
+
+  const formattedPlanCode = currentPlanCode
+    ? currentPlanCode.toLowerCase().replace(/\s+/g, "-")
+    : "No Active Plan";
   const [focused, setFocused] = useState<string | null>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -145,8 +151,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
             <ul className="flex flex-col gap-1 mb-2 space-y-2">
               <li className="group">
                 <SidebarLink
-                  pathname={PaymentRoutes.upgradePlan}
+                  pathname={PaymentRoutes.subscriptionUpgrade}
                   title="Upgrade Plan"
+                  subText={formattedPlanCode}
                   icon={FiZap}
                   sidebarOpen={sidebarOpen}
                   setSidebarOpen={closeSidebar}

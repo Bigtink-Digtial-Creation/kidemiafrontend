@@ -72,10 +72,17 @@ export default function ReplyCard({
     const [showReplyBox, setShowReplyBox] = useState(false);
     const [replyContent, setReplyContent] = useState("");
 
+
+    const [liked, setLiked] = useState(reply.user_has_upvoted);
+    const [likeCount, setLikeCount] = useState(reply.upvote_count);
+
+
     const collapseKey = `collapsed_replies:${user?.id}:${post.id}`;
     const [collapsedIds, setCollapsedIds] = useState<Set<string>>(() => {
         try {
-            return new Set(JSON.parse(localStorage.getItem(collapseKey) || "[]"));
+            return new Set(
+                JSON.parse(localStorage.getItem(collapseKey) || "[]")
+            );
         } catch {
             return new Set();
         }
@@ -90,15 +97,26 @@ export default function ReplyCard({
         localStorage.setItem(collapseKey, JSON.stringify([...next]));
     };
 
+
     const handleReaction = async () => {
         if (!user) {
             navigate(AuthRoutes.login);
             return;
         }
-        await toggleReaction.mutateAsync({
-            replyId: reply.id!,
-            reactionType: { reaction_type: "like" },
-        });
+
+        setLiked((prev) => !prev);
+        setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
+
+        try {
+            await toggleReaction.mutateAsync({
+                replyId: reply.id!,
+                reactionType: { reaction_type: "like" },
+            });
+        } catch {
+            // rollback
+            setLiked((prev) => !prev);
+            setLikeCount((prev) => (liked ? prev + 1 : prev - 1));
+        }
     };
 
     const { data: replyAuthorData } = useUserProfile(
@@ -279,13 +297,13 @@ export default function ReplyCard({
                 <button
                     onClick={handleReaction}
                     disabled={toggleReaction.isPending}
-                    className={`flex items-center space-x-1 px-1 py-1.5 rounded-lg text-sm ${reply.user_has_upvoted
+                    className={`flex items-center space-x-1 px-1 py-1.5 rounded-lg text-sm ${liked
                         ? "bg-kidemia-primary text-white"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                         }`}
                 >
                     <ArrowBigUp className="w-4 h-4" />
-                    <span>{formatNumber(reply.upvote_count)}</span>
+                    <span>{formatNumber(likeCount)}</span>
                 </button>
 
                 {/* SAMUEL KUFRE - THere is a problem with child replies */}

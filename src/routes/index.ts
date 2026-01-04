@@ -71,6 +71,8 @@ export const PaymentRoutes = {
   buytoken: "/token/top-up",
   upgradePlan: "/plan/upgrade",
   walletCallBack: "/wallet/callback",
+  subscriptionCallBack: "/subscription/callback",
+  subscriptionUpgrade: "/subscription/upgrade"
 };
 
 

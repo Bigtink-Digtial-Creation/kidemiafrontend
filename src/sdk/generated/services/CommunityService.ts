@@ -652,4 +652,58 @@ export class CommunityService {
       },
     });
   }
+  /**
+   * Toggle Follow User
+   * Follow or unfollow a user
+   * @param userId
+   * @returns any Successful Response
+   * @throws ApiError
+   */
+  public static toggleFollowUserApiV1ForumUsersUserIdFollowPost(
+    userId: string,
+  ): CancelablePromise<any> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/forum/users/{user_id}/follow',
+      path: {
+        'user_id': userId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Get Following
+   * Get list of users current user is following
+   * @returns any Successful Response
+   * @throws ApiError
+   */
+  public static getFollowingApiV1ForumFollowingGet(): CancelablePromise<any> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/forum/following',
+    });
+  }
+  /**
+   * Get User Followers
+   * Get user's followers
+   * @param userId
+   * @returns any Successful Response
+   * @throws ApiError
+   */
+  public static getUserFollowersApiV1ForumUsersUserIdFollowersGet(
+    userId: string,
+  ): CancelablePromise<any> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/forum/users/{user_id}/followers',
+      path: {
+        'user_id': userId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
 }

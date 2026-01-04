@@ -204,3 +204,4 @@ export { TransactionsService } from './services/TransactionsService';
 export { UploadService } from './services/UploadService';
 export { UsersService } from './services/UsersService';
 export { WalletService } from './services/WalletService';
+export { WebhooksService } from './services/WebhooksService';

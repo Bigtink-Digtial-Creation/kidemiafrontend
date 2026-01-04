@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router";
 import {
     formatTimeAgo,
@@ -30,6 +29,7 @@ import type { PostDetailResponse } from "../../../sdk/generated";
 import { useAtomValue } from "jotai";
 import { loggedinUserAtom } from "../../../store/user.atom";
 import { AuthRoutes, SidebarRoutes } from "../../../routes";
+import { useState } from "react";
 
 interface PostContentProps {
     post: PostDetailResponse;
@@ -45,12 +45,32 @@ export default function PostContent({ post }: PostContentProps) {
     const toggleBookmark = useToggleBookmark(post.id);
     const toggleFollow = useToggleFollowPost(post.id);
 
+    const { data: userData } = useUserProfile(post.author_id!);
+
+
+    const [liked, setLiked] = useState(post.user_has_upvoted);
+    const [likeCount, setLikeCount] = useState(post.upvote_count);
+    const [bookmarked, setBookmarked] = useState(post.user_has_bookmarked);
+    const [following, setFollowing] = useState(post.user_is_following);
+
+
     const handleReaction = async () => {
         if (!user) {
             navigate(AuthRoutes.login);
             return;
         }
-        await toggleReaction.mutateAsync({ reaction_type: "like" });
+
+        // optimistic update
+        setLiked((prev) => !prev);
+        setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
+
+        try {
+            await toggleReaction.mutateAsync({ reaction_type: "like" });
+        } catch {
+            // rollback
+            setLiked((prev) => !prev);
+            setLikeCount((prev) => (liked ? prev + 1 : prev - 1));
+        }
     };
 
     const handleBookmark = async () => {
@@ -58,7 +78,14 @@ export default function PostContent({ post }: PostContentProps) {
             navigate(AuthRoutes.login);
             return;
         }
-        await toggleBookmark.mutateAsync({});
+
+        setBookmarked((prev) => !prev);
+
+        try {
+            await toggleBookmark.mutateAsync({});
+        } catch {
+            setBookmarked((prev) => !prev);
+        }
     };
 
     const handleFollow = async () => {
@@ -66,12 +93,15 @@ export default function PostContent({ post }: PostContentProps) {
             navigate(AuthRoutes.login);
             return;
         }
-        await toggleFollow.mutateAsync();
+
+        setFollowing((prev) => !prev);
+
+        try {
+            await toggleFollow.mutateAsync();
+        } catch {
+            setFollowing((prev) => !prev);
+        }
     };
-
-    const { data: userData,
-    } = useUserProfile(post.author_id!);
-
 
     return (
         <div className="">
@@ -79,7 +109,6 @@ export default function PostContent({ post }: PostContentProps) {
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3 flex-1 min-w-0">
-                        {/* Avatar */}
                         {post.author?.profile_picture_url ? (
                             <img
                                 src={post.author.profile_picture_url}
@@ -96,11 +125,17 @@ export default function PostContent({ post }: PostContentProps) {
                             </div>
                         )}
 
-                        {/* Author Info */}
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center space-x-2">
                                 <button
-                                    onClick={() => navigate(SidebarRoutes.userProfile.replace(":userId", post.author_id))}
+                                    onClick={() =>
+                                        navigate(
+                                            SidebarRoutes.userProfile.replace(
+                                                ":userId",
+                                                post.author_id
+                                            )
+                                        )
+                                    }
                                     className="font-semibold text-gray-900 hover:text-kidemia-primary transition-colors truncate"
                                 >
                                     {post.author?.full_name || "Unknown"}
@@ -108,7 +143,10 @@ export default function PostContent({ post }: PostContentProps) {
                                 {userData?.reputation_meta.total_points !== undefined &&
                                     userData.reputation_meta.total_points > 0 && (
                                         <span className="px-2 py-0.5 bg-kidemia-primary/10 text-kidemia-primary text-xs font-medium rounded-full flex-shrink-0">
-                                            {formatNumber(userData?.reputation_meta.total_points!)} pts
+                                            {formatNumber(
+                                                userData.reputation_meta.total_points
+                                            )}{" "}
+                                            pts
                                         </span>
                                     )}
                             </div>
@@ -118,7 +156,14 @@ export default function PostContent({ post }: PostContentProps) {
                                     <>
                                         <span>•</span>
                                         <button
-                                            onClick={() => navigate(SidebarRoutes.subjectPage.replace(":subjectId", post.subject_id!))}
+                                            onClick={() =>
+                                                navigate(
+                                                    SidebarRoutes.subjectPage.replace(
+                                                        ":subjectId",
+                                                        post.subject_id!
+                                                    )
+                                                )
+                                            }
                                             className="hover:text-kidemia-primary transition-colors truncate"
                                         >
                                             {post.subject_id}
@@ -128,30 +173,28 @@ export default function PostContent({ post }: PostContentProps) {
                                 {post.exam_target && (
                                     <>
                                         <span>•</span>
-                                        <span className="truncate">{post.exam_target}</span>
+                                        <span className="truncate">
+                                            {post.exam_target}
+                                        </span>
                                     </>
                                 )}
                             </div>
                         </div>
                     </div>
 
-                    {/* Status Badges */}
                     <div className="flex items-center space-x-2 ml-4 flex-shrink-0">
                         {post.is_pinned && (
-                            <div
-                                className="p-1.5 bg-kidemia-primary/10 rounded-lg"
-                                title="Pinned Post"
-                            >
+                            <div className="p-1.5 bg-kidemia-primary/10 rounded-lg">
                                 <Pin className="w-4 h-4 text-kidemia-primary" />
                             </div>
                         )}
                         {post.is_locked && (
-                            <div className="p-1.5 bg-gray-100 rounded-lg" title="Locked Post">
+                            <div className="p-1.5 bg-gray-100 rounded-lg">
                                 <Lock className="w-4 h-4 text-gray-500" />
                             </div>
                         )}
                         {post.is_answered && (
-                            <div className="p-1.5 bg-green-100 rounded-lg" title="Answered">
+                            <div className="p-1.5 bg-green-100 rounded-lg">
                                 <CheckCircle className="w-4 h-4 text-green-600" />
                             </div>
                         )}
@@ -165,111 +208,74 @@ export default function PostContent({ post }: PostContentProps) {
                             post.post_type
                         )}`}
                     >
-                        <span className="mr-1.5">{getPostTypeIcon(post.post_type)}</span>
+                        <span className="mr-1.5">
+                            {getPostTypeIcon(post.post_type)}
+                        </span>
                         {getPostTypeLabel(post.post_type)}
                     </span>
                 </div>
 
-                {/* Title */}
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 leading-tight">
                     {post.title}
                 </h1>
 
-                {/* Content */}
                 <div className="prose prose-sm sm:prose max-w-none mb-4">
-                    <p className="text-gray-700 whitespace-pre-wrap">{post.content}</p>
+                    <p className="text-gray-700 whitespace-pre-wrap">
+                        {post.content}
+                    </p>
                 </div>
-
-                {/* Tags */}
-                {post.tags && post.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-4 pb-4 border-b border-gray-100">
-                        {post.tags.map((tag) => (
-                            <button
-                                key={tag.id}
-                                onClick={() => navigate(SidebarRoutes.tagPage.replace(":tagId", tag.id))}
-                                style={{
-                                    backgroundColor: tag.color + "20",
-                                    color: tag.color || "#BF4C20",
-                                }}
-                                className="inline-flex items-center px-3 py-1.5 rounded-full 
-                                text-sm font-medium hover:opacity-80 transition-opacity"
-                            >
-                                #{tag.name}
-                            </button>
-                        ))}
-                    </div>
-                )}
 
                 {/* Stats & Actions */}
                 <div className="flex items-center justify-between flex-wrap gap-4">
-                    {/* Stats */}
                     <div className="flex items-center space-x-6 text-sm text-gray-500">
                         <div className="flex items-center space-x-1.5">
                             <Eye className="w-4 h-4" />
-                            <span className="font-medium">{formatNumber(post.view_count)}</span>
-                            <span className="hidden sm:inline">views</span>
+                            <span className="font-medium">
+                                {formatNumber(post.view_count)}
+                            </span>
                         </div>
                         <div className="flex items-center space-x-1.5">
                             <MessageCircle className="w-4 h-4" />
-                            <span className="font-medium">{formatNumber(post.reply_count)}</span>
-                            <span className="hidden sm:inline">replies</span>
+                            <span className="font-medium">
+                                {formatNumber(post.reply_count)}
+                            </span>
                         </div>
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="flex items-center space-x-2">
-                        {/* Upvote */}
                         <button
                             onClick={handleReaction}
-                            disabled={toggleReaction.isPending}
-                            className={`
-                flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
-                ${post.user_has_upvoted
+                            className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
+                                ${liked
                                     ? "bg-kidemia-primary text-white shadow-sm"
                                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                }
-                disabled:opacity-50 disabled:cursor-not-allowed
-              `}
+                                }`}
                         >
                             <ThumbsUp className="w-4 h-4" />
-                            <span>{formatNumber(post.upvote_count)}</span>
+                            <span>{formatNumber(likeCount)}</span>
                         </button>
 
-                        {/* Bookmark */}
                         <button
                             onClick={handleBookmark}
-                            disabled={toggleBookmark.isPending}
-                            className={`
-                p-2 rounded-lg transition-all
-                ${post.user_has_bookmarked
+                            className={`p-2 rounded-lg transition-all
+                                ${bookmarked
                                     ? "bg-kidemia-secondary text-white shadow-sm"
                                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                }
-                disabled:opacity-50 disabled:cursor-not-allowed
-              `}
-                            title={post.user_has_bookmarked ? "Remove bookmark" : "Bookmark"}
+                                }`}
                         >
                             <Bookmark className="w-4 h-4" />
                         </button>
 
-                        {/* Follow */}
                         {user && (
                             <button
                                 onClick={handleFollow}
-                                disabled={toggleFollow.isPending}
-                                className={`
-                  p-2 rounded-lg transition-all
-                  ${post.user_is_following
+                                className={`p-2 rounded-lg transition-all
+                                    ${following
                                         ? "bg-blue-500 text-white shadow-sm"
                                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                    }
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                `}
-                                title={
-                                    post.user_is_following ? "Unfollow this post" : "Follow this post"
-                                }
+                                    }`}
                             >
-                                {post.user_is_following ? (
+                                {following ? (
                                     <BellOff className="w-4 h-4" />
                                 ) : (
                                     <Bell className="w-4 h-4" />
