@@ -1,9 +1,8 @@
-import { BreadcrumbItem, Breadcrumbs, Button } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { useNavigate, useParams } from "react-router";
-import { SidebarRoutes, TestRoutes } from "../../routes";
 import { useAtomValue } from "jotai";
 import {
-  selectedSubjectIdeAtom,
+  // selectedSubjectIdeAtom,
   selectedSubjectTitleAtom,
   selectedTopicsAtom,
 } from "../../store/test.atom";
@@ -13,31 +12,13 @@ export default function TestInstructionsPage() {
 
   const subjectTitle = useAtomValue(selectedSubjectTitleAtom);
   const topics = useAtomValue(selectedTopicsAtom);
-  const subjectId = useAtomValue(selectedSubjectIdeAtom);
+  // const subjectId = useAtomValue(selectedSubjectIdeAtom);
   const navigate = useNavigate();
 
   return (
     <section className="flex flex-col min-h-screen py-4 space-y-12 md:px-12">
       <div className="absolute top-4 left-0 px-4">
-        <div>
-          <Breadcrumbs variant="light" color="foreground">
-            <BreadcrumbItem href={SidebarRoutes.dashboard}>
-              Dashboard
-            </BreadcrumbItem>
-            <BreadcrumbItem href={TestRoutes.takeTest}>
-              Take a Test
-            </BreadcrumbItem>
-            <BreadcrumbItem href={TestRoutes.testSubjects}>
-              Pick a Subject
-            </BreadcrumbItem>
 
-            <BreadcrumbItem href={`/take-a-test/subjects/${subjectId}`}>
-              Pick Subject Topics
-            </BreadcrumbItem>
-
-            <BreadcrumbItem color="warning">Test Instructions</BreadcrumbItem>
-          </Breadcrumbs>
-        </div>
       </div>
       <div className="flex-1 space-y-12">
         <div className="space-y-3">

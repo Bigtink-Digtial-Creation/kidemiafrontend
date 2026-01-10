@@ -5,6 +5,7 @@
 import type { AssignRolesToUserRequest } from '../models/AssignRolesToUserRequest';
 import type { MessageResponse } from '../models/MessageResponse';
 import type { UserCreate } from '../models/UserCreate';
+import type { UserListResponse } from '../models/UserListResponse';
 import type { UserResponse } from '../models/UserResponse';
 import type { UserType } from '../models/UserType';
 import type { UserUpdate } from '../models/UserUpdate';
@@ -65,6 +66,44 @@ export class UsersService {
       query: {
         'skip': skip,
         'limit': limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * List users (optimized)
+   * @param skip
+   * @param limit
+   * @param search
+   * @param isActive
+   * @param role
+   * @param sortBy
+   * @param sortOrder
+   * @returns UserListResponse Successful Response
+   * @throws ApiError
+   */
+  public static listUsersMinimalApiV1UsersMinimalGet(
+    skip?: number,
+    limit: number = 20,
+    search?: (string | null),
+    isActive?: (boolean | null),
+    role?: (string | null),
+    sortBy: string = 'created_at',
+    sortOrder: string = 'desc',
+  ): CancelablePromise<Array<UserListResponse>> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/users/minimal',
+      query: {
+        'skip': skip,
+        'limit': limit,
+        'search': search,
+        'is_active': isActive,
+        'role': role,
+        'sort_by': sortBy,
+        'sort_order': sortOrder,
       },
       errors: {
         422: `Validation Error`,

@@ -2,6 +2,7 @@ import { useAtomValue } from "jotai";
 import { useNavigate, useParams } from "react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  addToast,
   Button,
   Card,
   CardBody,
@@ -14,6 +15,7 @@ import { ApiSDK } from "../../sdk";
 import { QueryKeys } from "../../utils/queryKeys";
 import { selectedTopicsAtom } from "../../store/test.atom";
 import LoadingSequence from "../../components/Loading/LoadingSequence";
+import { getApiErrorMessage } from "../../utils/errorParser";
 
 export default function TestDetails() {
   const { id } = useParams<{ id: string }>();
@@ -23,23 +25,25 @@ export default function TestDetails() {
   const topicIds = selectedTopics.map((t) => t.id);
 
 
-  const { data: testDetails, isLoading } = useQuery({
-    queryKey: [QueryKeys.testDetails, id, topicIds],
-    queryFn: ({ queryKey }) => {
-      const [, subjectId, topicIds] = queryKey as [
-        string,
-        string,
-        string[],
-      ];
+  const { data: testDetails, isLoading, isError,
+    error, } = useQuery({
+      queryKey: [QueryKeys.testDetails, id, topicIds],
+      queryFn: ({ queryKey }) => {
+        const [, subjectId, topicIds] = queryKey as [
+          string,
+          string,
+          string[],
+        ];
 
-      return ApiSDK.AssessmentsService
-        .autoGenerateAssessmentApiV1AssessmentsAutoGeneratePost({
-          subject_id: subjectId,
-          topic_ids: topicIds,
-        });
-    },
-    enabled: !!id && !!topicIds.length,
-  });
+        return ApiSDK.AssessmentsService
+          .autoGenerateAssessmentApiV1AssessmentsAutoGeneratePost({
+            subject_id: subjectId,
+            topic_ids: topicIds,
+          });
+      },
+      enabled: !!id && !!topicIds.length,
+      retry: false,
+    });
 
 
   const startAttemptMutation = useMutation({
@@ -54,7 +58,43 @@ export default function TestDetails() {
         `/take-a-test/${data.assessment_id}/${data.attempt_id}/questions`,
       );
     },
+    onError: (error: any) => {
+      const message = error?.body?.detail || "Failed to start test";
+      addToast({
+        title: "Error",
+        description: message,
+        color: "danger",
+      });
+    }
   });
+
+  if (isError) {
+    const errorMessage = getApiErrorMessage(error);
+
+    addToast({
+      title: "Assessment Issue",
+      description: errorMessage,
+      color: "danger",
+      timeout: 6000
+    });
+
+    setTimeout(() => {
+      navigate(-1);
+    }, 2500);
+    return (
+      <LoadingSequence
+        lines={[
+          {
+            text: "Unable to generate assessment",
+            className: "text-lg text-danger-500 font-bold",
+          },
+          {
+            text: "Redirecting you back to adjust your selection...",
+          },
+        ]}
+      />
+    );
+  }
 
   if (isLoading || !testDetails) {
     return (

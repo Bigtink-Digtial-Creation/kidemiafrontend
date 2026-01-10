@@ -3,13 +3,10 @@ import { useNavigate, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import CustomCheckbox from "../../components/Cards/CustomCheckbox";
 import {
-  BreadcrumbItem,
-  Breadcrumbs,
   Button,
   CheckboxGroup,
   Pagination,
 } from "@heroui/react";
-import { SidebarRoutes, TestRoutes } from "../../routes";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import { useAtom, useAtomValue } from "jotai";
@@ -64,47 +61,29 @@ export default function TestTopicsPage() {
   );
 
   const handleSelectionChange = (values: string[]) => {
-    if (values.length <= 5) {
-      // Update selectedTopics atom with full topic data for selected IDs
-      const updated =
-        topicData?.items
-          ?.filter((topic) => values.includes(topic.id))
-          .map((topic) => ({
-            id: topic.id,
-            name: topic.name,
-            description: topic.description || "No description",
-            code: topic.code,
-            estimated_time_minutes: topic.estimated_time_minutes || 0,
-            questions_count: topic.questions_count || 0,
-            difficulty_level: topic.difficulty_level || "",
-          })) ?? [];
+    const updated = topicData?.items
+      ?.filter((topic) => values.includes(topic.id))
+      .map((topic) => ({
+        id: topic.id,
+        name: topic.name,
+        description: topic.description || "No description",
+        code: topic.code,
+        estimated_time_minutes: topic.estimated_time_minutes || 0,
+        questions_count: topic.questions_count || 0,
+        difficulty_level: topic.difficulty_level || "",
+      })) ?? [];
 
-      setSelectedTopics(updated);
-    }
+    setSelectedTopics(updated);
   };
 
   return (
     <section className="py-4 space-y-12 md:px-12 w-full">
       <div className="absolute top-4 left-0 px-4">
-        <div>
-          <Breadcrumbs variant="light" color="foreground">
-            <BreadcrumbItem href={SidebarRoutes.dashboard}>
-              Dashboard
-            </BreadcrumbItem>
-            <BreadcrumbItem href={TestRoutes.takeTest}>
-              Take a Test
-            </BreadcrumbItem>
-            <BreadcrumbItem href={TestRoutes.testSubjects}>
-              Pick a Subject
-            </BreadcrumbItem>
 
-            <BreadcrumbItem color="warning">Pick Subject Topics</BreadcrumbItem>
-          </Breadcrumbs>
-        </div>
       </div>
       <div className="space-y-3">
         <h2 className="text-2xl text-kidemia-black font-semibold text-center">
-          Choose up to 5 {subjectTitle ? subjectTitle : ""} Topics that Interest
+          Select atleast 5 {subjectTitle ? subjectTitle : ""} Topics that Interest
           You the Most
         </h2>
         <p className="text-base text-kidemia-grey text-center font-medium max-w-2xl mx-auto">
@@ -127,8 +106,6 @@ export default function TestTopicsPage() {
               <CustomCheckbox
                 value={topics.id}
                 name={topics.name}
-                description={topics.description || "No description"}
-                estimated_time_minutes={topics.estimated_time_minutes || 0}
                 difficulty_level={topics.difficulty_level || ""}
               />
             </div>
@@ -154,18 +131,23 @@ export default function TestTopicsPage() {
         </div>
       )}
 
-      <div className="flex md:justify-end">
+      <div className="flex md:justify-end flex-col items-end gap-2">
         <Button
           type="button"
           variant="solid"
           size="lg"
-          className="bg-kidemia-secondary text-kidemia-white font-semibold w-full md:w-1/4"
+          className="bg-kidemia-secondary text-white font-semibold w-full md:w-1/4"
           radius="sm"
-          isDisabled={selectedTopics.length !== 5}
           onPress={() => navigate(`/take-a-test/${id}/instructions`)}
         >
           Continue
         </Button>
+
+        {selectedTopics.length < 5 && (
+          <p className="text-xs text-danger-500 font-medium">
+            Please select {5 - selectedTopics.length} more topic(s) to continue.
+          </p>
+        )}
       </div>
     </section>
   );

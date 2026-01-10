@@ -33,7 +33,7 @@ export default function AssessmentInstructions() {
     if (error) {
       const message =
         (error as any)?.body?.message ||
-        (error as any)?.response?.data?.message ||
+        (error as any)?.response?.data?.message || error?.message ||
         "Something went wrong";
 
       addToast({ title: message, color: "warning" });

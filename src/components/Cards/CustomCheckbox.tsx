@@ -3,16 +3,12 @@ import { Checkbox, Chip, cn } from "@heroui/react";
 interface CustomCheckboxProps {
   value: string;
   name: string;
-  description: string;
-  estimated_time_minutes: number;
   difficulty_level: string;
 }
 
 export default function CustomCheckbox({
   value,
   name,
-  description,
-  estimated_time_minutes,
   difficulty_level,
 }: CustomCheckboxProps) {
   const getChipColor = () => {
@@ -51,15 +47,10 @@ export default function CustomCheckbox({
           <p className="text-kidemia-black3 text-md font-semibold capitalize whitespace-nowrap">
             {name}
           </p>
-          <p className="text-sm text-kidemia-black3/80 line-clamp-2">
-            {description}
-          </p>
+
         </div>
 
         <div className="flex flex-col items-end space-y-2">
-          <p className="text-xs text-kidemia-black/80 whitespace-nowrap">
-            {estimated_time_minutes} mins
-          </p>
           <Chip
             size="sm"
             variant="flat"
