@@ -6,6 +6,7 @@ export const QueryKeys = {
   allAssessment: "allAssessment",
   assessmentQuestions: "assessmentQuestions",
   assesstmentAttempt: "assesstmentAttempt",
+  assessmentCategories: "assessmentCategories",
   testDetails: "testDetails",
   testAttempt: "testAttempt",
   categories: "categories",

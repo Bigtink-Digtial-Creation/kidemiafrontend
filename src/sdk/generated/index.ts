@@ -164,6 +164,8 @@ export type { TrendingPost } from './models/TrendingPost';
 export type { UploadResponse } from './models/UploadResponse';
 export type { UserAnswerResponse } from './models/UserAnswerResponse';
 export type { UserCreate } from './models/UserCreate';
+export type { UserListResponse } from './models/UserListResponse';
+export type { UserListRole } from './models/UserListRole';
 export type { UserProfile } from './models/UserProfile';
 export type { UserProfileResponse } from './models/UserProfileResponse';
 export type { UserReputationResponse } from './models/UserReputationResponse';

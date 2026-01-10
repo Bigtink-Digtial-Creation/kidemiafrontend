@@ -54,12 +54,12 @@ export class AdminPlansService {
    * @returns PlanConfigResponse Successful Response
    * @throws ApiError
    */
-  public static getPlanByIdApiV1AdminManageSubscriptionPlansPlanIdGet(
+  public static getPlanByIdApiV1AdminManageSubscriptionPlansPlanPlanIdGet(
     planId: string,
   ): CancelablePromise<PlanConfigResponse> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: '/api/v1/admin/manage/subscription-plans/{plan_id}',
+      url: '/api/v1/admin/manage/subscription-plans/plan/{plan_id}',
       path: {
         'plan_id': planId,
       },
@@ -76,13 +76,13 @@ export class AdminPlansService {
    * @returns PlanConfigResponse Successful Response
    * @throws ApiError
    */
-  public static updatePlanApiV1AdminManageSubscriptionPlansPlanIdPut(
+  public static updatePlanApiV1AdminManageSubscriptionPlansPlanPlanIdPut(
     planId: string,
     requestBody: PlanConfigUpdate,
   ): CancelablePromise<PlanConfigResponse> {
     return __request(OpenAPI, {
       method: 'PUT',
-      url: '/api/v1/admin/manage/subscription-plans/{plan_id}',
+      url: '/api/v1/admin/manage/subscription-plans/plan/{plan_id}',
       path: {
         'plan_id': planId,
       },
@@ -100,15 +100,35 @@ export class AdminPlansService {
    * @returns any Successful Response
    * @throws ApiError
    */
-  public static deletePlanApiV1AdminManageSubscriptionPlansPlanIdDelete(
+  public static deletePlanApiV1AdminManageSubscriptionPlansPlanPlanIdDelete(
     planId: string,
   ): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: 'DELETE',
-      url: '/api/v1/admin/manage/subscription-plans/{plan_id}',
+      url: '/api/v1/admin/manage/subscription-plans/plan/{plan_id}',
       path: {
         'plan_id': planId,
       },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Create Feature
+   * Create a new reusable feature
+   * @param requestBody
+   * @returns PlanFeatureResponse Successful Response
+   * @throws ApiError
+   */
+  public static createFeatureApiV1AdminManageSubscriptionPlansFeaturesCreatePost(
+    requestBody: PlanFeatureCreate,
+  ): CancelablePromise<PlanFeatureResponse> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/admin/manage/subscription-plans/features/create',
+      body: requestBody,
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -124,26 +144,6 @@ export class AdminPlansService {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/v1/admin/manage/subscription-plans/features',
-    });
-  }
-  /**
-   * Create Feature
-   * Create a new reusable feature
-   * @param requestBody
-   * @returns PlanFeatureResponse Successful Response
-   * @throws ApiError
-   */
-  public static createFeatureApiV1AdminManageSubscriptionPlansFeaturesPost(
-    requestBody: PlanFeatureCreate,
-  ): CancelablePromise<PlanFeatureResponse> {
-    return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/admin/manage/subscription-plans/features',
-      body: requestBody,
-      mediaType: 'application/json',
-      errors: {
-        422: `Validation Error`,
-      },
     });
   }
   /**
@@ -173,6 +173,52 @@ export class AdminPlansService {
       url: '/api/v1/admin/manage/subscription-plans/promotions',
       body: requestBody,
       mediaType: 'application/json',
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Update Promotion
+   * Update an existing promotion code
+   * @param promotionId
+   * @param requestBody
+   * @returns PromotionResponse Successful Response
+   * @throws ApiError
+   */
+  public static updatePromotionApiV1AdminManageSubscriptionPlansPromotionsPromotionIdPut(
+    promotionId: string,
+    requestBody: PromotionCreate,
+  ): CancelablePromise<PromotionResponse> {
+    return __request(OpenAPI, {
+      method: 'PUT',
+      url: '/api/v1/admin/manage/subscription-plans/promotions/{promotion_id}',
+      path: {
+        'promotion_id': promotionId,
+      },
+      body: requestBody,
+      mediaType: 'application/json',
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Toggle Promotion Status
+   * Enable or disable a promotion code
+   * @param promotionId
+   * @returns PromotionResponse Successful Response
+   * @throws ApiError
+   */
+  public static togglePromotionStatusApiV1AdminManageSubscriptionPlansPromotionsPromotionIdTogglePatch(
+    promotionId: string,
+  ): CancelablePromise<PromotionResponse> {
+    return __request(OpenAPI, {
+      method: 'PATCH',
+      url: '/api/v1/admin/manage/subscription-plans/promotions/{promotion_id}/toggle',
+      path: {
+        'promotion_id': promotionId,
+      },
       errors: {
         422: `Validation Error`,
       },

@@ -3,16 +3,13 @@ import { useNavigate, useParams } from "react-router";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import {
-  BreadcrumbItem,
-  Breadcrumbs,
   Button,
   Card,
   CardBody,
   CardFooter,
 } from "@heroui/react";
-import { SidebarRoutes, TestRoutes } from "../../routes";
-import { useAtomValue } from "jotai";
-import { selectedSubjectIdeAtom } from "../../store/test.atom";
+// import { useAtomValue } from "jotai";
+// import { selectedSubjectIdeAtom } from "../../store/test.atom";
 import {
   BiCalendar,
   BiPlayCircle,
@@ -25,7 +22,7 @@ import SpinnerCircle from "../../components/Spinner/Circle";
 
 export default function TestAttempt() {
   const { assessmentId } = useParams<{ assessmentId: string }>();
-  const subjectId = useAtomValue(selectedSubjectIdeAtom);
+  // const subjectId = useAtomValue(selectedSubjectIdeAtom);
   const navigate = useNavigate();
 
   const { data: attemptTest, isLoading } = useQuery({
@@ -59,31 +56,7 @@ export default function TestAttempt() {
   return (
     <section className="max-w-5xl w-full mx-auto mt-8 px-4 sm:px-6 lg:px-8">
       <div className="absolute top-4 left-0 px-4">
-        <div>
-          <Breadcrumbs variant="light" color="foreground">
-            <BreadcrumbItem href={SidebarRoutes.dashboard}>
-              Dashboard
-            </BreadcrumbItem>
-            <BreadcrumbItem href={TestRoutes.takeTest}>
-              Take a Test
-            </BreadcrumbItem>
-            <BreadcrumbItem href={TestRoutes.testSubjects}>
-              Pick a Subject
-            </BreadcrumbItem>
 
-            <BreadcrumbItem href={`/take-a-test/subjects/${subjectId}`}>
-              Pick Subject Topics
-            </BreadcrumbItem>
-
-            <BreadcrumbItem href={`/take-a-test/${subjectId}/instructions`}>
-              Test Instructions
-            </BreadcrumbItem>
-            <BreadcrumbItem href={`/take-a-test/${subjectId}/details`}>
-              Test Details
-            </BreadcrumbItem>
-            <BreadcrumbItem color="warning">Test Attempt</BreadcrumbItem>
-          </Breadcrumbs>
-        </div>
       </div>
 
       <div>

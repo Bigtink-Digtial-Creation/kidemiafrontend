@@ -91,14 +91,14 @@ export class SubjectsService {
    * @param q
    * @param skip
    * @param limit
-   * @returns SubjectResponse Successful Response
+   * @returns SubjectListResponse Successful Response
    * @throws ApiError
    */
   public static searchSubjectsApiV1SubjectsSearchGet(
     q: string,
     skip?: number,
     limit: number = 20,
-  ): CancelablePromise<Array<SubjectResponse>> {
+  ): CancelablePromise<SubjectListResponse> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/v1/subjects/search',

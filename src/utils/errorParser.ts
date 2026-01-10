@@ -1,6 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AxiosError } from "axios";
 
+export const getApiErrorMessage = (error: any): string => {
+  if (error?.body?.message) {
+    return error.body.message;
+  }
+  if (typeof error?.body === 'string') return error.body;
+  return error?.message || "An unexpected error occurred";
+};
+
 export const apiErrorMessageParser = (message: string | string[]) => {
   if (Array.isArray(message)) {
     return message[0].toString();
@@ -39,13 +47,13 @@ export const apiErrorParser = (
 
 export type ApiRequestOptions = {
   readonly method:
-    | "GET"
-    | "PUT"
-    | "POST"
-    | "DELETE"
-    | "OPTIONS"
-    | "HEAD"
-    | "PATCH";
+  | "GET"
+  | "PUT"
+  | "POST"
+  | "DELETE"
+  | "OPTIONS"
+  | "HEAD"
+  | "PATCH";
   readonly url: string;
   readonly path?: Record<string, any>;
   readonly cookies?: Record<string, any>;
