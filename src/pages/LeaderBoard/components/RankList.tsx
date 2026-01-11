@@ -1,6 +1,5 @@
 import { Award, Flame, TrendingUp, Trophy } from "lucide-react";
 import type { LeaderboardEntryResponse } from "../../../sdk/generated";
-import SpeedDemon from "@/assets/images/icons/badges/speed-demon.jpg";
 
 
 
@@ -79,7 +78,7 @@ export const RankList = ({ students, currentUserId }: RankListProps) => (
                                             title={b.display_name}
                                         >
                                             {b.icon_url ? (
-                                                <img src={SpeedDemon} alt={b.display_name} className="w-4 h-4" />
+                                                <img src={b.icon_url} alt={b.display_name} className="w-3 h-3" />
                                             ) : (
                                                 "🏆"
                                             )}
