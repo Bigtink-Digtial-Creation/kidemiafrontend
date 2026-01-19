@@ -127,17 +127,18 @@ export function useAuthRedirect(
 
     validateAuth();
   }, [
-    loggedInUser,
-    authToken,
-    userRole,
-    isEmailVerified,
-    location.pathname,
+    location.pathname,  // Keep this - validate on route change
     navigate,
     requireAuth,
     requireEmailVerification,
-    setLoggedInUser,
-    setAuthToken,
-    setUserRole,
+    // REMOVE these - they cause infinite re-validation:
+    // loggedInUser,
+    // authToken,
+    // userRole,
+    // isEmailVerified,
+    // setLoggedInUser,
+    // setAuthToken,
+    // setUserRole,
   ]);
 
   return { loggedInUser, authToken, userRole, isEmailVerified, isValidating };

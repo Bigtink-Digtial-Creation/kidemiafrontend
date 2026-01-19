@@ -47,7 +47,13 @@ export default function LoginPage() {
         setStoredToken(token);
         setLoggedInUser(data);
         setRole(data.user?.roles?.[0].name ?? null);
-        navigate(SidebarRoutes.dashboard, { replace: true });
+        setTimeout(() => {
+          navigate(SidebarRoutes.dashboard, { replace: true });
+          addToast({
+            title: "Login Successful",
+            color: "success",
+          });
+        }, 100);
         addToast({
           title: "Login Successful",
           color: "success",
