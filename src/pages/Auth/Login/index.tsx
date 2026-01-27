@@ -17,7 +17,6 @@ import {
   loggedinUserAtom,
   storedAuthTokenAtom,
 } from "../../../store/user.atom";
-import { apiErrorParser } from "../../../utils/errorParser";
 import { userRoleAtom } from "../../../store/user.atom"
 
 
@@ -69,7 +68,7 @@ export default function LoginPage() {
 
       }
     },
-    onError(error) {
+    onError() {
       // const parsedError = apiErrorParser(error);
       // description: parsedError.message || "Login Error",
       addToast({
