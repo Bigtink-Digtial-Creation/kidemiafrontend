@@ -5,7 +5,9 @@ import { ApiSDK } from "../../sdk";
 import { Image, Button } from "@heroui/react";
 import { AppLogo } from "../../assets/images";
 import { CheckCircle, XCircle, Loader2, Home } from "lucide-react";
-import { PaymentRoutes, SidebarRoutes } from "../../routes";
+import { GuardianRoutes, PaymentRoutes, SidebarRoutes } from "../../routes";
+import { useAtomValue } from "jotai";
+import { userRoleAtom } from "../../store/user.atom";
 
 type VerificationStatus = "verifying" | "success" | "failed";
 
@@ -14,6 +16,16 @@ export default function SubscriptionCallbackPage() {
     const navigate = useNavigate();
     const [status, setStatus] = useState<VerificationStatus>("verifying");
     const [subscriptionDetails, setSubscriptionDetails] = useState<any>(null);
+
+    let targetPath = SidebarRoutes.dashboard;
+    const userRole = useAtomValue(userRoleAtom);
+    if (userRole === "guardian") {
+        targetPath = GuardianRoutes.dashboard;
+    } else if (userRole === "student") {
+        targetPath = SidebarRoutes.dashboard;
+    } else if (userRole === "institution_admin") {
+        targetPath = "/admin/dashboard";
+    }
 
     const reference = searchParams.get("reference");
 
@@ -59,7 +71,7 @@ export default function SubscriptionCallbackPage() {
     };
 
     const handleGoHome = () => {
-        navigate(SidebarRoutes.dashboard);
+        navigate(targetPath);
     };
 
     return (

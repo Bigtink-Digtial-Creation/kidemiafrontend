@@ -15,4 +15,13 @@ export const QueryKeys = {
   pricing: "pricing",
   wallet: "wallet",
   mysubscription: "mysubscription",
+
+  guardianProfile: "guardianProfile",
+  categoryChangeRequests: "categoryChangeRequests",
+  comprehensiveReport: "comprehensiveReport",
+  wardReport: "wardReport",
+  wardStats: "wardStats",
+  myWards: "myWards",
+  subscriptionMembers: "subscriptionMembers",
+
 } as const;

@@ -9,7 +9,7 @@ import { MdOutlineEmail } from "react-icons/md";
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
 import { BiScan } from "react-icons/bi";
 import { FcGoogle } from "react-icons/fc";
-import { AuthRoutes, SidebarRoutes } from "../../../routes";
+import { AuthRoutes, GuardianRoutes, SidebarRoutes } from "../../../routes";
 import { useMutation } from "@tanstack/react-query";
 import type { LoginRequest } from "../../../sdk/generated";
 import { ApiSDK } from "../../../sdk";
@@ -17,7 +17,6 @@ import {
   loggedinUserAtom,
   storedAuthTokenAtom,
 } from "../../../store/user.atom";
-import { apiErrorParser } from "../../../utils/errorParser";
 import { userRoleAtom } from "../../../store/user.atom"
 
 
@@ -46,25 +45,35 @@ export default function LoginPage() {
         ApiSDK.OpenAPI.TOKEN = token;
         setStoredToken(token);
         setLoggedInUser(data);
-        setRole(data.user?.roles?.[0].name ?? null);
-        setTimeout(() => {
-          navigate(SidebarRoutes.dashboard, { replace: true });
-          addToast({
-            title: "Login Successful",
-            color: "success",
-          });
-        }, 100);
+        const roleName = data.user?.roles?.[0]?.name;
+        setRole(roleName ?? null);
+        let targetPath = SidebarRoutes.dashboard;
+
+        if (roleName === "guardian") {
+          targetPath = GuardianRoutes.dashboard;
+        } else if (roleName === "student") {
+          targetPath = SidebarRoutes.dashboard;
+        } else if (roleName === "institution_admin") {
+          targetPath = "/admin/dashboard";
+        }
+
         addToast({
           title: "Login Successful",
+          description: `Welcome back, ${data.user?.first_name}!`,
           color: "success",
         });
+        setTimeout(() => {
+          navigate(targetPath, { replace: true });
+        }, 100);
+
       }
     },
-    onError(error) {
-      const parsedError = apiErrorParser(error);
+    onError() {
+      // const parsedError = apiErrorParser(error);
+      // description: parsedError.message || "Login Error",
       addToast({
         title: "An Error Occured",
-        description: parsedError.message || "Login Error",
+        description: "Unable to login Check your network and try again",
         color: "danger",
       });
     },

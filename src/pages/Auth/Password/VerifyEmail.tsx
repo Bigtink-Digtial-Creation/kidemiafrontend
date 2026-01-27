@@ -1,6 +1,6 @@
 import { useNavigate, useSearchParams } from "react-router";
 import { addToast, Button } from "@heroui/react";
-import { AuthRoutes, SidebarRoutes } from "../../../routes";
+import { AuthRoutes, GuardianRoutes, SidebarRoutes } from "../../../routes";
 import { useMutation } from "@tanstack/react-query";
 import type { VerifyEmailRequest } from "../../../sdk/generated";
 import { ApiSDK } from "../../../sdk";
@@ -47,10 +47,20 @@ export default function VerifyEmailPage() {
 
             // Check if user is logged in at the time of success
             // Note: We need to get the fresh value, not the closure value
+            const roleName = loggedInUser?.user?.roles?.[0]?.name;
+            let targetPath = SidebarRoutes.dashboard;
+            if (roleName === "guardian") {
+                targetPath = GuardianRoutes.dashboard;
+            } else if (roleName === "student") {
+                targetPath = SidebarRoutes.dashboard;
+            } else if (roleName === "institution_admin") {
+                targetPath = "/institution/dashboard";
+            }
             if (loggedInUser?.user) {
                 verifyEmail();
                 setTimeout(() => {
-                    navigate(SidebarRoutes.dashboard);
+                    navigate(targetPath);
+
                 }, 1500);
             }
             // If not logged in, user will click "Continue to Login" button

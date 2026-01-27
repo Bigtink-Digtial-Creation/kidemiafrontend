@@ -6,6 +6,7 @@ import {
   SidebarRoutes,
   TestRoutes,
   PaymentRoutes,
+  GuardianRoutes
 } from "./routes";
 
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -75,6 +76,12 @@ import { FAQPage } from "./pages/Home/FAQPage";
 import EmailLayout from "./layouts/Email.layout";
 import SubscriptionCallbackPage from "./pages/payment/SubscriptionCallbackPage";
 import SubscriptionDashboard from "./pages/payment/PricingUpgrade";
+import WardReportPage from "./pages/Guardian/WardReportPage";
+import GuardianDashboard from "./pages/Guardian";
+import ComprehensiveReportPage from "./pages/Guardian/ComprehensiveReportPage";
+import CategoryRequestsPage from "./pages/Guardian/CategoryRequestsPage";
+import CreateAssessmentPage from "./pages/Guardian/CreateAssessmentPage";
+import GuardianSubscriptionPage from "./pages/Guardian/GuardianSubscriptionPage";
 
 export const router = createBrowserRouter([
   {
@@ -97,11 +104,42 @@ export const router = createBrowserRouter([
       { path: AuthRoutes.login, element: <LoginPage /> },
       { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> },
       { path: AuthRoutes.changePassword, element: <ChangePasswordPage /> },
-      { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> },
       { path: AuthRoutes.resetPassword, element: <ResetPasswordPage /> },
       { path: AuthRoutes.signup, element: <SignUpPage /> },
       { path: AuthRoutes.guardian, element: <GuardianSignup /> },
     ],
+  },
+  {
+    element: <EmailLayout />,
+    errorElement: <ErrorPage />,
+    children: [{
+      path: AuthRoutes.verifyEmail,
+      element: <VerifyEmailPage />,
+    },]
+  },
+  {
+    element: (
+      <ProtectedRoute allowedRoles={["guardian"]} requireEmailVerification={true} />
+    ),
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        element: <DashboardLayout />,
+        children: [
+          { path: GuardianRoutes.dashboard, element: <GuardianDashboard /> },
+          { path: GuardianRoutes.settings, element: <SettingsPage /> },
+          { path: GuardianRoutes.wardReport, element: <WardReportPage /> },
+          // { path: GuardianRoutes.reports, element: <ReportsPage /> },
+          { path: GuardianRoutes.categoryRequests, element: <CategoryRequestsPage />, },
+          { path: GuardianRoutes.comprehensiveReport, element: <ComprehensiveReportPage />, },
+          { path: GuardianRoutes.notifications, element: <NotificationsPage /> },
+          { path: GuardianRoutes.createAssessment, element: <CreateAssessmentPage /> },
+          { path: GuardianRoutes.subscription, element: <GuardianSubscriptionPage /> },
+
+
+        ]
+      },
+    ]
   },
   {
     element: (
@@ -123,23 +161,13 @@ export const router = createBrowserRouter([
           { path: SidebarRoutes.userProfile, element: <UserProfilePage /> },
           { path: SidebarRoutes.subjectPage, element: <SubjectPage /> },
           { path: SidebarRoutes.communityGuideLines, element: <CommunityGuidelinesPage /> },
-          { path: SidebarRoutes.profile, element: <ProfilePage /> },
-          { path: SidebarRoutes.settings, element: <SettingsPage /> },
           { path: SidebarRoutes.takeAssessment, element: <AssessmentPage /> },
           { path: PaymentRoutes.buytoken, element: <BuyUnitsPage /> },
-          { path: PaymentRoutes.subscriptionUpgrade, element: <SubscriptionDashboard /> },
-          { path: PaymentRoutes.subscriptionCallBack, element: <SubscriptionCallbackPage /> },
-        ],
-      }
-    ]
-  },
+          { path: SidebarRoutes.settings, element: <SettingsPage /> },
 
-  {
-    element: (
-      <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={true} />
-    ),
-    errorElement: <ErrorPage />,
-    children: [
+        ],
+      },
+
       {
         element: <TestLayout />,
         children: [
@@ -156,6 +184,7 @@ export const router = createBrowserRouter([
           { path: AssessmentRoutes.assessmentQuestion, element: <AssessmentQuestions /> },
         ],
       },
+
       { path: TestRoutes.results, element: <ResultPage /> },
       {
         path: AssessmentRoutes.assessmentResult,
@@ -165,25 +194,50 @@ export const router = createBrowserRouter([
         path: AssessmentRoutes.assessmentCorrection,
         element: <CorrectionPage />,
       },
+      {
+        path: PaymentRoutes.walletCallBack,
+        element: <WalletCallbackPage />,
+      }
+
     ]
   },
 
-  { path: AuthRoutes.unauthorized, element: <UnauthorizedPage /> },
+
+
   {
-    path: AuthRoutes.emailVerificationRequired, element: <EmailVerificationRequiredPage />,
+    path: AuthRoutes.unauthorized,
+    element: <UnauthorizedPage />
+  },
+  {
+    path: AuthRoutes.emailVerificationRequired,
+    element: <EmailVerificationRequiredPage />,
     errorElement: <ErrorPage />
   },
 
+
   {
     element: (
-      <ProtectedRoute allowedRoles={["student"]} requireEmailVerification={true} />
+      <ProtectedRoute allowedRoles={["student", "guardian"]} requireEmailVerification={true} />
     ),
     errorElement: <ErrorPage />,
-    children: [{
-      path: PaymentRoutes.walletCallBack,
-      element: <WalletCallbackPage />,
-    },
+    children: [
+      {
+        element: <DashboardLayout />,
+        children: [
+          {
+            path: PaymentRoutes.subscriptionUpgrade,
+            element: <SubscriptionDashboard />,
+          },
+          {
+            path: PaymentRoutes.subscriptionCallBack,
+            element: <SubscriptionCallbackPage />,
+          },
 
+          { path: SidebarRoutes.profile, element: <ProfilePage /> },
+
+
+        ]
+      },
     ]
   },
   {
@@ -192,13 +246,5 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
 
-  {
-    element: <EmailLayout />,
-    errorElement: <ErrorPage />,
-    children: [{
-      path: AuthRoutes.verifyEmail,
-      element: <VerifyEmailPage />,
-    },]
-  },
 
-]);
+])

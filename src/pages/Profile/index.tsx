@@ -4,7 +4,7 @@ import type { UserUpdate } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
 import SpinnerCircle from "../../components/Spinner/Circle";
 import { loggedinUserAtom } from "../../store/user.atom";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useForm } from "react-hook-form";
 import { useInvalidateQueries } from "../../hooks/use-invalidate-queries";
 import { QueryKeys } from "../../utils/queryKeys";
@@ -28,22 +28,11 @@ import ChangePasswordModal from "./components/ChangePasswordModal";
 export default function ProfilePage() {
     const avatarModal = useDisclosure();
     const passwordModal = useDisclosure();
-
-    const mockUpdateUserCategoryApi = (
-        userId: string,
-        payload: { category: string }
-    ) =>
-        new Promise<{ category: string; status: "pending" }>((resolve) => {
-            console.log("MOCK category update:", userId, payload);
-            setTimeout(() => {
-                resolve({
-                    category: payload.category,
-                    status: "pending",
-                });
-            }, 1200);
-        });
-
     const storedUser = useAtomValue(loggedinUserAtom);
+    const [_, setStoredUser] = useAtom(loggedinUserAtom);
+    const [selectedCategory, setSelectedCategory] = useState<string>("");
+    const roleName = storedUser?.user?.roles?.[0].name;
+    const isStudent = roleName === "student";
 
     const form = useForm<ProfileSchema>({
         resolver: zodResolver(ProfileSchema),
@@ -51,30 +40,39 @@ export default function ProfilePage() {
 
     const { data: user, isLoading } = useQuery({
         queryKey: [QueryKeys.user],
-        queryFn: () =>
-            ApiSDK.UsersService.getUserApiV1UsersUserIdGet(
-                storedUser?.user?.id as string,
-            ),
+        queryFn: () => ApiSDK.UsersService.getUserApiV1UsersUserIdGet(storedUser?.user?.id as string),
     });
 
-    const {
-        data: categoriesData,
-        isLoading: categoriesLoading,
-    } = useQuery({
+    const { data: categoriesData, isLoading: categoriesLoading } = useQuery({
         queryKey: [QueryKeys.categories],
-        queryFn: async () => {
-            return ApiSDK.AssessmentCategoriesService.getCategoryConfigsApiV1CategoriesGet();
-        },
+        queryFn: () => ApiSDK.AssessmentCategoriesService.getCategoryConfigsApiV1CategoriesGet(),
+        enabled: isStudent,
+    });
+
+    // Simplified status tracking: Fetch only the latest request
+    const { data: latestRequest } = useQuery({
+        queryKey: ["latest-category-request", user?.student?.id],
+        queryFn: () => ApiSDK.GuardiansService.getLatestCategoryChangeApiV1GuardiansLatestCategoryChangeWardIdGet(
+            user?.student?.id as string
+        ),
+        enabled: isStudent && !!user?.student?.id,
+    });
+
+    const requestStatus = latestRequest?.data?.status;
+    const hasPendingRequest = requestStatus === "pending";
+
+    const { data: guardianData } = useQuery({
+        queryKey: [QueryKeys.guardianProfile, user?.student?.guardian_id],
+        queryFn: () => ApiSDK.GuardiansService.getGuardianDetailApiV1GuardiansGuardianIdGet(user!.student!.guardian_id!),
+        enabled: isStudent && !!user?.student?.guardian_id,
     });
 
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-    const [selectedCategory, setSelectedCategory] = useState<string>("");
 
     useEffect(() => {
         if (!user) return;
-
         setAvatarUrl(user.profile_picture_url ?? null);
-        setSelectedCategory(user.student?.category?.category_name ?? "");
+        setSelectedCategory(user.student?.category_id ?? "");
 
         form.reset({
             first_name: user.first_name ?? "",
@@ -90,110 +88,79 @@ export default function ProfilePage() {
 
     const updateProfile = useMutation({
         mutationFn: (data: UserUpdate) =>
-            ApiSDK.AuthenticationService.updateAccountApiV1AuthAccountUserIdPatch(
-                user!.id,
-                data,
-            ),
+            ApiSDK.AuthenticationService.updateAccountApiV1AuthAccountUserIdPatch(user!.id, data),
         onSuccess() {
             invalidateQueries([QueryKeys.user]);
             addToast({ color: "success", description: "Changes saved successfully" });
         },
         onError(error) {
-            addToast({
-                color: "danger",
-                description: apiErrorParser(error).message,
-            });
+            addToast({ color: "danger", description: apiErrorParser(error).message });
         },
     });
 
+    const currentCategoryName = categoriesData?.find(c => c.id === (selectedCategory || user?.student?.category_id))?.display_name
+        || user?.student?.category?.display_name;
+
     const updateCategoryMutation = useMutation({
-        mutationFn: (category: string) =>
-            mockUpdateUserCategoryApi(user!.id, { category }),
-        // Remember: Replace with actual API call:
-        // ApiSDK.UsersService.updateUserCategoryApiV1UsersCategoryPatch(
-        //   user!.id,
-        //   { category },
-        // ),
-        onSuccess() {
-            addToast({
-                color: "success",
-                description: "Category change submitted for approval",
+        mutationFn: async (categoryId: string) => {
+            return ApiSDK.GuardiansService.updateStudentCategoryApiV1GuardiansRequestCategoryUpdatePost({
+                ward_id: user?.student?.id!,
+                new_category_id: categoryId,
+                reason: "New change request"
             });
-            invalidateQueries([QueryKeys.user]);
+        },
+        onSuccess(response: any) {
+            const data = response.data;
+            if (data.auto_updated) {
+                addToast({ color: "success", description: data.message });
+                if (storedUser?.user?.student) {
+                    const updatedUser = {
+                        ...storedUser,
+                        user: {
+                            ...storedUser.user,
+                            student: {
+                                ...storedUser.user.student,
+                                category_id: selectedCategory,
+                                category: categoriesData?.find(c => c.id === selectedCategory)
+                            }
+                        }
+                    };
+                    setStoredUser(updatedUser);
+                }
+                invalidateQueries([QueryKeys.user]);
+            } else {
+                addToast({ color: "primary", description: data.message });
+                invalidateQueries(["latest-category-request"]);
+            }
         },
         onError(error) {
-            addToast({
-                color: "danger",
-                description: apiErrorParser(error).message,
-            });
+            addToast({ color: "danger", description: apiErrorParser(error).message });
         },
     });
 
     const uploadAvatarMutation = useMutation({
         mutationFn: async (file: File) => {
-            const formData = {
-                file: file
-            };
-
-            const response = await ApiSDK.UploadService.updateAvatarApiV1ApiUploadAccountAvatarPatch(
-                formData
-            );
-
+            const response = await ApiSDK.UploadService.updateAvatarApiV1ApiUploadAccountAvatarPatch({ file });
             return response;
         },
         onSuccess: (response) => {
-            updateProfile.mutate({
-                profile_picture_url: response.url
-            });
+            updateProfile.mutate({ profile_picture_url: response.url });
             setAvatarUrl(response.url);
             avatarModal.onClose();
-
-            addToast({
-                color: "success",
-                description: "Profile picture updated successfully"
-            });
+            addToast({ color: "success", description: "Profile picture updated" });
         },
-        onError: (error) => {
-            addToast({
-                color: "danger",
-                description: apiErrorParser(error).message || "Upload failed"
-            });
+        onError: (error: any) => {
+            addToast({ color: "danger", description: error?.body?.detail || "Upload failed" });
         },
     });
 
     const handleCategoryUpdate = () => {
-        if (!selectedCategory) {
-            addToast({
-                color: "warning",
-                description: "Please select a category",
-            });
+        if (!selectedCategory) return;
+        if (selectedCategory === user?.student?.category_id) {
+            addToast({ color: "warning", description: "This is already your current category" });
             return;
         }
         updateCategoryMutation.mutate(selectedCategory);
-    };
-
-    const handleAvatarUpload = async (file: File): Promise<void> => {
-        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-        if (!validTypes.includes(file.type)) {
-            addToast({
-                color: "danger",
-                description: "Please select a valid image file (JPG, PNG, GIF, WEBP)",
-            });
-            return;
-        }
-
-        // Validate file size (10MB max)
-        const maxSize = 10 * 1024 * 1024;
-        if (file.size > maxSize) {
-            addToast({
-                color: "danger",
-                description: "File size must be less than 10MB",
-            });
-            return;
-        }
-
-        // Trigger the upload mutation using mutateAsync to return a promise
-        await uploadAvatarMutation.mutateAsync(file);
     };
 
     if (isLoading) {
@@ -204,28 +171,17 @@ export default function ProfilePage() {
         );
     }
 
-    const fullName = [
-        user?.first_name,
-        user?.middle_name,
-        user?.last_name,
-    ]
-        .filter(Boolean)
-        .join(" ");
-
-    const submitAll = () => {
-        const values = form.getValues();
-        updateProfile.mutate(values);
-    };
+    const fullName = [user?.first_name, user?.middle_name, user?.last_name].filter(Boolean).join(" ");
 
     return (
         <>
             <div className="min-h-[100dvh] w-full flex justify-center px-4 py-6">
-                <div className="w-full max-w-3xl rounded-2xl bg-gray-50/80 backdrop-blur-md px-6 py-8 shadow-sm transition-all duration-300 hover:shadow-md">
+                <div className="w-full max-w-3xl rounded-2xl bg-gray-50/80 backdrop-blur-md px-6 py-8 shadow-sm">
                     <div className="flex flex-col items-center gap-3">
                         <div className="relative">
                             <Avatar
                                 src={avatarUrl ?? undefined}
-                                className="w-28 h-28 text-3xl cursor-pointer transition-transform duration-200 hover:scale-105"
+                                className="w-28 h-28 text-3xl cursor-pointer"
                                 isBordered
                                 name={getNameIntials(fullName) as string}
                                 onClick={avatarModal.onOpen}
@@ -236,23 +192,15 @@ export default function ProfilePage() {
                                 </div>
                             )}
                         </div>
-                        <button
-                            onClick={avatarModal.onOpen}
-                            className="text-sm text-kidemia-secondary transition-colors duration-200 hover:text-kidemia-primary disabled:opacity-50"
-                            disabled={uploadAvatarMutation.isPending}
-                        >
-                            Tap to{" "}
-                            <span className="text-kidemia-primary font-medium">
-                                {uploadAvatarMutation.isPending ? "uploading..." : "upload"}
-                            </span>{" "}
-                            picture
+                        <button onClick={avatarModal.onOpen} className="text-sm text-kidemia-secondary">
+                            Tap to <span className="text-kidemia-primary font-medium">upload</span> picture
                         </button>
                     </div>
 
                     <ProfileAvatarModal
                         isOpen={avatarModal.isOpen}
                         onClose={avatarModal.onClose}
-                        onSave={handleAvatarUpload}
+                        onSave={(file) => uploadAvatarMutation.mutate(file)}
                         isUploading={uploadAvatarMutation.isPending}
                     />
 
@@ -265,97 +213,63 @@ export default function ProfilePage() {
                             ["Date of Birth", "date_of_birth", "date"],
                             ["Phone Number", "phone_number"],
                         ] as const).map(([label, field, type]) => (
-                            <ProfileRow
-                                key={field}
-                                label={label}
-                                value={(user as any)?.[field] || "-"}
-                            >
-                                <Input
-                                    type={type ?? "text"}
-                                    variant="underlined"
-                                    classNames={{
-                                        input: "transition-all duration-200",
-                                    }}
-                                    {...form.register(field)}
-                                />
+                            <ProfileRow key={field} label={label} value={(user as any)?.[field] || "-"}>
+                                <Input type={type ?? "text"} variant="underlined" {...form.register(field)} />
                             </ProfileRow>
                         ))}
 
-                        <ProfileRow
-                            label="Email"
-                            value={user?.email}
-                            disabled
-                        />
+                        <ProfileRow label="Email" value={user?.email} disabled />
 
-                        <ProfileRow
-                            label="Category"
-                            value={user?.student?.category?.display_name}
-                            status="pending"
-                            isUpdating={updateCategoryMutation.isPending}
-                            onUpdate={handleCategoryUpdate}
-                        >
-                            <Select
-                                variant="underlined"
-                                placeholder="Select a category"
-                                selectedKeys={selectedCategory ? [selectedCategory] : []}
-                                onSelectionChange={(keys) => {
-                                    const selected = Array.from(keys)[0] as string;
-                                    setSelectedCategory(selected);
-                                }}
-                                isLoading={categoriesLoading}
-                                classNames={{
-                                    trigger: "transition-all duration-200",
-                                }}
-                            >
-                                {(categoriesData || []).map((category) => (
-                                    <SelectItem
-                                        key={category.category_name}
+                        {isStudent && (
+                            <>
+                                <ProfileRow
+                                    label="Category"
+                                    value={currentCategoryName}
+                                    status={requestStatus as any}
+                                    isUpdating={updateCategoryMutation.isPending}
+                                    onUpdate={handleCategoryUpdate}
+                                    helperText={
+                                        hasPendingRequest
+                                            ? `Requested change to: ${latestRequest?.data?.new_category_name}`
+                                            : "You can update your learning category here"
+                                    }
+                                >
+                                    <Select
+                                        variant="underlined"
+                                        aria-label="Select Category"
+                                        selectedKeys={selectedCategory ? [selectedCategory] : []}
+                                        onSelectionChange={(keys) => setSelectedCategory(Array.from(keys)[0] as string)}
+                                        isLoading={categoriesLoading}
+                                        isDisabled={hasPendingRequest}
                                     >
-                                        {category.display_name}
-                                    </SelectItem>
-                                ))}
-                            </Select>
-                        </ProfileRow>
+                                        {(categoriesData || []).map((cat) => (
+                                            <SelectItem key={cat.id} textValue={cat.display_name}>
+                                                {cat.display_name}
+                                            </SelectItem>
+                                        ))}
+                                    </Select>
+                                </ProfileRow>
 
-                        <ProfileRow
-                            label="Guardian Email"
-                            value={user?.student?.guardian_email ?? "-"}
-                        />
-
-                        <ProfileRow label="School" value="-" />
+                                <ProfileRow
+                                    label="Guardian Email"
+                                    value={user?.student?.guardian_email ?? "-"}
+                                    helperText={guardianData ? `Guardian: ${guardianData.full_name}` : ""}
+                                >
+                                    <Input variant="underlined" defaultValue={user?.student?.guardian_email || ""} />
+                                </ProfileRow>
+                            </>
+                        )}
 
                         <div className="pt-8 flex flex-col gap-4">
-                            <Button
-                                className="bg-kidemia-primary text-white rounded-lg font-medium transition-all duration-200 hover:bg-kidemia-primary/90 hover:shadow-md active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
-                                isLoading={updateProfile.isPending}
-                                onPress={submitAll}
-                                size="lg"
-                                spinner={
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                    </div>
-                                }
-                            >
-                                {updateProfile.isPending ? "Saving..." : "Save Changes"}
+                            <Button className="bg-kidemia-primary text-white" isLoading={updateProfile.isPending} onPress={() => updateProfile.mutate(form.getValues())} size="lg">
+                                Save Changes
                             </Button>
-
-                            <Button
-                                variant="light"
-                                onPress={passwordModal.onOpen}
-                                className="text-kidemia-secondary font-medium transition-all duration-200 hover:bg-gray-100"
-                                size="lg"
-                            >
-                                Change Password
-                            </Button>
+                            <Button variant="light" onPress={passwordModal.onOpen} size="lg">Change Password</Button>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <ChangePasswordModal
-                isOpen={passwordModal.isOpen}
-                onClose={passwordModal.onClose}
-            />
+            <ChangePasswordModal isOpen={passwordModal.isOpen} onClose={passwordModal.onClose} />
         </>
     );
 }

@@ -20,6 +20,8 @@ import {
     CheckCircle
 } from "lucide-react";
 import { PaymentRoutes } from "../../routes";
+import { userRoleAtom } from "../../store/user.atom";
+import { useAtomValue } from "jotai";
 
 export default function SubscriptionDashboard() {
     const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
@@ -29,6 +31,10 @@ export default function SubscriptionDashboard() {
     const isYearly = billingCycle === "yearly";
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+
+    const userRole = useAtomValue(userRoleAtom);
+    const isIndividual = userRole === "student";
+    const isGuardian = userRole === "guardian";
 
     // Use the custom hook for subscription data
     const {
@@ -46,8 +52,8 @@ export default function SubscriptionDashboard() {
         queryKey: [QueryKeys.pricing],
         queryFn: async () => {
             return ApiSDK.SubscriptionPlansService.getPricingPlansApiV1SubscriptionPlansPricingGet(
-                true,
-                false,
+                isIndividual,
+                isGuardian,
                 false
             );
         },

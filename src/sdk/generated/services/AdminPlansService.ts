@@ -204,6 +204,27 @@ export class AdminPlansService {
     });
   }
   /**
+   * Delete Promotion
+   * Soft delete a promotion code
+   * @param promotionId
+   * @returns any Successful Response
+   * @throws ApiError
+   */
+  public static deletePromotionApiV1AdminManageSubscriptionPlansPromotionsPromotionIdDelete(
+    promotionId: string,
+  ): CancelablePromise<any> {
+    return __request(OpenAPI, {
+      method: 'DELETE',
+      url: '/api/v1/admin/manage/subscription-plans/promotions/{promotion_id}',
+      path: {
+        'promotion_id': promotionId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
    * Toggle Promotion Status
    * Enable or disable a promotion code
    * @param promotionId

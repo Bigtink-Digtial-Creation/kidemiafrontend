@@ -3,7 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Body_update_avatar_api_v1_api_upload_account_avatar_patch } from '../models/Body_update_avatar_api_v1_api_upload_account_avatar_patch';
+import type { Body_upload_badge_image_api_v1_api_upload_badges_post } from '../models/Body_upload_badge_image_api_v1_api_upload_badges_post';
 import type { Body_upload_file_api_v1_api_upload_file_post } from '../models/Body_upload_file_api_v1_api_upload_file_post';
+import type { Body_upload_question_image_api_v1_api_upload_questions_post } from '../models/Body_upload_question_image_api_v1_api_upload_questions_post';
 import type { UploadResponse } from '../models/UploadResponse';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -12,8 +14,6 @@ export class UploadService {
   /**
    * Upload user avatar
    * Update user avatar with automatic old avatar deletion
-   *
-   * This is a more focused endpoint specifically for avatar updates
    * @param formData
    * @returns UploadResponse Successful Response
    * @throws ApiError
@@ -30,6 +30,46 @@ export class UploadService {
         400: `Invalid file`,
         422: `Validation Error`,
         500: `Server error`,
+      },
+    });
+  }
+  /**
+   * Upload question image
+   * Uploads an image specifically for an assessment question. Stored in 'questions/' folder.
+   * @param formData
+   * @returns UploadResponse Successful Response
+   * @throws ApiError
+   */
+  public static uploadQuestionImageApiV1ApiUploadQuestionsPost(
+    formData: Body_upload_question_image_api_v1_api_upload_questions_post,
+  ): CancelablePromise<UploadResponse> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/api/upload/questions',
+      formData: formData,
+      mediaType: 'multipart/form-data',
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Upload badge icon
+   * Uploads a badge icon. Stored in 'badges/' folder.
+   * @param formData
+   * @returns UploadResponse Successful Response
+   * @throws ApiError
+   */
+  public static uploadBadgeImageApiV1ApiUploadBadgesPost(
+    formData: Body_upload_badge_image_api_v1_api_upload_badges_post,
+  ): CancelablePromise<UploadResponse> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/api/upload/badges',
+      formData: formData,
+      mediaType: 'multipart/form-data',
+      errors: {
+        422: `Validation Error`,
       },
     });
   }
