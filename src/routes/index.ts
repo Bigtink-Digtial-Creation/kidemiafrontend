@@ -25,6 +25,22 @@ export const AuthRoutes = {
   resendVerification: "/auth/resend-verification",
 };
 
+
+export const GuardianRoutes = {
+  dashboard: "/guardian",
+  profile: "/guardian/profile",
+  settings: "/guardian/settings",
+  wards: "/guardian/wards",
+  reports: '/guardian/reports',
+  wardReport: '/guardian/reports/:wardId',
+  assessments: '/guardian/assessments',
+  createAssessment: '/guardian/assessments/create',
+  categoryRequests: '/guardian/category-requests',
+  subscription: '/guardian/subscription',
+  comprehensiveReport: '/guardian/comprehensive-report',
+  notifications: "/guardian/notifications",
+};
+
 export const SidebarRoutes = {
   dashboard: "/dashboard",
 
@@ -78,6 +94,7 @@ export const PaymentRoutes = {
 
 export type HomeRoutes = (typeof HomeRoutes)[keyof typeof HomeRoutes];
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
+export type GuardianRoutes = (typeof GuardianRoutes)[keyof typeof GuardianRoutes];
 export type SidebarRoutes = (typeof SidebarRoutes)[keyof typeof SidebarRoutes];
 export type TestRoutes = (typeof TestRoutes)[keyof typeof TestRoutes];
 export type PaymentRoutes = (typeof PaymentRoutes)[keyof typeof PaymentRoutes];

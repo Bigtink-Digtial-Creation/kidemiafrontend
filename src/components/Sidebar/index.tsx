@@ -8,13 +8,16 @@ import {
 } from "@heroui/react";
 import { NavLink } from "react-router";
 import { motion } from "framer-motion";
-import { PaymentRoutes, SidebarRoutes } from "../../routes";
+import { PaymentRoutes, SidebarRoutes, GuardianRoutes } from "../../routes";
 import { FiLogOut, FiSettings, FiZap } from "react-icons/fi";
 import { sidebarLinks } from "./sidebarLink.ts";
 import SidebarLink from "./SidebarLink.tsx";
 import { AppDarkLogo } from "../../assets/images";
 import LogoutModal from "./LogoutModal";
 import { useActiveSubscription } from "../../hooks/useActiveSubscription.ts";
+import { useAtomValue } from "jotai";
+import { userRoleAtom } from "../../store/user.atom";
+import type { UserRole } from "../../utils/enums.ts";
 
 type SidebarProps = {
   sidebarOpen: boolean;
@@ -22,13 +25,14 @@ type SidebarProps = {
 };
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
+  const userRole = useAtomValue(userRoleAtom);
   const { currentPlanCode } = useActiveSubscription();
 
   const formattedPlanCode = currentPlanCode
     ? currentPlanCode.toLowerCase().replace(/\s+/g, "-")
     : "No Active Plan";
+
   const [focused, setFocused] = useState<string | null>(null);
-  const triggerRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const logout = useDisclosure();
@@ -43,7 +47,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
       if (
         sidebarOpen &&
         !sidebarRef.current?.contains(target as Node) &&
-        !triggerRef.current?.contains(target as Node) &&
         !backdropRef.current?.contains(target as Node)
       ) {
         closeSidebar();
@@ -65,17 +68,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
     };
   }, [sidebarOpen, closeSidebar]);
 
-  useEffect(() => {
-    const keyHandler = ({ keyCode }: KeyboardEvent) => {
-      if (sidebarOpen && keyCode === 27) {
-        setSidebarOpen(false);
-      }
-    };
-
-    document.addEventListener("keydown", keyHandler);
-
-    return () => document.removeEventListener("keydown", keyHandler);
-  }, [sidebarOpen, setSidebarOpen]);
+  // Determine Logo Redirect Path
+  const logoPath = userRole === "guardian" ? GuardianRoutes.dashboard : SidebarRoutes.dashboard;
 
   return (
     <>
@@ -92,9 +86,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
           }`}
       >
         <div className="w-full flex justify-start">
-          <div className="w-full flex  items-center justify-between px-6 py-4">
+          <div className="w-full flex items-center justify-between px-6 py-4">
             <NavLink
-              to={SidebarRoutes.dashboard}
+              to={logoPath}
               className="animate-sidebar-text-show"
             >
               <Image src={AppDarkLogo} alt="Logo" width={80} />
@@ -102,16 +96,16 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
           </div>
         </div>
 
-        <div className="w-full flex flex-col overflow-y-auto duration-300 ease-linear">
-          <ScrollShadow hideScrollBar={true} as={"nav"} className="p-4">
+        <div className="w-full flex flex-col overflow-y-auto duration-300 ease-linear h-full">
+          <ScrollShadow hideScrollBar={true} as={"nav"} className="p-4 flex-grow">
             <div
               className="overflow-x-hidden w-full"
               onMouseLeave={() => setFocused("")}
             >
               <ul className="flex flex-col space-y-3">
-                {sidebarLinks.map((link) => {
-                  // if (user && link?.allowedRoles.includes(user.role)) {
-                  return (
+                {sidebarLinks
+                  .filter((link) => link.allowedRoles?.includes(userRole as UserRole) || "")
+                  .map((link) => (
                     <li
                       key={link.pathname}
                       onMouseEnter={() => setFocused(link.title)}
@@ -127,41 +121,40 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
                       {focused === link.title ? (
                         <motion.div
                           transition={{
-                            layout: {
-                              duration: 0.2,
-                              ease: "easeOut",
-                            },
+                            layout: { duration: 0.2, ease: "easeOut" },
                           }}
-                          className="absolute bottom-0 left-0 right-0 w-full h-full group-hover:text-dark  px-5 pr-8 m-0 z-0 rounded-lg space-x-0"
+                          className="absolute bottom-0 left-0 right-0 w-full h-full group-hover:text-dark px-5 pr-8 m-0 z-0 rounded-lg space-x-0"
                           layoutId="highlight"
                         />
                       ) : null}
                     </li>
-                  );
-                  // }
-                })}
+                  ))}
               </ul>
             </div>
           </ScrollShadow>
+          <Divider />
 
-          <div
-            className={`w-full overflow-hidden p-4 pt-[calc(100vh-55rem)]  space-y-4 absolute bottom-0`}
-          >
-            <Divider />
+          <div className="w-full p-4 space-y-4">
             <ul className="flex flex-col gap-1 mb-2 space-y-2">
+
               <li className="group">
                 <SidebarLink
-                  pathname={PaymentRoutes.subscriptionUpgrade}
-                  title="Upgrade Plan"
+                  pathname={
+                    userRole === "guardian"
+                      ? GuardianRoutes.subscription
+                      : PaymentRoutes.subscriptionUpgrade
+                  }
+                  title={userRole === "guardian" ? "Manage Plan" : "Upgrade Plan"}
                   subText={formattedPlanCode}
                   icon={FiZap}
                   sidebarOpen={sidebarOpen}
                   setSidebarOpen={closeSidebar}
                 />
               </li>
+
               <li className="group">
                 <SidebarLink
-                  pathname={SidebarRoutes.settings}
+                  pathname={userRole === "guardian" ? GuardianRoutes.settings : SidebarRoutes.settings}
                   title="Settings"
                   icon={FiSettings}
                   sidebarOpen={sidebarOpen}

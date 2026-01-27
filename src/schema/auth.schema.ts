@@ -98,6 +98,12 @@ export const StepFourSchema = z.object({
 
 export const GuardianSignupSchema = z
   .object({
+    first_name: z
+      .string({ message: "FirstName is required" })
+      .min(2, { message: "FirstName is required" }),
+    last_name: z
+      .string({ message: "LastName is required" })
+      .min(2, { message: "LastName is required" }),
     email: z.email({ message: "Enter a valid email address" }),
     password: z
       .string({ message: "New Password is required" })

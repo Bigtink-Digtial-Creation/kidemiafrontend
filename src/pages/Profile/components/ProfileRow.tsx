@@ -1,53 +1,110 @@
-import { Button, Spinner } from "@heroui/react";
-import type { ReactNode } from "react";
+import { Button, Chip } from "@heroui/react";
+import { type ReactNode, useState } from "react";
+import { FiEdit2, FiCheck, FiX } from "react-icons/fi";
 
-type Props = {
+interface ProfileRowProps {
     label: string;
     value?: string | null;
+    children?: ReactNode;
     disabled?: boolean;
-    status?: "pending";
+    status?: "pending" | "approved" | "rejected";
     isUpdating?: boolean;
     onUpdate?: () => void;
-    children?: ReactNode;
-};
+    helperText?: string;
+}
 
 export default function ProfileRow({
     label,
     value,
-    disabled,
-    status,
-    isUpdating,
-    onUpdate,
     children,
-}: Props) {
+    disabled = false,
+    status,
+    isUpdating = false,
+    onUpdate,
+    helperText,
+}: ProfileRowProps) {
+    const [isEditing, setIsEditing] = useState(false);
+
+    const handleUpdate = () => {
+        if (onUpdate) {
+            onUpdate();
+            setIsEditing(false);
+        }
+    };
+
+    const handleCancel = () => {
+        setIsEditing(false);
+    };
+
+    const getStatusChip = () => {
+        if (!status || status === "approved") return null;
+
+        const statusConfig = {
+            pending: { color: "warning" as const, label: "Pending Approval" },
+            rejected: { color: "danger" as const, label: "Rejected" },
+        };
+
+        const config = statusConfig[status as keyof typeof statusConfig];
+        if (!config) return null;
+
+        return (
+            <Chip size="sm" color={config.color} variant="flat" className="ml-2">
+                {config.label}
+            </Chip>
+        );
+    };
+
     return (
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between transition-all duration-200 hover:bg-gray-100/50 rounded-lg p-2 -mx-2">
-            <div className="flex-1">
-                <p className="text-sm text-gray-500 font-medium">{label}</p>
-                {children ? (
-                    <div className="mt-1">{children}</div>
-                ) : (
-                    <p className="font-medium text-gray-800">{value}</p>
-                )}
-                {status === "pending" && (
-                    <span className="text-xs text-orange-500 font-medium animate-pulse">
-                        Pending
-                    </span>
+        <div className="py-3 border-b border-gray-200/60 last:border-0">
+            <div className="flex justify-between items-start gap-4">
+                <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                        <label className="text-sm font-medium text-gray-700">
+                            {label}
+                        </label>
+                        {getStatusChip()}
+                    </div>
+
+                    {isEditing && children ? (
+                        <div className="space-y-2">
+                            {children}
+                            {helperText && (
+                                <p className="text-xs text-gray-500 mt-1">{helperText}</p>
+                            )}
+                        </div>
+                    ) : (
+                        <>
+                            <p className={`text-sm ${disabled ? "text-gray-500" : "text-gray-900"}`}>
+                                {value || "-"}
+                            </p>
+                            {helperText && (
+                                <p className="text-xs text-blue-500 italic mt-1">{helperText}</p>
+                            )}
+                        </>
+                    )}
+                </div>
+
+                {!disabled && (
+                    <div className="flex items-center gap-2">
+                        {isEditing ? (
+                            <>
+                                <Button size="sm" color="success" variant="flat" isIconOnly onPress={handleUpdate} isLoading={isUpdating} className="min-w-8 h-8">
+                                    {!isUpdating && <FiCheck className="text-lg" />}
+                                </Button>
+                                <Button size="sm" color="danger" variant="flat" isIconOnly onPress={handleCancel} isDisabled={isUpdating} className="min-w-8 h-8">
+                                    <FiX className="text-lg" />
+                                </Button>
+                            </>
+                        ) : (
+                            children && status !== "pending" && (
+                                <Button size="sm" color="default" variant="flat" isIconOnly onPress={() => setIsEditing(true)} className="min-w-8 h-8">
+                                    <FiEdit2 className="text-sm" />
+                                </Button>
+                            )
+                        )}
+                    </div>
                 )}
             </div>
-
-            {!disabled && onUpdate && (
-                <Button
-                    size="sm"
-                    variant="light"
-                    onPress={onUpdate}
-                    isDisabled={isUpdating}
-                    className="hidden sm:flex w-full sm:w-auto bg-kidemia-secondary text-white px-6 py-2 rounded-md text-sm transition-all duration-200 hover:bg-kidemia-secondary/90 hover:shadow-md active:scale-95"
-                >
-                    {isUpdating && <Spinner size="sm" />}
-                    {isUpdating ? "Saving..." : "Update"}
-                </Button>
-            )}
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import CustomCheckbox from "../../components/Cards/CustomCheckbox";
@@ -7,6 +7,7 @@ import {
   CheckboxGroup,
   Pagination,
 } from "@heroui/react";
+import { ChevronLeft } from "lucide-react";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import { useAtom, useAtomValue } from "jotai";
@@ -16,7 +17,17 @@ import {
 } from "../../store/test.atom";
 import LoadingSequence from "../../components/Loading/LoadingSequence";
 
+
+const TIP_MESSAGES = [
+  "Pick the areas you feel most confident in or would like to challenge yourself with.",
+  "You need at least 5 topics to generate a balanced practice test.",
+  "Focused practice on specific topics helps you master difficult concepts faster.",
+  "Don't worry, you can always come back and try other topics later!",
+  "Pro tip: Mix easy and hard topics to build real exam stamina."
+];
+
 export default function TestTopicsPage() {
+  const [messageIndex, setMessageIndex] = useState(0);
   const [selectedTopics, setSelectedTopics] = useAtom(selectedTopicsAtom);
   const [page, setPage] = useState<number>(1);
   const subjectTitle = useAtomValue(selectedSubjectTitleAtom);
@@ -24,6 +35,14 @@ export default function TestTopicsPage() {
 
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % TIP_MESSAGES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const { data: topicData, isLoading } = useQuery({
     queryKey: [QueryKeys.allTopics, id],
@@ -35,7 +54,7 @@ export default function TestTopicsPage() {
   });
 
   if (isLoading) {
-    return <>
+    return (
       <LoadingSequence
         lines={[
           {
@@ -51,7 +70,7 @@ export default function TestTopicsPage() {
           },
         ]}
       />
-    </>;
+    );
   }
 
   const totalTopics = topicData?.items?.length ?? 0;
@@ -77,22 +96,35 @@ export default function TestTopicsPage() {
   };
 
   return (
-    <section className="py-4 space-y-12 md:px-12 w-full">
-      <div className="absolute top-4 left-0 px-4">
-
+    <section className="py-4 space-y-8 md:space-y-12 md:px-12 w-full relative min-h-screen">
+      <div className="sticky top-0 z-20  backdrop-blur-md md:static md:bg-transparent md:backdrop-blur-none -mx-4 px-4 py-2 md:mx-0 md:px-0">
+        <Button
+          variant="light"
+          radius="full"
+          onPress={() => navigate(-1)}
+          startContent={<ChevronLeft size={20} />}
+          className="text-kidemia-secondary font-semibold hover:bg-kidemia-biege/50 px-2 min-w-0"
+        >
+          Back
+        </Button>
       </div>
+
       <div className="space-y-3">
-        <h2 className="text-2xl text-kidemia-black font-semibold text-center">
-          Select atleast 5 {subjectTitle ? subjectTitle : ""} Topics that Interest
+        <h2 className="text-xl text-kidemia-black font-semibold text-center leading-tight">
+          Select at least 5 {subjectTitle ? subjectTitle : ""} Topics that Interest
           You the Most
         </h2>
-        <p className="text-base text-kidemia-grey text-center font-medium max-w-2xl mx-auto">
-          Pick the areas you feel most confident in or would like to challenge
-          yourself with. Once selected, you can proceed to begin your test.
-        </p>
+        <div className="h-12 flex items-center justify-center overflow-hidden">
+          <p
+            key={messageIndex} // Key triggers the animation when index changes
+            className="text-sm md:text-base text-kidemia-grey text-center font-medium max-w-2xl mx-auto px-4 animate-in fade-in slide-in-from-bottom-2 duration-500"
+          >
+            {TIP_MESSAGES[messageIndex]}
+          </p>
+        </div>
       </div>
 
-      <div className="w-full overflow-x-hidden">
+      <div className="w-full overflow-x-hidden px-2 md:px-0">
         <CheckboxGroup
           classNames={{
             base: "w-full",
@@ -102,7 +134,7 @@ export default function TestTopicsPage() {
           orientation="horizontal"
         >
           {paginatedTopics?.map((topics) => (
-            <div key={topics.id}>
+            <div key={topics.id} className="w-full md:w-auto">
               <CustomCheckbox
                 value={topics.id}
                 name={topics.name}
@@ -114,7 +146,7 @@ export default function TestTopicsPage() {
       </div>
 
       {totalTopics > itemsPerPage && (
-        <div className="flex justify-center">
+        <div className="flex justify-center py-4">
           <Pagination
             radius="sm"
             total={Math.ceil(totalTopics / itemsPerPage)}
@@ -131,12 +163,13 @@ export default function TestTopicsPage() {
         </div>
       )}
 
-      <div className="flex md:justify-end flex-col items-end gap-2">
+      {/* Footer Action Area */}
+      <div className="flex md:justify-end flex-col items-end gap-2 px-4 md:px-0 pb-8">
         <Button
           type="button"
           variant="solid"
           size="lg"
-          className="bg-kidemia-secondary text-white font-semibold w-full md:w-1/4"
+          className="bg-kidemia-secondary text-white font-semibold w-full md:w-1/4 shadow-lg shadow-kidemia-secondary/20"
           radius="sm"
           onPress={() => navigate(`/take-a-test/${id}/instructions`)}
         >
@@ -144,7 +177,7 @@ export default function TestTopicsPage() {
         </Button>
 
         {selectedTopics.length < 5 && (
-          <p className="text-xs text-danger-500 font-medium">
+          <p className="text-xs text-danger-500 font-medium italic">
             Please select {5 - selectedTopics.length} more topic(s) to continue.
           </p>
         )}

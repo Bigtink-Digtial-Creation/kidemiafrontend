@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { ChangePasswordRequest } from '../models/ChangePasswordRequest';
 import type { ForgotPasswordRequest } from '../models/ForgotPasswordRequest';
+import type { GuardianRegisterRequest } from '../models/GuardianRegisterRequest';
 import type { LoginRequest } from '../models/LoginRequest';
 import type { LoginResponse } from '../models/LoginResponse';
 import type { MessageResponse } from '../models/MessageResponse';
@@ -47,6 +48,59 @@ export class AuthenticationService {
     });
   }
   /**
+   * Register a new Guardian
+   * Register a new Guardian.
+   * This automatically creates a User and triggers the Guardian profile creation.
+   * @param requestBody
+   * @returns RegisterResponse Successful Response
+   * @throws ApiError
+   */
+  public static registerGuardianApiV1AuthRegisterGuardianPost(
+    requestBody: GuardianRegisterRequest,
+  ): CancelablePromise<RegisterResponse> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/auth/register/guardian',
+      body: requestBody,
+      mediaType: 'application/json',
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Admin Create User
+   * Create a new user account (Platform Admin only).
+   *
+   * This endpoint allows platform administrators to create user accounts
+   * with any user type. The created user will receive a verification email.
+   *
+   * - **email**: Valid email address
+   * - **password**: Min 8 characters with uppercase, lowercase, and number
+   * - **first_name**: User's first name
+   * - **last_name**: User's last name
+   * - **user_type**: Type of user (student, guardian, institution_admin, platform_admin)
+   * - **phone_number**: Optional phone number
+   * - **date_of_birth**: Optional date of birth
+   * - **username**: Optional username
+   * @param requestBody
+   * @returns RegisterResponse Successful Response
+   * @throws ApiError
+   */
+  public static adminCreateUserApiV1AuthAdminCreateUserPost(
+    requestBody: RegisterRequest,
+  ): CancelablePromise<RegisterResponse> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/auth/admin/create-user',
+      body: requestBody,
+      mediaType: 'application/json',
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
    * Login to get access token
    * Authenticate user and get access tokens.
    *
@@ -63,6 +117,27 @@ export class AuthenticationService {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/v1/auth/login',
+      body: requestBody,
+      mediaType: 'application/json',
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Admin Login only
+   * Authenticate administrative users only.
+   * Restricts access for 'guardian' and 'student' types.
+   * @param requestBody
+   * @returns LoginResponse Successful Response
+   * @throws ApiError
+   */
+  public static adminLoginApiV1AuthAdminLoginPost(
+    requestBody: LoginRequest,
+  ): CancelablePromise<LoginResponse> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/auth/admin/login',
       body: requestBody,
       mediaType: 'application/json',
       errors: {
