@@ -407,6 +407,27 @@ export class GuardiansService {
     });
   }
   /**
+   * Get Assignment Detail
+   * Get detailed assignment information including attempts
+   * @param assignmentId
+   * @returns any Successful Response
+   * @throws ApiError
+   */
+  public static getAssignmentDetailApiV1GuardiansAssignmentsAssignmentIdGet(
+    assignmentId: string,
+  ): CancelablePromise<any> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/guardians/assignments/{assignment_id}',
+      path: {
+        'assignment_id': assignmentId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
    * Get Guardian Subscription
    * Get subscription details for guardian
    * @param guardianId

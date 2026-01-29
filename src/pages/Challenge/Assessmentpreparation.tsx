@@ -23,10 +23,10 @@ import {
 import { ApiSDK } from "../../sdk";
 import { QueryKeys } from "../../utils/queryKeys";
 import { addToast } from "@heroui/react";
-import { AssessmentRoutes } from "../../routes";
+import { WardRoutes } from "../../routes";
 
-export default function AssessmentAttempt() {
-    const { assessment_id } = useParams<{ assessment_id: string }>();
+export default function AssessmentPreparation() {
+    const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -37,18 +37,18 @@ export default function AssessmentAttempt() {
     const [userAcknowledged, setUserAcknowledged] = useState(false);
 
     const { data: configData, isLoading } = useQuery({
-        queryKey: [QueryKeys.assessmentConfig, assessment_id],
-        queryFn: () => ApiSDK.AssessmentsService.getAssessmentConfigApiV1AssessmentsAssessmentIdConfigGet(assessment_id!),
-        enabled: !!assessment_id,
+        queryKey: [QueryKeys.assessmentConfig, id],
+        queryFn: () => ApiSDK.AssessmentsService.getAssessmentConfigApiV1AssessmentsAssessmentIdConfigGet(id!),
+        enabled: !!id,
     });
 
     const config = configData?.data;
 
     const startAttemptMutation = useMutation({
-        mutationFn: () => ApiSDK.AttemptsService.startAttemptApiV1AttemptsAssessmentIdStartPost(assessment_id!, {}),
+        mutationFn: () => ApiSDK.AttemptsService.startAttemptApiV1AttemptsAssessmentIdStartPost(id!, {}),
         onSuccess: (data) => {
             addToast({ title: "Assessment Started", color: "success" });
-            navigate(AssessmentRoutes.assessmentQuestion.replace(":assessment_id", assessment_id!).replace(":attempt_id", data.attempt_id));
+            navigate(WardRoutes.questions.replace(":assessment_id", id!).replace(":attempt_id", data.attempt_id));
         },
     });
 
@@ -103,8 +103,8 @@ export default function AssessmentAttempt() {
             {/* Minimal Header */}
             <header className="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-50 flex items-center px-8 justify-between">
                 <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
-                    <div className="w-8 h-8 bg-kidemia-primary rounded flex items-center justify-center text-white">E</div>
-                    <span>Exam</span>
+                    <div className="w-8 h-8 bg-kidemia-primary rounded flex items-center justify-center text-white">C</div>
+                    <span>Challenge</span>
                 </div>
                 <div className="flex items-center gap-4 text-sm font-medium text-slate-500">
                     <span className="flex items-center gap-1"><FiShield className="text-green-500" /> Secure Mode</span>
@@ -191,7 +191,7 @@ export default function AssessmentAttempt() {
                             <div className="space-y-5 mb-8">
                                 <Stat icon={<FiClock />} label="Duration" value={`${config.duration_minutes} Minutes`} />
                                 <Stat icon={<FiBookOpen />} label="Total Items" value={config.total_questions} />
-                                <Stat icon={<FiCheck />} label="Passing Score" value={`${config.passing_percentage ?? '50'}%`} />
+                                <Stat icon={<FiCheck />} label="Passing Score" value={`${config.passing_percentage ?? 50}%`} />
                                 <Stat icon={<FiAlertCircle />} label="Attempts Left" value={attemptsRemaining} highlight={attemptsRemaining <= 1} />
                             </div>
 

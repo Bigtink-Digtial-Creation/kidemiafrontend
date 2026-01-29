@@ -11,7 +11,7 @@ const gradeRemarkMap: Record<string, string> = {
   B: "Good job! You’re doing well.",
   C: "Fair effort. More practice will help.",
   D: "Below average. Focus and try again.",
-  F: "Don’t give up. Review and reattempt.",
+  F: "Don’t give up. Review and retry.",
 };
 
 export default function ResultPage() {
@@ -112,7 +112,7 @@ export default function ResultPage() {
                 size="lg"
                 variant="light"
                 className="text-[#2C3E50] font-semibold flex items-center gap-2"
-                onClick={() => navigate(SidebarRoutes.dashboard)}
+                onPress={() => navigate(SidebarRoutes.dashboard)}
               >
                 <Home className="w-5 h-5" />
                 <span className="hidden sm:inline">Home</span>
@@ -122,7 +122,7 @@ export default function ResultPage() {
                 size="lg"
                 variant="light"
                 className="text-[#2C3E50] font-semibold flex items-center gap-2"
-                onClick={() => navigate(SidebarRoutes.dashboard)}
+                onPress={() => navigate(SidebarRoutes.dashboard)}
               >
                 <LayoutDashboard className="w-5 h-5" />
                 <span className="hidden sm:inline">Dashboard</span>

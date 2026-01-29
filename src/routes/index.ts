@@ -31,14 +31,18 @@ export const GuardianRoutes = {
   profile: "/guardian/profile",
   settings: "/guardian/settings",
   wards: "/guardian/wards",
+  assignments: "/guardian/challenge/:id",
+  monitor: "/guardian/challenge/monitoring",
   reports: '/guardian/reports',
   wardReport: '/guardian/reports/:wardId',
-  assessments: '/guardian/assessments',
-  createAssessment: '/guardian/assessments/create',
+  assessments: '/guardian/challenges',
+  assessmentDetail: '/guardian/challenge/:assignmentId',
+  createAssessment: '/guardian/challenges/create',
   categoryRequests: '/guardian/category-requests',
   subscription: '/guardian/subscription',
   comprehensiveReport: '/guardian/comprehensive-report',
   notifications: "/guardian/notifications",
+
 };
 
 export const SidebarRoutes = {
@@ -76,11 +80,21 @@ export const TestRoutes = {
 
 export const AssessmentRoutes = {
   assessmentInstructions: "/assessment/instructions/:id",
-  assesmentAttempt: "/assessment/:assessmentId/attempt-instructions",
+  assesmentAttempt: "/assessment/:assessment_id/start",
   assessmentQuestion: "/assessment/:assessment_id/:attempt_id/questions",
   assessmentResult: "/assessment/result/:assessment_id",
   assessmentCorrection: "/assessment/:attemptId/corrections",
 };
+
+export const WardRoutes = {
+
+  challenges: "/challenges/available",
+  assessmentResult: "/challenges/result/:id",
+  assessmentInstructions: "/challenges/instructions/:id",
+  precheck: "/challenge/:id/precheck",
+  questions: "/challenge/:assessment_id/exam/:attempt_id"
+
+}
 
 export const PaymentRoutes = {
   checkout: "/payment/checkout/:id/plan",
@@ -98,5 +112,6 @@ export type GuardianRoutes = (typeof GuardianRoutes)[keyof typeof GuardianRoutes
 export type SidebarRoutes = (typeof SidebarRoutes)[keyof typeof SidebarRoutes];
 export type TestRoutes = (typeof TestRoutes)[keyof typeof TestRoutes];
 export type PaymentRoutes = (typeof PaymentRoutes)[keyof typeof PaymentRoutes];
-export type AssessmentRoutes =
-  (typeof AssessmentRoutes)[keyof typeof AssessmentRoutes];
+export type AssessmentRoutes = (typeof AssessmentRoutes)[keyof typeof AssessmentRoutes];
+export type WardRoutes = (typeof WardRoutes)[keyof typeof WardRoutes];
+

@@ -9,8 +9,8 @@ import {
   MdWallet,
 } from "react-icons/md";
 import { CgPerformance } from "react-icons/cg";
-import { FiBarChart2, FiBell, FiHome } from "react-icons/fi";
-import { FaCircleQuestion } from "react-icons/fa6";
+import { FiBarChart2, FiHome } from "react-icons/fi";
+import { FaCircleQuestion, FaSignsPost } from "react-icons/fa6";
 
 export type SidebarLinkT = {
   title: string;
@@ -75,15 +75,16 @@ export const sidebarLinks: SidebarLinkT[] = [
     allowedRoles: [UserRole.GUARDIAN],
   },
   {
+    title: "Monitor",
+    pathname: GuardianRoutes.monitor,
+    icon: FaSignsPost,
+    allowedRoles: [UserRole.GUARDIAN],
+  },
+  {
     title: "Reports",
     pathname: GuardianRoutes.comprehensiveReport,
     icon: FiBarChart2,
     allowedRoles: [UserRole.GUARDIAN],
   },
-  {
-    title: "Notifications",
-    pathname: GuardianRoutes.notifications,
-    icon: FiBell,
-    allowedRoles: [UserRole.GUARDIAN],
-  },
+
 ];

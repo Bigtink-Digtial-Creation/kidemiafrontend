@@ -11,7 +11,9 @@ import { ApiSDK } from "../../sdk";
 import StatCard from "./components/StatCard";
 import ReportSummary from "./components/ReportSummary";
 import AssesstmentHistory from "./components/AssesstmentHistory";
-import { SidebarRoutes, TestRoutes } from "../../routes";
+import { SidebarRoutes, TestRoutes, WardRoutes } from "../../routes";
+import { AiFillTrophy } from "react-icons/ai";
+import { FiEdit3, FiZap } from "react-icons/fi";
 
 
 export default function DashboardPage() {
@@ -30,24 +32,44 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-end items-center">
-        <div className="flex items-center space-x-3">
+
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">Welcome Back!</h1>
+          <p className="text-slate-500">Ready to sharpen your skills today?</p>
+        </div>
+
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <Button
-            className="bg-kidemia-biege border border-enita-black2 font-medium text-kidemia-primary w-full"
-            variant="faded"
-            size="md"
-            radius="sm"
-            type="button"
+            className="bg-white hover:bg-orange-50 border-2 border-orange-100 font-bold text-orange-600 shadow-sm transition-all hover:scale-105"
+            variant="flat"
+            size="lg"
+            radius="full"
+            startContent={<AiFillTrophy className="text-xl" />}
+            onPress={() => navigate(WardRoutes.challenges)}
+          >
+            Challenges
+          </Button>
+
+          <Button
+            className="bg-white hover:bg-blue-50 border-2 border-blue-100 font-bold text-blue-600 shadow-sm transition-all hover:scale-105"
+            variant="flat"
+            size="lg"
+            radius="full"
+            startContent={<FiEdit3 className="text-xl" />}
             onPress={() => navigate(TestRoutes.takeTest)}
           >
             Practice
           </Button>
 
           <Button
-            className="bg-kidemia-secondary text-kidemia-white font-medium w-full px-8"
-            size="md"
-            radius="sm"
-            type="button"
+            className="bg-gradient-to-r from-kidemia-secondary 
+            to-kidemia-primary text-white font-bold px-10 
+            shadow-lg shadow-purple-200 transition-all 
+            hover:scale-105 active:scale-95 hover:brightness-110"
+            size="lg"
+            radius="full"
+            startContent={<FiZap className="text-xl" />}
             onPress={() => navigate(SidebarRoutes.takeAssessment)}
           >
             Take Exam
@@ -57,7 +79,8 @@ export default function DashboardPage() {
 
       <div className="space-y-10">
         {/* Stat Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-5 gap-5 lg:gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 
+        2xl:grid-cols-5 gap-5 lg:gap-4">
           {statsLoading ? (
             <>
               {[...Array(5)].map((_, idx) => (

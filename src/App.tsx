@@ -6,7 +6,8 @@ import {
   SidebarRoutes,
   TestRoutes,
   PaymentRoutes,
-  GuardianRoutes
+  GuardianRoutes,
+  WardRoutes
 } from "./routes";
 
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -44,8 +45,6 @@ import HistoryPage from "./pages/History";
 import SettingsPage from "./pages/Settings";
 import AssessmentPage from "./pages/Assessment";
 import AssessmentInstruction from "./pages/Assessment/AssessmentInstruction";
-import AssessmentAttempt from "./pages/Assessment/AssessmentAttempt";
-import AssessmentQuestions from "./pages/Assessment/AssessmentQuestions";
 import AssessmentResult from "./pages/Assessment/AssessmentResult";
 import TestDetails from "./pages/TakeTest/TestDetails";
 import TestAttempt from "./pages/TakeTest/TestAttempt";
@@ -80,8 +79,15 @@ import WardReportPage from "./pages/Guardian/WardReportPage";
 import GuardianDashboard from "./pages/Guardian";
 import ComprehensiveReportPage from "./pages/Guardian/ComprehensiveReportPage";
 import CategoryRequestsPage from "./pages/Guardian/CategoryRequestsPage";
-import CreateAssessmentPage from "./pages/Guardian/CreateAssessmentPage";
 import GuardianSubscriptionPage from "./pages/Guardian/GuardianSubscriptionPage";
+import CreateChallengeAssessment from "./pages/Guardian/CreateAssessmentPage";
+import GuardianMonitoringDashboard from "./pages/Guardian/Monitoringdashboard";
+import WardChallengeList from "./pages/Challenge/MyChallengeList";
+import AssessmentPreparation from "./pages/Challenge/Assessmentpreparation";
+import ProctoredAssessmentQuestions from "./pages/Challenge/ProctoredAssessmentQuestion";
+import AssessmentAttempt from "./pages/Assessment/AssessmentAttempt";
+import AssessmentQuestions from "./pages/Assessment/AssessmentQuestions";
+import AssignmentDetailPage from "./pages/Guardian/AssignmentDetailPage";
 
 export const router = createBrowserRouter([
   {
@@ -129,11 +135,12 @@ export const router = createBrowserRouter([
           { path: GuardianRoutes.dashboard, element: <GuardianDashboard /> },
           { path: GuardianRoutes.settings, element: <SettingsPage /> },
           { path: GuardianRoutes.wardReport, element: <WardReportPage /> },
-          // { path: GuardianRoutes.reports, element: <ReportsPage /> },
+          { path: GuardianRoutes.monitor, element: <GuardianMonitoringDashboard /> },
           { path: GuardianRoutes.categoryRequests, element: <CategoryRequestsPage />, },
           { path: GuardianRoutes.comprehensiveReport, element: <ComprehensiveReportPage />, },
           { path: GuardianRoutes.notifications, element: <NotificationsPage /> },
-          { path: GuardianRoutes.createAssessment, element: <CreateAssessmentPage /> },
+          { path: GuardianRoutes.createAssessment, element: <CreateChallengeAssessment /> },
+          { path: GuardianRoutes.assessmentDetail, element: <AssignmentDetailPage /> },
           { path: GuardianRoutes.subscription, element: <GuardianSubscriptionPage /> },
 
 
@@ -165,6 +172,18 @@ export const router = createBrowserRouter([
           { path: PaymentRoutes.buytoken, element: <BuyUnitsPage /> },
           { path: SidebarRoutes.settings, element: <SettingsPage /> },
 
+          // Challenges
+          { path: WardRoutes.challenges, element: <WardChallengeList /> },
+          { path: WardRoutes.assessmentInstructions, element: <AssessmentPreparation /> },
+          { path: WardRoutes.questions, element: <ProctoredAssessmentQuestions /> },
+
+          // Assessment - PAID - EXAM
+          { path: AssessmentRoutes.assesmentAttempt, element: <AssessmentAttempt /> },
+          { path: AssessmentRoutes.assessmentQuestion, element: <AssessmentQuestions /> },
+
+
+
+
         ],
       },
 
@@ -180,8 +199,10 @@ export const router = createBrowserRouter([
           { path: TestRoutes.questions, element: <QuestionsPage /> },
           { path: TestRoutes.review, element: <ReviewSubmission /> },
           { path: AssessmentRoutes.assessmentInstructions, element: <AssessmentInstruction /> },
-          { path: AssessmentRoutes.assesmentAttempt, element: <AssessmentAttempt /> },
-          { path: AssessmentRoutes.assessmentQuestion, element: <AssessmentQuestions /> },
+
+
+          // Challenge
+
         ],
       },
 
