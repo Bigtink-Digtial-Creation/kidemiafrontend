@@ -46,6 +46,7 @@ export default function ProctoredAssessmentQuestions() {
 
     // Refs & State
     const videoRef = useRef<HTMLVideoElement>(null);
+    const hasAutoSubmitted = useRef<boolean>(false); // CRITICAL: Prevents double submission/restart logic
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [isTimeUp, setIsTimeUp] = useState<boolean>(false);
@@ -75,10 +76,43 @@ export default function ProctoredAssessmentQuestions() {
 
     const currentQuestion = allQuestions[currentIndex];
 
+    // --- MUTATIONS ---
+
+    const saveAnsMutation = useMutation({
+        mutationFn: (body: SaveAnswerRequest) =>
+            ApiSDK.AttemptsService.saveAnswerApiV1AttemptsAttemptIdAnswerPost(attempt_id!, body)
+    });
+
+    const notifyGuardian = async (id: string) => {
+        try {
+            await ApiSDK.WardsService.autoSubmitAttemptApiV1WardsAttemptsAttemptIdAutoSubmitPost(id);
+        } catch (e) {
+            console.error("Guardian notification failed", e);
+        }
+    }
+
+    const submitAttemptMutation = useMutation({
+        mutationFn: (id: string) => ApiSDK.AttemptsService.submitAttemptApiV1AttemptsAttemptIdSubmitPost(id),
+        onMutate: () => {
+            setIsSubmitting(true);
+            hasAutoSubmitted.current = true; // Block any further auto-logic
+        },
+        onSuccess: async (data) => {
+            setAttemptResult(data);
+            resetAns();
+            await notifyGuardian(data.id);
+            // use replace: true so they can't go back to the test
+            navigate(AssessmentRoutes.assessmentResult.replace(":assessment_id", assessment_id!), { replace: true });
+        },
+        onError: () => {
+            setIsSubmitting(false);
+            hasAutoSubmitted.current = false;
+        }
+    });
 
     // Webcam Initialization
     useEffect(() => {
-        if (asstQuestions?.require_webcam) {
+        if (asstQuestions?.require_webcam && !isSubmitting) {
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then((stream) => {
                     if (videoRef.current) {
@@ -91,13 +125,13 @@ export default function ProctoredAssessmentQuestions() {
                     handleViolation("Webcam access lost or denied");
                 });
         }
-    }, [asstQuestions]);
+    }, [asstQuestions, isSubmitting]);
 
     // Tab Switching
     useEffect(() => {
-        if (asstQuestions?.detect_tab_switching) {
+        if (asstQuestions?.detect_tab_switching && !isSubmitting) {
             const handleVisibility = () => {
-                if (document.hidden) {
+                if (document.hidden && !hasAutoSubmitted.current) {
                     const nextCount = tabSwitchCount + 1;
                     setTabSwitchCount(nextCount);
                     handleViolation(`Tab switch detected (${nextCount}/${maxTabSwitches})`);
@@ -109,22 +143,23 @@ export default function ProctoredAssessmentQuestions() {
             document.addEventListener("visibilitychange", handleVisibility);
             return () => document.removeEventListener("visibilitychange", handleVisibility);
         }
-    }, [tabSwitchCount, asstQuestions]);
+    }, [tabSwitchCount, asstQuestions, isSubmitting]);
 
     // Fullscreen Monitor
     useEffect(() => {
-        if (asstQuestions?.fullscreen_required) {
+        if (asstQuestions?.fullscreen_required && !isSubmitting) {
             const handleFs = () => {
                 const isFs = !!document.fullscreenElement;
                 setIsFullscreen(isFs);
-                if (!isFs) handleViolation("Fullscreen mode exited");
+                if (!isFs && !hasAutoSubmitted.current) handleViolation("Fullscreen mode exited");
             };
             document.addEventListener("fullscreenchange", handleFs);
             return () => document.removeEventListener("fullscreenchange", handleFs);
         }
-    }, [asstQuestions]);
+    }, [asstQuestions, isSubmitting]);
 
     const handleViolation = (message: string) => {
+        if (hasAutoSubmitted.current) return;
         setWarningMessage(message);
         onOpen();
         if (attempt_id) {
@@ -134,48 +169,31 @@ export default function ProctoredAssessmentQuestions() {
         }
     };
 
-    // Timer
+    // Timer Logic - Fixed to prevent restarts
     useEffect(() => {
-        if (!isLoading && asstQuestions?.duration_minutes) {
+        if (!isLoading && asstQuestions?.duration_minutes && !isSubmitting) {
+            // Set initial values
             setTimeLeft(asstQuestions.duration_minutes * 60);
             setMaxTabSwitches(asstQuestions.max_tab_switches || 3);
+
             const timer = setInterval(() => {
                 setTimeLeft((prev) => {
                     if (prev <= 1) {
                         clearInterval(timer);
-                        setIsTimeUp(true);
-                        submitAttemptMutation.mutate(attempt_id!);
+                        // Only trigger if we haven't already started submitting
+                        if (!hasAutoSubmitted.current) {
+                            setIsTimeUp(true);
+                            submitAttemptMutation.mutate(attempt_id!);
+                        }
                         return 0;
                     }
                     return prev - 1;
                 });
             }, 1000);
+
             return () => clearInterval(timer);
         }
-    }, [isLoading, asstQuestions]);
-
-    // --- MUTATIONS ---
-
-    const saveAnsMutation = useMutation({
-        mutationFn: (body: SaveAnswerRequest) =>
-            ApiSDK.AttemptsService.saveAnswerApiV1AttemptsAttemptIdAnswerPost(attempt_id!, body)
-    });
-
-    const submitAttemptMutation = useMutation({
-        mutationFn: (id: string) => ApiSDK.AttemptsService.submitAttemptApiV1AttemptsAttemptIdSubmitPost(id),
-        onMutate: () => setIsSubmitting(true),
-        onSuccess: (data) => {
-            setAttemptResult(data);
-            resetAns();
-            notifyGuardian(data.id);
-            navigate(AssessmentRoutes.assessmentResult.replace(":assessment_id", assessment_id!));
-        }
-    });
-
-
-    const notifyGuardian = async (id: string) => {
-        ApiSDK.WardsService.autoSubmitAttemptApiV1WardsAttemptsAttemptIdAutoSubmitPost(id)
-    }
+    }, [isLoading, asstQuestions?.duration_minutes]); // Removed isSubmitting from deps to prevent re-run during submission
 
     const handleNext = async () => {
         if (selectedAnswers[currentIndex]) {
@@ -187,16 +205,16 @@ export default function ProctoredAssessmentQuestions() {
         if (currentIndex < allQuestions.length - 1) setCurrentIndex(prev => prev + 1);
     };
 
-
     if (isLoading || !currentQuestion) return <div className="h-screen flex items-center justify-center"><SpinnerCircle /></div>;
 
+    // Loading overlay during submission
     if (isSubmitting || isTimeUp) return <LoadingSequence lines={[{ text: "Securing and submitting your responses...", className: "text-2xl font-bold" }]} />;
 
     const timeWarning = timeLeft <= 300;
+    const isLastQuestion = currentIndex === allQuestions.length - 1;
 
     return (
         <div className="min-h-screen bg-[#F1F5F9] flex flex-col">
-            {/* TOP NAVIGATION BAR */}
             <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 md:px-8 py-3">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -230,8 +248,6 @@ export default function ProctoredAssessmentQuestions() {
             </header>
 
             <main className="flex-1 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-8">
-
-                {/* LEFT: QUESTION CONTENT */}
                 <div className="lg:col-span-8 space-y-6">
                     <Card className="shadow-sm border-none rounded-[2rem] overflow-hidden">
                         <CardBody className="p-6 md:p-10">
@@ -270,16 +286,28 @@ export default function ProctoredAssessmentQuestions() {
                         </CardBody>
                     </Card>
 
-                    {/* MOBILE NAV (Visible only on small screens) */}
                     <div className="flex lg:hidden items-center justify-between gap-4 mt-4">
                         <Button isIconOnly variant="flat" className="bg-kidemia-secondary text-white" onPress={() => setCurrentIndex(c => c - 1)} isDisabled={currentIndex === 0}><FiArrowLeft /></Button>
-                        <Pagination total={allQuestions.length} page={currentIndex + 1} onChange={(p) => setCurrentIndex(p - 1)} size="sm" />
-                        <Button isIconOnly color="primary" className="bg-kidemia-secondary text-white" onPress={handleNext}><FiArrowRight /></Button>
+                        {!isLastQuestion ? (
+                            <>
+                                <Pagination total={allQuestions.length} page={currentIndex + 1} onChange={(p) => setCurrentIndex(p - 1)} size="sm" />
+                                <Button isIconOnly color="primary" className="bg-kidemia-secondary text-white" onPress={handleNext} isLoading={saveAnsMutation.isPending}><FiArrowRight /></Button>
+                            </>
+                        ) : (
+                            <Button
+                                color="success"
+                                className="flex-1 text-white font-bold h-12 rounded-xl"
+                                startContent={<FiSend />}
+                                onPress={() => submitAttemptMutation.mutate(attempt_id!)}
+                                isLoading={submitAttemptMutation.isPending}
+                            >
+                                Submit Final
+                            </Button>
+                        )}
                     </div>
                 </div>
 
                 <aside className="lg:col-span-4 space-y-6">
-                    {/* Live Proctoring PIP */}
                     {asstQuestions?.require_webcam && (
                         <div className="relative aspect-video rounded-[2rem] bg-slate-900 overflow-hidden shadow-xl border-4 border-white">
                             <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover -scale-x-100" />
@@ -289,7 +317,6 @@ export default function ProctoredAssessmentQuestions() {
                         </div>
                     )}
 
-                    {/* Question Grid Navigator */}
                     <Card className="hidden lg:block border-none shadow-sm rounded-[2rem]">
                         <CardBody className="p-6">
                             <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Question Map</h4>
@@ -317,12 +344,12 @@ export default function ProctoredAssessmentQuestions() {
                                     color="primary"
                                     className="font-bold rounded-2xl bg-kidemia-secondary text-white"
                                     onPress={handleNext}
-                                    isDisabled={currentIndex === allQuestions.length - 1}
+                                    isDisabled={isLastQuestion}
                                     isLoading={saveAnsMutation.isPending}
                                 >
                                     Next Question
                                 </Button>
-                                {currentIndex === allQuestions.length - 1 && (
+                                {isLastQuestion && (
                                     <Button
                                         fullWidth
                                         size="lg"
