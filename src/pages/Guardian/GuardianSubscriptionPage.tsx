@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-    Card,
-    CardBody,
     Button,
     Table,
     TableHeader,
@@ -16,11 +14,12 @@ import {
     ModalHeader,
     ModalBody,
     ModalFooter,
-    Input,
+    Select,
+    SelectItem,
     useDisclosure,
     addToast,
 } from "@heroui/react";
-import { FiPlus, FiTrash2, FiUsers, FiCreditCard, FiCalendar } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiCreditCard, FiArrowRight, FiUsers, FiCalendar } from "react-icons/fi";
 import { ApiSDK } from "../../sdk";
 import { QueryKeys } from "../../utils/queryKeys";
 import { useNavigate } from "react-router";
@@ -33,8 +32,18 @@ export default function GuardianSubscriptionPage() {
     const { isOpen: isAddOpen, onOpen: onAddOpen, onClose: onAddClose } = useDisclosure();
     const { isOpen: isRemoveOpen, onOpen: onRemoveOpen, onClose: onRemoveClose } = useDisclosure();
 
-    const [memberEmail, setMemberEmail] = useState("");
+    const [selectedWardId, setSelectedWardId] = useState("");
     const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
+
+    // Fetch guardian profile
+    const { data: guardianData } = useQuery({
+        queryKey: [QueryKeys.guardianProfile],
+        queryFn: async () => {
+            return ApiSDK.GuardiansService.getMyGuardianProfileApiV1GuardiansMeGet();
+        },
+    });
+
+    const profile = guardianData?.data;
 
     // Fetch subscription data
     const { data: subscriptionsData, isLoading: subscriptionsLoading } = useQuery({
@@ -47,6 +56,18 @@ export default function GuardianSubscriptionPage() {
     const activeSubscription = subscriptionsData?.data?.find(
         (sub: any) => sub.status === "active"
     );
+
+    // Fetch guardian's wards
+    const { data: wardsData, isLoading: wardsLoading } = useQuery({
+        queryKey: [QueryKeys.myWards, profile?.id],
+        queryFn: async () => {
+            if (!profile?.id) return null;
+            return ApiSDK.GuardiansService.getMyWardsApiV1GuardiansGuardianIdWardsGet(
+                profile.id
+            );
+        },
+        enabled: !!profile?.id,
+    });
 
     // Fetch subscription members
     const { data: membersData, isLoading: membersLoading } = useQuery({
@@ -62,19 +83,19 @@ export default function GuardianSubscriptionPage() {
 
     // Add member mutation
     const addMember = useMutation({
-        mutationFn: async (data: { subscription_id: string; member_id: string }) => {
+        mutationFn: async (data: { subscription_id: string; user_id: string }) => {
             return ApiSDK.SubscriptionsService.addMemberApiV1SubscriptionsSubscriptionIdMembersPost(
                 data.subscription_id,
-                { user_id: data.member_id }
+                { user_id: data.user_id }
             );
         },
         onSuccess: () => {
             addToast({
                 title: "Success",
-                description: "Member added to subscription successfully!",
+                description: "Ward added to subscription successfully!",
                 color: "success",
             });
-            setSelectedMemberId(null);
+            setSelectedWardId("");
             onAddClose();
             queryClient.invalidateQueries({ queryKey: [QueryKeys.subscriptionMembers] });
             queryClient.invalidateQueries({ queryKey: [QueryKeys.mysubscription] });
@@ -82,7 +103,7 @@ export default function GuardianSubscriptionPage() {
         onError: (error: any) => {
             addToast({
                 title: "Failed",
-                description: error?.body?.detail || "Failed to add member",
+                description: error?.body?.detail || "Failed to add ward to subscription",
                 color: "danger",
             });
         },
@@ -117,11 +138,21 @@ export default function GuardianSubscriptionPage() {
     });
 
     const handleAddMember = () => {
-        if (!selectedMemberId || !activeSubscription?.id) return;
+        if (!selectedWardId || !activeSubscription?.id) {
+            addToast({
+                title: "Error",
+                description: "Please select a ward",
+                color: "warning",
+            });
+            return;
+        }
+
+        const selectedWard = wardsData?.data?.find((w: any) => w.id === selectedWardId);
+        if (!selectedWard) return;
 
         addMember.mutate({
             subscription_id: activeSubscription.id,
-            member_id: selectedMemberId,
+            user_id: selectedWard.user_id,
         });
     };
 
@@ -149,156 +180,190 @@ export default function GuardianSubscriptionPage() {
 
     if (!activeSubscription) {
         return (
-            <div className="space-y-6">
-                <h1 className="text-xl font-semibold text-kidemia-black">
-                    Subscription Management
-                </h1>
-                <div className="flex flex-col items-center justify-center py-20 px-6 text-center animate-in fade-in zoom-in duration-500">
-                    {/* Minimalist Icon with subtle background pulse */}
-                    <div className="relative mb-8">
-                        <div className="absolute inset-0 bg-orange-100 rounded-full blur-2xl opacity-40 scale-150" />
-                        <div className="relative w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 shadow-sm">
-                            <FiCreditCard className="text-3xl text-slate-400" />
+            <div className="max-w-4xl mx-auto px-4 py-8 md:py-16">
+                <div className="text-center space-y-8">
+                    {/* Icon */}
+                    <div className="flex justify-center">
+                        <div className="w-20 h-20 rounded-full bg-orange-50 flex items-center justify-center">
+                            <FiCreditCard className="text-4xl text-orange-500" />
                         </div>
                     </div>
 
-                    {/* Typography - Clean & High Density */}
-                    <div className="max-w-sm mx-auto">
-                        <h3 className="text-2xl font-bold tracking-tight text-slate-900 mb-3">
-                            Subscription Required
-                        </h3>
-                        <p className="text-sm font-medium text-slate-500 leading-relaxed mb-10">
-                            To manage your wards and access advanced analytics, please choose a plan that fits your family's needs.
+                    {/* Content */}
+                    <div className="space-y-4">
+                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                            No Active Subscription
+                        </h1>
+                        <p className="text-gray-600 max-w-md mx-auto">
+                            Subscribe to a plan to add wards to your subscription and share benefits with your family.
                         </p>
                     </div>
 
-                    {/* Action - Brand Focused */}
+                    {/* Action */}
                     <Button
-                        className="h-12 px-10 bg-kidemia-secondary text-white font-bold rounded-xl shadow-lg shadow-orange-200 hover:scale-105 transition-transform"
+                        size="lg"
+                        className="bg-orange-500 text-white font-semibold px-8"
+                        endContent={<FiArrowRight />}
                         onPress={() => navigate(PaymentRoutes.subscriptionUpgrade)}
                     >
-                        Explore Premium Plans
+                        View Plans
                     </Button>
-
-                    <p className="mt-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">
-                        Kidemia Academic Suite
-                    </p>
                 </div>
             </div>
         );
     }
 
     const members = membersData?.data?.members || [];
+    const wards = wardsData?.data || [];
     const canAddMore = activeSubscription.max_members
         ? activeSubscription.current_members < activeSubscription.max_members
         : true;
 
+    // Enrich members with ward data
+    const enrichedMembers = members.map((member: any) => {
+        const ward = wards.find((w: any) => w.user_id === member.user_id);
+        return {
+            ...member,
+            full_name: ward?.full_name || "Unknown",
+            email: ward?.email || "N/A",
+            is_owner: member.role === "owner",
+        };
+    });
+
+    // Filter wards that are not already members
+    const availableWards = wards.filter(
+        (ward: any) => !members.some((member: any) => member.user_id === ward.user_id)
+    );
+
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
+        <div className="max-w-6xl mx-auto px-4 py-6 md:py-8 space-y-6 md:space-y-8">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-kidemia-black">
-                        Subscription Management
+                    <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+                        Subscription Members
                     </h1>
-                    <p className="text-gray-500">
-                        Manage members on your subscription plan
+                    <p className="text-sm text-gray-600 mt-1">
+                        Add wards to share subscription benefits
                     </p>
+                </div>
+
+                <Button
+                    size="sm"
+                    variant="light"
+                    className="text-orange-500 font-medium self-start sm:self-auto"
+                    endContent={<FiArrowRight className="text-sm" />}
+                    onPress={() => navigate(PaymentRoutes.subscriptionUpgrade)}
+                >
+                    Manage Subscription
+                </Button>
+            </div>
+
+            {/* Subscription Info - Clean Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-4 border-y border-gray-200">
+                <div className="flex items-center gap-3">
+                    <FiCreditCard className="text-xl text-orange-500 flex-shrink-0" />
+                    <div>
+                        <p className="text-xs text-gray-500">Plan</p>
+                        <p className="font-semibold text-gray-900 capitalize">
+                            {activeSubscription.plan_code.replace(/_/g, " ")}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <FiUsers className="text-xl text-blue-500 flex-shrink-0" />
+                    <div>
+                        <p className="text-xs text-gray-500">Members</p>
+                        <p className="font-semibold text-gray-900">
+                            {activeSubscription.current_members} / {activeSubscription.max_members || "∞"}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <FiCalendar className="text-xl text-green-500 flex-shrink-0" />
+                    <div>
+                        <p className="text-xs text-gray-500">Next Billing</p>
+                        <p className="font-semibold text-gray-900">
+                            {new Date(activeSubscription.next_billing_date).toLocaleDateString()}
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            {/* Subscription Summary */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card>
-                    <CardBody className="flex flex-row items-center gap-4">
-                        <FiCreditCard className="text-3xl text-orange-500" />
-                        <div>
-                            <p className="text-xs text-gray-500 font-medium">Plan</p>
-                            <h3 className="text-xl font-bold capitalize">
-                                {activeSubscription.plan_code.replace(/_/g, " ")}
-                            </h3>
-                        </div>
-                    </CardBody>
-                </Card>
-
-                <Card>
-                    <CardBody className="flex flex-row items-center gap-4">
-                        <FiUsers className="text-3xl text-blue-500" />
-                        <div>
-                            <p className="text-xs text-gray-500 font-medium">Members</p>
-                            <h3 className="text-xl font-bold">
-                                {activeSubscription.current_members} /{" "}
-                                {activeSubscription.max_members || "∞"}
-                            </h3>
-                        </div>
-                    </CardBody>
-                </Card>
-
-                <Card>
-                    <CardBody className="flex flex-row items-center gap-4">
-                        <FiCalendar className="text-3xl text-green-500" />
-                        <div>
-                            <p className="text-xs text-gray-500 font-medium">Next Billing</p>
-                            <h3 className="text-lg font-bold">
-                                {new Date(
-                                    activeSubscription.next_billing_date
-                                ).toLocaleDateString()}
-                            </h3>
-                        </div>
-                    </CardBody>
-                </Card>
+            {/* Add Member Button */}
+            <div className="flex justify-between items-center">
+                <h2 className="text-lg font-semibold text-gray-900">Current Members</h2>
+                <Button
+                    size="sm"
+                    className="bg-orange-500 text-white font-medium"
+                    startContent={<FiPlus />}
+                    onPress={onAddOpen}
+                    isDisabled={!canAddMore || availableWards.length === 0}
+                >
+                    Add Ward
+                </Button>
             </div>
 
-            {/* Members Table */}
-            <Card>
-                <CardBody>
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-bold">Subscription Members</h3>
-                        <Button
-                            color="warning"
-                            className="bg-orange-500 text-white"
-                            startContent={<FiPlus />}
-                            onPress={onAddOpen}
-                            isDisabled={!canAddMore}
+            {/* Limit Warning */}
+            {!canAddMore && (
+                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
+                    You've reached the maximum number of members for your plan. Upgrade to add more.
+                </div>
+            )}
+
+            {availableWards.length === 0 && canAddMore && (
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+                    All your wards are already added to the subscription. Add more wards from your dashboard first.
+                </div>
+            )}
+
+            {/* Members Table - Mobile Responsive */}
+            {membersLoading ? (
+                <div className="flex justify-center py-12">
+                    <SpinnerCircle />
+                </div>
+            ) : enrichedMembers.length === 0 ? (
+                <div className="text-center py-12 border border-dashed border-gray-300 rounded-lg">
+                    <p className="text-gray-500">No members yet. Add your wards to get started.</p>
+                </div>
+            ) : (
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                    <div className="inline-block min-w-full align-middle">
+                        <Table
+                            aria-label="Subscription members"
+                            removeWrapper
+                            className="border border-gray-200 rounded-lg"
                         >
-                            Add Member
-                        </Button>
-                    </div>
-
-                    {!canAddMore && (
-                        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
-                            You've reached the maximum number of members for your plan.
-                            Upgrade to add more members.
-                        </div>
-                    )}
-
-                    {membersLoading ? (
-                        <div className="flex justify-center py-8">
-                            <SpinnerCircle />
-                        </div>
-                    ) : (
-                        <Table aria-label="Subscription members">
                             <TableHeader>
-                                <TableColumn>NAME</TableColumn>
-                                <TableColumn>EMAIL</TableColumn>
-                                <TableColumn>ROLE</TableColumn>
-                                <TableColumn>JOINED</TableColumn>
-                                <TableColumn>ACTIONS</TableColumn>
+                                <TableColumn className="bg-gray-50 text-xs font-semibold">NAME</TableColumn>
+                                <TableColumn className="bg-gray-50 text-xs font-semibold hidden sm:table-cell">EMAIL</TableColumn>
+                                <TableColumn className="bg-gray-50 text-xs font-semibold">ROLE</TableColumn>
+                                <TableColumn className="bg-gray-50 text-xs font-semibold hidden md:table-cell">JOINED</TableColumn>
+                                <TableColumn className="bg-gray-50 text-xs font-semibold">ACTIONS</TableColumn>
                             </TableHeader>
-                            <TableBody emptyContent="No members found">
-                                {members.map((member: any) => (
-                                    <TableRow key={member.id}>
-                                        <TableCell>{member.full_name || "N/A"}</TableCell>
-                                        <TableCell>{member.email}</TableCell>
+                            <TableBody>
+                                {enrichedMembers.map((member: any) => (
+                                    <TableRow key={member.id} className="border-b border-gray-100 last:border-0">
+                                        <TableCell className="py-3">
+                                            <div>
+                                                <p className="font-medium text-sm">{member.full_name}</p>
+                                                <p className="text-xs text-gray-500 sm:hidden">{member.email}</p>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="hidden sm:table-cell text-sm">{member.email}</TableCell>
                                         <TableCell>
                                             <Chip
                                                 size="sm"
                                                 color={member.is_owner ? "warning" : "default"}
                                                 variant="flat"
+                                                className="text-xs"
                                             >
-                                                {member.is_owner ? "Owner" : "Member"}
+                                                {member.is_owner ? "Owner" : "Ward"}
                                             </Chip>
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="hidden md:table-cell text-sm text-gray-600">
                                             {new Date(member.joined_at).toLocaleDateString()}
                                         </TableCell>
                                         <TableCell>
@@ -306,11 +371,11 @@ export default function GuardianSubscriptionPage() {
                                                 <Button
                                                     size="sm"
                                                     color="danger"
-                                                    variant="flat"
-                                                    startContent={<FiTrash2 />}
+                                                    variant="light"
+                                                    isIconOnly
                                                     onPress={() => openRemoveModal(member.id)}
                                                 >
-                                                    Remove
+                                                    <FiTrash2 className="text-base" />
                                                 </Button>
                                             )}
                                         </TableCell>
@@ -318,27 +383,40 @@ export default function GuardianSubscriptionPage() {
                                 ))}
                             </TableBody>
                         </Table>
-                    )}
-                </CardBody>
-            </Card>
+                    </div>
+                </div>
+            )}
 
-            {/* Add Member Modal */}
+            {/* Add Ward Modal */}
             <Modal isOpen={isAddOpen} onClose={onAddClose} size="md">
                 <ModalContent>
-                    <ModalHeader>Add Member to Subscription</ModalHeader>
+                    <ModalHeader>Add Ward to Subscription</ModalHeader>
                     <ModalBody>
-                        <Input
-                            label="Member Email"
-                            placeholder="Enter email address"
-                            type="email"
-                            value={memberEmail}
-                            onChange={(e) => setMemberEmail(e.target.value)}
-                            variant="bordered"
-                            isRequired
-                        />
-                        <p className="text-sm text-gray-500">
-                            The member must already be registered as a student/ward.
-                        </p>
+                        {wardsLoading ? (
+                            <div className="flex justify-center py-8">
+                                <SpinnerCircle />
+                            </div>
+                        ) : (
+                            <>
+                                <Select
+                                    label="Select Ward"
+                                    placeholder="Choose a ward to add"
+                                    selectedKeys={selectedWardId ? [selectedWardId] : []}
+                                    onChange={(e) => setSelectedWardId(e.target.value)}
+                                    variant="bordered"
+                                    isRequired
+                                >
+                                    {availableWards.map((ward: any) => (
+                                        <SelectItem key={ward.id} textValue={ward.full_name}>
+                                            {ward.full_name} ({ward.email})
+                                        </SelectItem>
+                                    ))}
+                                </Select>
+                                <p className="text-sm text-gray-500">
+                                    Adding a ward to your subscription gives them access to all subscription benefits.
+                                </p>
+                            </>
+                        )}
                     </ModalBody>
                     <ModalFooter>
                         <Button color="default" variant="flat" onPress={onAddClose}>
@@ -350,7 +428,7 @@ export default function GuardianSubscriptionPage() {
                             onPress={handleAddMember}
                             isLoading={addMember.isPending}
                         >
-                            Add Member
+                            Add Ward
                         </Button>
                     </ModalFooter>
                 </ModalContent>

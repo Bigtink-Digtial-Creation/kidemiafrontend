@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   addToast,
   Button,
@@ -30,15 +30,20 @@ export default function QuestionsPage() {
     assessment_id: string;
     attempt_id: string;
   }>();
+
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useAtom(selectedAnswersAtom);
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isTimeUp, setIsTimeUp] = useState<boolean>(false);
 
+  const hasSubmittedRef = useRef(false);
+  const timerStartedRef = useRef(false);
+
   const setAttemptResult = useSetAtom(testAttemptResultAtom);
   const resetAns = useResetAtom(selectedAnswersAtom);
   const navigate = useNavigate();
+  const invalidateQueries = useInvalidateQueries();
 
   const { data: questionsData, isLoading } = useQuery<any>({
     queryKey: [QueryKeys.allQuestions, assessment_id],
@@ -50,7 +55,6 @@ export default function QuestionsPage() {
     enabled: !!assessment_id,
   });
 
-  // flatten and memoize questions for easy navigations
   const allQuestions = useMemo(() => {
     if (!questionsData?.questions) return [];
     return questionsData.questions.map((q: any) => ({
@@ -69,21 +73,71 @@ export default function QuestionsPage() {
       attempt_id: string;
       requestBody: SaveAnswerRequest;
     }) => {
-      return await ApiSDK.AttemptsService.saveAnswerApiV1AttemptsAttemptIdAnswerPost(
+      return ApiSDK.AttemptsService.saveAnswerApiV1AttemptsAttemptIdAnswerPost(
         attempt_id,
         requestBody,
       );
     },
-    // onSuccess: (data) => {
-    //   console.log("❌ Answer saved:", data);
-    // },
-    onError: (error) => {
+    onError(error) {
       addToast({
-        title: error.message,
+        title: apiErrorParser(error).message,
         color: "warning",
       });
     },
   });
+
+  const submitAttemptMutation = useMutation({
+    mutationFn: (attemptId: string) =>
+      ApiSDK.AttemptsService.submitAttemptApiV1AttemptsAttemptIdSubmitPost(
+        attemptId,
+      ),
+    onMutate() {
+      setIsSubmitting(true);
+    },
+    onSuccess(data) {
+      setAttemptResult(data);
+      invalidateQueries([QueryKeys.leaderboard]);
+      addToast({
+        description: "Attempt Submitted Successfully",
+        color: "success",
+      });
+      resetAns();
+      navigate(`/take-a-test/results/${assessment_id}`);
+    },
+    onError(error) {
+      setIsSubmitting(false);
+      addToast({
+        description: apiErrorParser(error).message,
+        color: "danger",
+      });
+    },
+  });
+
+  const saveCurrentAnswer = async () => {
+    const selectedOptionId = selectedAnswers[currentIndex];
+    const questionId = currentQuestion?.id;
+
+    if (!selectedOptionId || !questionId) return;
+
+    await saveAnsMutation.mutateAsync({
+      attempt_id: attempt_id!,
+      requestBody: {
+        question_id: questionId,
+        selected_option_ids: [selectedOptionId],
+      },
+    });
+  };
+
+  const safeSubmit = async () => {
+    if (hasSubmittedRef.current || !attempt_id) return;
+    hasSubmittedRef.current = true;
+
+    try {
+      await saveCurrentAnswer();
+    } finally {
+      submitAttemptMutation.mutate(attempt_id);
+    }
+  };
 
   const handleAnswerSelect = (value: AnswerOption) => {
     setSelectedAnswers((prev) => ({
@@ -93,29 +147,14 @@ export default function QuestionsPage() {
   };
 
   const handleNext = async () => {
-    const selectedOptionId = selectedAnswers[currentIndex];
-    const currentQuestionId = currentQuestion?.id;
-
-    if (!selectedOptionId || !currentQuestionId) return;
-
     try {
-      await saveAnsMutation.mutateAsync({
-        attempt_id: attempt_id!,
-        requestBody: {
-          question_id: currentQuestionId,
-          selected_option_ids: [selectedOptionId],
-        },
-      });
-
-      // Only move to next question on success
+      await saveCurrentAnswer();
       if (currentIndex < allQuestions.length - 1) {
         setCurrentIndex((prev) => prev + 1);
       }
-    } catch (error) {
-      const parsedError = apiErrorParser(error);
+    } catch {
       addToast({
-        title: "An Error Occured",
-        description: parsedError.name,
+        title: "Failed to save answer",
         color: "danger",
       });
     }
@@ -127,223 +166,137 @@ export default function QuestionsPage() {
     }
   };
 
-  const invalidateQueries = useInvalidateQueries();
-  // submit mutation
-  const submitAttemptMutation = useMutation({
-    mutationFn: (attemptId: string) =>
-      ApiSDK.AttemptsService.submitAttemptApiV1AttemptsAttemptIdSubmitPost(
-        attemptId,
-      ),
-    onMutate: () => {
-      setIsSubmitting(true);
-    },
-    onSuccess(data) {
-      setAttemptResult(data);
-      invalidateQueries([QueryKeys.leaderboard,])
-      addToast({
-        description: "Attempt Submitted Successfull",
-        color: "success",
-      });
-      setTimeout(() => {
-        navigate(`/take-a-test/results/${assessment_id}`);
-      }, 800);
-    },
-    onError(error) {
-      setIsSubmitting(false);
-      const parsedError = apiErrorParser(error);
-      addToast({
-        description: parsedError.message,
-        color: "danger",
-      });
-    },
-  });
-
   useEffect(() => {
-    if (!isLoading && questionsData?.duration_minutes) {
-      const durationInSeconds = questionsData.duration_minutes * 60;
-
-      setTimeLeft(durationInSeconds);
-
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            setIsTimeUp(true);
-
-            addToast({
-              title: "Time's up!",
-              description: "Submitting your answers automatically...",
-              color: "warning",
-            });
-
-            //Trigger auto-submit when time runs out
-            if (attempt_id && !submitAttemptMutation.isPending) {
-              submitAttemptMutation.mutate(attempt_id);
-            }
-
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(timer);
+    if (
+      timerStartedRef.current ||
+      isLoading ||
+      !questionsData?.duration_minutes
+    ) {
+      return;
     }
-  }, [isLoading, questionsData?.duration_minutes]);
 
-  const handleSubmit = (attemptId: string) => {
-    submitAttemptMutation.mutate(attemptId);
-    resetAns();
-  };
+    timerStartedRef.current = true;
+    const totalSeconds = questionsData.duration_minutes * 60;
+    setTimeLeft(totalSeconds);
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setIsTimeUp(true);
+
+          addToast({
+            title: "Time's up!",
+            description: "Submitting your test automatically...",
+            color: "warning",
+          });
+
+          safeSubmit();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isLoading, questionsData?.duration_minutes]);
 
   if (isLoading || !currentQuestion) {
     return (
       <LoadingSequence
         lines={[
-          {
-            text: "Loading your questions...",
-            className: "text-lg md:text-xl text-kidemia-primary",
-          },
-          {
-            text: "Don't back out. LOL",
-          },
+          { text: "Loading your questions...", className: "text-lg" },
+          { text: "Please wait..." },
         ]}
       />
     );
   }
 
-  if (isSubmitting || submitAttemptMutation.isPending || isTimeUp) {
+  if (isSubmitting || submitAttemptMutation.isPending) {
     return (
       <LoadingSequence
         lines={[
           {
             text: isTimeUp
               ? "⏰ Time's up! Submitting your test..."
-              : "Relax, your result is cooking 🍳",
-            className: "text-2xl md:text-3xl font-semibold text-kidemia-black",
+              : "Submitting your assessment...",
+            className: "text-2xl font-semibold",
           },
           {
-            text: isTimeUp
-              ? "Don't worry, we're saving all your progress and wrapping things up for you."
-              : "We're adding the final touches to your test assessment. Hang tight while we finish up!",
-            className: "text-lg text-kidemia-grey max-w-md text-center",
-          },
-          {
-            text: "Please don't close or refresh this page.",
-            className: "text-base text-kidemia-secondary italic",
+            text: "Please do not close or refresh this page.",
           },
         ]}
       />
-
     );
   }
 
   return (
     <section className="py-4 space-y-12 md:px-12 w-full max-w-4xl">
       <div className="absolute top-0 right-0 px-8 pt-2.5">
-        <div className="flex justify-between flex-col md:flex-row items-center gap-2 space-x-6">
-          <p className="text-md text-kidemia-black font-medium">
-            Time Left: {formatTime(timeLeft)}
-          </p>
-        </div>
+        <p className="text-md font-medium">
+          Time Left: {formatTime(timeLeft)}
+        </p>
       </div>
 
       <div className="pt-2">
-        <h3 className="text-lg font-semibold text-kidemia-primary text-center">
+        <h3 className="text-lg font-semibold text-center">
           Topic: {currentQuestion.topic_name}
         </h3>
       </div>
 
       <div className="py-4">
-        <div className="space-y-3">
-          <h2 className="text-xl text-kidemia-black font-semibold">
-            Question {currentIndex + 1}
-          </h2>
-          <p className="text-lg text-kidemia-grey font-medium">
-            {currentQuestion.question_text}
-          </p>
-        </div>
+        <h2 className="text-xl font-semibold">
+          Question {currentIndex + 1}
+        </h2>
+        <p className="text-lg">{currentQuestion.question_text}</p>
 
-        <div className="py-6">
-          <RadioGroup
-            value={selectedAnswers[currentIndex] || ""}
-            onValueChange={handleAnswerSelect}
-            classNames={{
-              wrapper: "space-y-6",
-            }}
-          >
-            {currentQuestion.options.map((option: any) => (
-              <Radio
-                key={option.id}
-                value={option.id}
-                className="text-kidemia-grey font-medium"
-                color="warning"
-              >
-                {option.option_text}
-              </Radio>
-            ))}
-          </RadioGroup>
-        </div>
+        <RadioGroup
+          value={selectedAnswers[currentIndex] || ""}
+          onValueChange={handleAnswerSelect}
+          className="py-6 space-y-6"
+        >
+          {currentQuestion.options.map((option: any) => (
+            <Radio key={option.id} value={option.id}>
+              {option.option_text}
+            </Radio>
+          ))}
+        </RadioGroup>
       </div>
 
-      <div className="flex items-center space-x-6 py-6">
+      <div className="flex gap-6 py-6">
         <Button
-          className="bg-kidemia-biege border border-enita-black2 font-medium text-kidemia-primary w-full"
-          variant="faded"
-          size="md"
-          radius="sm"
-          type="button"
-          startContent={<FaArrowLeft />}
           onPress={handlePrev}
           isDisabled={currentIndex === 0}
+          startContent={<FaArrowLeft />}
         >
           Previous
         </Button>
 
         {currentIndex === allQuestions.length - 1 ? (
           <Button
-            className="bg-kidemia-secondary text-kidemia-white font-medium w-full"
-            size="md"
-            radius="sm"
-            type="button"
-            onPress={() => handleSubmit(attempt_id!)}
-            isDisabled={
-              !selectedAnswers[currentIndex] || submitAttemptMutation.isPending
-            }
-            isLoading={submitAttemptMutation.isPending}
+            onPress={safeSubmit}
+            isDisabled={!selectedAnswers[currentIndex]}
+            color="success"
           >
-            {submitAttemptMutation.isPending ? "Submitting Attempt" : "Submit"}
+            Submit
           </Button>
         ) : (
           <Button
-            className="bg-kidemia-secondary text-kidemia-white font-medium w-full"
-            size="md"
-            radius="sm"
-            type="button"
-            endContent={<FaArrowRight />}
             onPress={handleNext}
-            isDisabled={
-              !selectedAnswers[currentIndex] || saveAnsMutation.isPending
-            }
-            isLoading={saveAnsMutation.isPending}
+            isDisabled={!selectedAnswers[currentIndex]}
+            endContent={<FaArrowRight />}
+            color="primary"
           >
-            {saveAnsMutation.isPending ? "Saving Answer" : "Next"}
+            Next
           </Button>
         )}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 flex justify-center items-center py-4">
-        <Pagination
-          radius="sm"
-          page={currentIndex + 1}
-          total={allQuestions.length}
-          classNames={{
-            cursor: "border-1 bg-transparent text-kidemia-primary",
-            item: "bg-transparent shadow-none cursor-pointer",
-          }}
-          onChange={(page) => setCurrentIndex(page - 1)}
-        />
-      </div>
+      <Pagination
+        page={currentIndex + 1}
+        total={allQuestions.length}
+        onChange={(page) => setCurrentIndex(page - 1)}
+      />
     </section>
   );
 }

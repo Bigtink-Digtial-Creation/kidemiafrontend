@@ -3,6 +3,7 @@ import { IoIosInformationCircleOutline } from "react-icons/io";
 import { assessmentAtom } from "../../store/test.atom";
 import { useAtomValue } from "jotai";
 import { useNavigate, useParams } from "react-router";
+import { AssessmentRoutes } from "../../routes";
 
 export default function AssessmentInstruction() {
   const assessment = useAtomValue(assessmentAtom);
@@ -90,7 +91,7 @@ export default function AssessmentInstruction() {
           radius="sm"
           size="md"
           className="w-full bg-kidemia-secondary text-white font-semibold"
-          onPress={() => navigate(`/assessment/${id}/attempt-instructions`)}
+          onPress={() => navigate(AssessmentRoutes.assesmentAttempt.replace(":assessment_id", id!))}
         >
           Start Assessment
         </Button>

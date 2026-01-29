@@ -7,6 +7,7 @@ export const QueryKeys = {
   assessmentQuestions: "assessmentQuestions",
   assesstmentAttempt: "assesstmentAttempt",
   assessmentCategories: "assessmentCategories",
+  assessmentConfig: "assessmentConfig",
   testDetails: "testDetails",
   testAttempt: "testAttempt",
   categories: "categories",
@@ -23,5 +24,7 @@ export const QueryKeys = {
   wardStats: "wardStats",
   myWards: "myWards",
   subscriptionMembers: "subscriptionMembers",
-
+  assignments: "assignments",
+  wardAssignments: "wardAssignments",
+  assignmentDetail: "assignmentDetail",
 } as const;

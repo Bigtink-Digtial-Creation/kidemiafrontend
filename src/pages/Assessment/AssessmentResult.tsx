@@ -71,7 +71,7 @@ export default function AssessmentResult() {
             </div>
 
             <h2 className="text-xl mt-1 sm:text-2xl lg:text-3xl font-bold text-[#2C3E50] text-center px-4">
-              You scored {result.score}/{result.total_questions} Overall
+              You scored {result.score}/100 Overall
             </h2>
           </div>
 

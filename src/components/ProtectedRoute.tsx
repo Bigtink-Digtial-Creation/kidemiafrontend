@@ -2,8 +2,8 @@ import { useAtomValue } from "jotai";
 import { Navigate, Outlet, useLocation } from "react-router";
 import { userRoleAtom, emailVerifiedAtom } from "../store/user.atom";
 import { AuthRoutes } from "../routes";
-import { useAuthRedirect } from "../hooks/use-auth-redirect";
 import SpinnerCircle from "./Spinner/Circle";
+import { useAuthRedirect } from "../hooks/use-auth-redirect";
 
 type ProtectedRouteProps = {
     allowedRoles: string[];

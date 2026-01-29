@@ -5,6 +5,7 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 import { IoTimeOutline } from "react-icons/io5";
 import { MdCreditScore } from "react-icons/md";
 import { assessmentAtom } from "../../store/test.atom";
+import { AssessmentRoutes } from "../../routes";
 
 interface AssessmentCardI {
   id: string;
@@ -38,7 +39,7 @@ export default function AssessmentCard({
       timeMins,
       questionsNo,
     });
-    navigate(`/assessment/instructions/${id}`);
+    navigate(AssessmentRoutes.assessmentInstructions.replace(":id", id!));
   };
 
   return (

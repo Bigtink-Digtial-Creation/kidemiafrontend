@@ -64,7 +64,7 @@ export default function LoginPage() {
         });
         setTimeout(() => {
           navigate(targetPath, { replace: true });
-        }, 100);
+        }, 300);
 
       }
     },

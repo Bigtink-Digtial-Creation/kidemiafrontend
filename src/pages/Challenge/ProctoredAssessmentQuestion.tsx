@@ -38,7 +38,7 @@ import SpinnerCircle from "../../components/Spinner/Circle";
 import LoadingSequence from "../../components/Loading/LoadingSequence";
 import { AssessmentRoutes } from "../../routes";
 
-export default function AssessmentQuestions() {
+export default function ProctoredAssessmentQuestions() {
     const resetAns = useResetAtom(selectedAssesmentAnswersAtom);
     const setAttemptResult = useSetAtom(attemptResultAtom);
     const { assessment_id, attempt_id } = useParams<{ assessment_id: string; attempt_id: string }>();
@@ -167,9 +167,15 @@ export default function AssessmentQuestions() {
         onSuccess: (data) => {
             setAttemptResult(data);
             resetAns();
+            notifyGuardian(data.id);
             navigate(AssessmentRoutes.assessmentResult.replace(":assessment_id", assessment_id!));
         }
     });
+
+
+    const notifyGuardian = async (id: string) => {
+        ApiSDK.WardsService.autoSubmitAttemptApiV1WardsAttemptsAttemptIdAutoSubmitPost(id)
+    }
 
     const handleNext = async () => {
         if (selectedAnswers[currentIndex]) {
@@ -248,7 +254,7 @@ export default function AssessmentQuestions() {
                                     <div
                                         key={opt.id}
                                         className={`group relative flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer ${selectedAnswers[currentIndex] === opt.id
-                                            ? "border-kidemia-secondary bg-blue-50/50 shadow-md shadow-kidemia-secondary/5s0"
+                                            ? "border-blue-500 bg-blue-50/50 shadow-md shadow-blue-100"
                                             : "border-slate-100 hover:border-slate-300 bg-white"
                                             }`}
                                     >
@@ -264,6 +270,7 @@ export default function AssessmentQuestions() {
                         </CardBody>
                     </Card>
 
+                    {/* MOBILE NAV (Visible only on small screens) */}
                     <div className="flex lg:hidden items-center justify-between gap-4 mt-4">
                         <Button isIconOnly variant="flat" className="bg-kidemia-secondary text-white" onPress={() => setCurrentIndex(c => c - 1)} isDisabled={currentIndex === 0}><FiArrowLeft /></Button>
                         <Pagination total={allQuestions.length} page={currentIndex + 1} onChange={(p) => setCurrentIndex(p - 1)} size="sm" />

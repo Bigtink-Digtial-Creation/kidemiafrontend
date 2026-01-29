@@ -109,17 +109,17 @@ export default function AssessmentPage() {
           ) : (
             <div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {currentPageData?.map((asst) => (
+                {currentPageData?.map((ass) => (
                   <AssessmentCard
-                    key={asst.id}
-                    id={asst.id}
-                    title={asst.title}
-                    code={asst.code}
-                    timeMins={asst.duration_minutes}
-                    questionsNo={asst.total_questions}
-                    attemptsNo={asst.total_attempts}
-                    priceNo={asst.price}
-                    avgScore={asst.average_score}
+                    key={ass.id}
+                    id={ass.id}
+                    title={ass.title}
+                    code={ass.code}
+                    timeMins={ass.duration_minutes}
+                    questionsNo={ass.total_questions}
+                    attemptsNo={ass.total_attempts}
+                    priceNo={ass.price}
+                    avgScore={ass.average_score}
                   />
                 ))}
               </div>
