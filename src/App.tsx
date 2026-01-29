@@ -74,7 +74,6 @@ import { TermsOfServicePage } from "./pages/Home/TermsOfServicePage";
 import { FAQPage } from "./pages/Home/FAQPage";
 import EmailLayout from "./layouts/Email.layout";
 import SubscriptionCallbackPage from "./pages/payment/SubscriptionCallbackPage";
-import SubscriptionDashboard from "./pages/payment/PricingUpgrade";
 import WardReportPage from "./pages/Guardian/WardReportPage";
 import GuardianDashboard from "./pages/Guardian";
 import ComprehensiveReportPage from "./pages/Guardian/ComprehensiveReportPage";
@@ -88,6 +87,7 @@ import ProctoredAssessmentQuestions from "./pages/Challenge/ProctoredAssessmentQ
 import AssessmentAttempt from "./pages/Assessment/AssessmentAttempt";
 import AssessmentQuestions from "./pages/Assessment/AssessmentQuestions";
 import AssignmentDetailPage from "./pages/Guardian/AssignmentDetailPage";
+import SubscriptionDashboard from "./pages/payment/PricingUpgrade";
 
 export const router = createBrowserRouter([
   {

@@ -10,20 +10,30 @@ export const PricingCardTwo = ({
     isYearly,
     features,
     isCurrentPlan,
+    currentPlanPrice, // New prop to compare against
     onSelect,
 }: {
     name: string;
-    description?: string,
+    description?: string;
     price: number;
     yearlyPrice?: number;
     currency: string;
     isYearly: boolean;
     features: any[];
     isCurrentPlan: boolean;
+    currentPlanPrice: number; // The numeric value of the user's existing plan
     onSelect: () => void;
 }) => {
     const displayPrice = isYearly && yearlyPrice ? yearlyPrice : price;
     const monthlySavings = isYearly && yearlyPrice ? Math.round(((price * 12 - yearlyPrice * 12) / (price * 12)) * 100) : 0;
+
+    const getButtonText = () => {
+        if (isCurrentPlan) return "Current Plan";
+        if (!currentPlanPrice || currentPlanPrice === 0) {
+            return "Get Started";
+        }
+        return displayPrice > currentPlanPrice ? "Upgrade" : "Downgrade";
+    };
 
     return (
         <Card className="relative flex flex-col transition-shadow duration-200 hover:shadow-lg bg-white border border-gray-200">
@@ -43,7 +53,8 @@ export const PricingCardTwo = ({
                         </span>
                     </div>
                     {description != null && description !== "" && (
-                        <p className="text-sm font-normal text-kidemia-black">{description}</p>)}
+                        <p className="text-sm font-normal text-kidemia-black">{description}</p>
+                    )}
                 </div>
 
                 {isYearly && monthlySavings > 0 && (
@@ -65,13 +76,13 @@ export const PricingCardTwo = ({
 
                 <Button
                     onPress={onSelect}
-                    disabled={isCurrentPlan}
-                    className={`w-full ${isCurrentPlan
+                    isDisabled={isCurrentPlan}
+                    className={`w-full font-medium ${isCurrentPlan
                         ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                         : "bg-kidemia-primary text-white hover:bg-kidemia-primary/90"
                         }`}
                 >
-                    {isCurrentPlan ? "Current Plan" : "Upgrade"}
+                    {getButtonText()}
                 </Button>
             </CardBody>
         </Card>

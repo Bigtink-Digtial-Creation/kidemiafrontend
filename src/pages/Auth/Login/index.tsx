@@ -9,7 +9,7 @@ import { MdOutlineEmail } from "react-icons/md";
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
 import { BiScan } from "react-icons/bi";
 import { FcGoogle } from "react-icons/fc";
-import { AuthRoutes, GuardianRoutes, SidebarRoutes } from "../../../routes";
+import { AuthRoutes } from "../../../routes";
 import { useMutation } from "@tanstack/react-query";
 import type { LoginRequest } from "../../../sdk/generated";
 import { ApiSDK } from "../../../sdk";
@@ -18,6 +18,7 @@ import {
   storedAuthTokenAtom,
 } from "../../../store/user.atom";
 import { userRoleAtom } from "../../../store/user.atom"
+import { getDashboardPathByRole } from "../../../utils/navigation";
 
 
 export default function LoginPage() {
@@ -47,16 +48,7 @@ export default function LoginPage() {
         setLoggedInUser(data);
         const roleName = data.user?.roles?.[0]?.name;
         setRole(roleName ?? null);
-        let targetPath = SidebarRoutes.dashboard;
-
-        if (roleName === "guardian") {
-          targetPath = GuardianRoutes.dashboard;
-        } else if (roleName === "student") {
-          targetPath = SidebarRoutes.dashboard;
-        } else if (roleName === "institution_admin") {
-          targetPath = "/admin/dashboard";
-        }
-
+        const targetPath = getDashboardPathByRole(roleName)
         addToast({
           title: "Login Successful",
           description: `Welcome back, ${data.user?.first_name}!`,
@@ -64,7 +56,7 @@ export default function LoginPage() {
         });
         setTimeout(() => {
           navigate(targetPath, { replace: true });
-        }, 300);
+        }, 700);
 
       }
     },

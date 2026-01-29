@@ -1,6 +1,6 @@
 import { useNavigate, useSearchParams } from "react-router";
 import { addToast, Button } from "@heroui/react";
-import { AuthRoutes, GuardianRoutes, SidebarRoutes } from "../../../routes";
+import { AuthRoutes } from "../../../routes";
 import { useMutation } from "@tanstack/react-query";
 import type { VerifyEmailRequest } from "../../../sdk/generated";
 import { ApiSDK } from "../../../sdk";
@@ -10,6 +10,7 @@ import { MdCheckCircle, MdError } from "react-icons/md";
 import { verifyEmailAtom } from "../../../store/auth.atom";
 import { useAtomValue, useSetAtom } from "jotai";
 import { loggedinUserAtom } from "../../../store/user.atom";
+import { getDashboardPathByRole } from "../../../utils/navigation";
 
 export default function VerifyEmailPage() {
     const navigate = useNavigate();
@@ -48,14 +49,7 @@ export default function VerifyEmailPage() {
             // Check if user is logged in at the time of success
             // Note: We need to get the fresh value, not the closure value
             const roleName = loggedInUser?.user?.roles?.[0]?.name;
-            let targetPath = SidebarRoutes.dashboard;
-            if (roleName === "guardian") {
-                targetPath = GuardianRoutes.dashboard;
-            } else if (roleName === "student") {
-                targetPath = SidebarRoutes.dashboard;
-            } else if (roleName === "institution_admin") {
-                targetPath = "/institution/dashboard";
-            }
+            const targetPath = getDashboardPathByRole(roleName)
             if (loggedInUser?.user) {
                 verifyEmail();
                 setTimeout(() => {
