@@ -46,6 +46,7 @@ export default function AssessmentQuestions() {
 
     // Refs & State
     const videoRef = useRef<HTMLVideoElement>(null);
+    const hasSubmitted = useRef<boolean>(false); // Guards against multiple submission calls
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [isTimeUp, setIsTimeUp] = useState<boolean>(false);
@@ -75,10 +76,34 @@ export default function AssessmentQuestions() {
 
     const currentQuestion = allQuestions[currentIndex];
 
+    // --- MUTATIONS ---
+
+    const saveAnsMutation = useMutation({
+        mutationFn: (body: SaveAnswerRequest) =>
+            ApiSDK.AttemptsService.saveAnswerApiV1AttemptsAttemptIdAnswerPost(attempt_id!, body)
+    });
+
+    const submitAttemptMutation = useMutation({
+        mutationFn: (id: string) => ApiSDK.AttemptsService.submitAttemptApiV1AttemptsAttemptIdSubmitPost(id),
+        onMutate: () => {
+            setIsSubmitting(true);
+            hasSubmitted.current = true;
+        },
+        onSuccess: (data) => {
+            setAttemptResult(data);
+            resetAns();
+            // Using replace: true prevents the user from going back to the test
+            navigate(AssessmentRoutes.assessmentResult.replace(":assessment_id", assessment_id!), { replace: true });
+        },
+        onError: () => {
+            setIsSubmitting(false);
+            hasSubmitted.current = false;
+        }
+    });
 
     // Webcam Initialization
     useEffect(() => {
-        if (asstQuestions?.require_webcam) {
+        if (asstQuestions?.require_webcam && !hasSubmitted.current) {
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then((stream) => {
                     if (videoRef.current) {
@@ -95,9 +120,9 @@ export default function AssessmentQuestions() {
 
     // Tab Switching
     useEffect(() => {
-        if (asstQuestions?.detect_tab_switching) {
+        if (asstQuestions?.detect_tab_switching && !hasSubmitted.current) {
             const handleVisibility = () => {
-                if (document.hidden) {
+                if (document.hidden && !hasSubmitted.current) {
                     const nextCount = tabSwitchCount + 1;
                     setTabSwitchCount(nextCount);
                     handleViolation(`Tab switch detected (${nextCount}/${maxTabSwitches})`);
@@ -113,11 +138,11 @@ export default function AssessmentQuestions() {
 
     // Fullscreen Monitor
     useEffect(() => {
-        if (asstQuestions?.fullscreen_required) {
+        if (asstQuestions?.fullscreen_required && !hasSubmitted.current) {
             const handleFs = () => {
                 const isFs = !!document.fullscreenElement;
                 setIsFullscreen(isFs);
-                if (!isFs) handleViolation("Fullscreen mode exited");
+                if (!isFs && !hasSubmitted.current) handleViolation("Fullscreen mode exited");
             };
             document.addEventListener("fullscreenchange", handleFs);
             return () => document.removeEventListener("fullscreenchange", handleFs);
@@ -125,6 +150,7 @@ export default function AssessmentQuestions() {
     }, [asstQuestions]);
 
     const handleViolation = (message: string) => {
+        if (hasSubmitted.current) return;
         setWarningMessage(message);
         onOpen();
         if (attempt_id) {
@@ -134,42 +160,29 @@ export default function AssessmentQuestions() {
         }
     };
 
-    // Timer
+    // Timer - Logic check added
     useEffect(() => {
-        if (!isLoading && asstQuestions?.duration_minutes) {
+        if (!isLoading && asstQuestions?.duration_minutes && !hasSubmitted.current) {
             setTimeLeft(asstQuestions.duration_minutes * 60);
             setMaxTabSwitches(asstQuestions.max_tab_switches || 3);
+
             const timer = setInterval(() => {
                 setTimeLeft((prev) => {
                     if (prev <= 1) {
                         clearInterval(timer);
-                        setIsTimeUp(true);
-                        submitAttemptMutation.mutate(attempt_id!);
+                        if (!hasSubmitted.current) {
+                            setIsTimeUp(true);
+                            submitAttemptMutation.mutate(attempt_id!);
+                        }
                         return 0;
                     }
                     return prev - 1;
                 });
             }, 1000);
+
             return () => clearInterval(timer);
         }
-    }, [isLoading, asstQuestions]);
-
-    // --- MUTATIONS ---
-
-    const saveAnsMutation = useMutation({
-        mutationFn: (body: SaveAnswerRequest) =>
-            ApiSDK.AttemptsService.saveAnswerApiV1AttemptsAttemptIdAnswerPost(attempt_id!, body)
-    });
-
-    const submitAttemptMutation = useMutation({
-        mutationFn: (id: string) => ApiSDK.AttemptsService.submitAttemptApiV1AttemptsAttemptIdSubmitPost(id),
-        onMutate: () => setIsSubmitting(true),
-        onSuccess: (data) => {
-            setAttemptResult(data);
-            resetAns();
-            navigate(AssessmentRoutes.assessmentResult.replace(":assessment_id", assessment_id!));
-        }
-    });
+    }, [isLoading, asstQuestions?.duration_minutes]);
 
     const handleNext = async () => {
         if (selectedAnswers[currentIndex]) {
@@ -181,12 +194,12 @@ export default function AssessmentQuestions() {
         if (currentIndex < allQuestions.length - 1) setCurrentIndex(prev => prev + 1);
     };
 
-
     if (isLoading || !currentQuestion) return <div className="h-screen flex items-center justify-center"><SpinnerCircle /></div>;
 
     if (isSubmitting || isTimeUp) return <LoadingSequence lines={[{ text: "Securing and submitting your responses...", className: "text-2xl font-bold" }]} />;
 
     const timeWarning = timeLeft <= 300;
+    const isLastQuestion = currentIndex === allQuestions.length - 1;
 
     return (
         <div className="min-h-screen bg-[#F1F5F9] flex flex-col">
@@ -225,7 +238,6 @@ export default function AssessmentQuestions() {
 
             <main className="flex-1 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-8">
 
-                {/* LEFT: QUESTION CONTENT */}
                 <div className="lg:col-span-8 space-y-6">
                     <Card className="shadow-sm border-none rounded-[2rem] overflow-hidden">
                         <CardBody className="p-6 md:p-10">
@@ -248,7 +260,7 @@ export default function AssessmentQuestions() {
                                     <div
                                         key={opt.id}
                                         className={`group relative flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer ${selectedAnswers[currentIndex] === opt.id
-                                            ? "border-kidemia-secondary bg-blue-50/50 shadow-md shadow-kidemia-secondary/5s0"
+                                            ? "border-kidemia-secondary bg-blue-50/50 shadow-md shadow-kidemia-secondary/50"
                                             : "border-slate-100 hover:border-slate-300 bg-white"
                                             }`}
                                     >
@@ -266,13 +278,27 @@ export default function AssessmentQuestions() {
 
                     <div className="flex lg:hidden items-center justify-between gap-4 mt-4">
                         <Button isIconOnly variant="flat" className="bg-kidemia-secondary text-white" onPress={() => setCurrentIndex(c => c - 1)} isDisabled={currentIndex === 0}><FiArrowLeft /></Button>
-                        <Pagination total={allQuestions.length} page={currentIndex + 1} onChange={(p) => setCurrentIndex(p - 1)} size="sm" />
-                        <Button isIconOnly color="primary" className="bg-kidemia-secondary text-white" onPress={handleNext}><FiArrowRight /></Button>
+
+                        {!isLastQuestion ? (
+                            <>
+                                <Pagination total={allQuestions.length} page={currentIndex + 1} onChange={(p) => setCurrentIndex(p - 1)} size="sm" />
+                                <Button isIconOnly color="primary" className="bg-kidemia-secondary text-white" onPress={handleNext} isLoading={saveAnsMutation.isPending}><FiArrowRight /></Button>
+                            </>
+                        ) : (
+                            <Button
+                                color="success"
+                                className="flex-1 text-white font-bold h-10 rounded-xl"
+                                startContent={<FiSend />}
+                                onPress={() => submitAttemptMutation.mutate(attempt_id!)}
+                                isLoading={submitAttemptMutation.isPending}
+                            >
+                                Submit Final
+                            </Button>
+                        )}
                     </div>
                 </div>
 
                 <aside className="lg:col-span-4 space-y-6">
-                    {/* Live Proctoring PIP */}
                     {asstQuestions?.require_webcam && (
                         <div className="relative aspect-video rounded-[2rem] bg-slate-900 overflow-hidden shadow-xl border-4 border-white">
                             <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover -scale-x-100" />
@@ -282,7 +308,6 @@ export default function AssessmentQuestions() {
                         </div>
                     )}
 
-                    {/* Question Grid Navigator */}
                     <Card className="hidden lg:block border-none shadow-sm rounded-[2rem]">
                         <CardBody className="p-6">
                             <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Question Map</h4>
@@ -310,12 +335,12 @@ export default function AssessmentQuestions() {
                                     color="primary"
                                     className="font-bold rounded-2xl bg-kidemia-secondary text-white"
                                     onPress={handleNext}
-                                    isDisabled={currentIndex === allQuestions.length - 1}
+                                    isDisabled={isLastQuestion}
                                     isLoading={saveAnsMutation.isPending}
                                 >
                                     Next Question
                                 </Button>
-                                {currentIndex === allQuestions.length - 1 && (
+                                {isLastQuestion && (
                                     <Button
                                         fullWidth
                                         size="lg"
