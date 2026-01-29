@@ -12,7 +12,7 @@ import {
     FiEye,
     FiPlay,
 } from "react-icons/fi";
-import { WardRoutes } from "../../../routes";
+import { AssessmentRoutes, WardRoutes } from "../../../routes";
 
 
 export default function WardAssignmentCard({ assignment, navigate }: { assignment: any; navigate: any }) {
@@ -69,11 +69,17 @@ export default function WardAssignmentCard({ assignment, navigate }: { assignmen
                             startContent={isCompleted ? <FiEye /> : <FiPlay />}
                             onPress={() => {
                                 const route = isCompleted
-                                    ? WardRoutes.assessmentResult
+                                    ? AssessmentRoutes.assessmentResult
                                     : WardRoutes.assessmentInstructions;
-                                navigate(route.replace(":id", assignment.assessment_id));
+                                navigate(
+                                    route
+                                        .replace(":assessment_id", assignment.assessment_id)
+                                        .replace(":id", assignment.assessment_id)
+                                );
+
                             }}
                         >
+
                             {isCompleted ? "Results" : assignment.status === "started" ? "Continue" : "Start"}
                         </Button>
                     </div>
