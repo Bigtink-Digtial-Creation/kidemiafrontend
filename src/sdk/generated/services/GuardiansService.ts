@@ -408,7 +408,6 @@ export class GuardiansService {
   }
   /**
    * Get Assignment Detail
-   * Get detailed assignment information including attempts
    * @param assignmentId
    * @returns any Successful Response
    * @throws ApiError

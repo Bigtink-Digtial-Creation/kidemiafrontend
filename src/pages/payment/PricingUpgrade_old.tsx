@@ -23,13 +23,11 @@ import { PaymentRoutes } from "../../routes";
 import { userRoleAtom } from "../../store/user.atom";
 import { useAtomValue } from "jotai";
 
-export default function SubscriptionDashboard() {
+export default function OldSubscriptionDashboard() {
     const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
     const [showCancelModal, setShowCancelModal] = useState(false);
     const [cancelReason, setCancelReason] = useState("");
     const [view, setView] = useState<"current" | "upgrade">("current");
-    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-    const [selectedPlan, setSelectedPlan] = useState<any>(null);
     const isYearly = billingCycle === "yearly";
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -37,9 +35,6 @@ export default function SubscriptionDashboard() {
     const userRole = useAtomValue(userRoleAtom);
     const isIndividual = userRole === "student";
     const isGuardian = userRole === "guardian";
-
-    const callbackUrl = `${window.location.origin}/subscription/callback`;
-
 
     // Use the custom hook for subscription data
     const {
@@ -65,54 +60,6 @@ export default function SubscriptionDashboard() {
         staleTime: 1000 * 60 * 5,
     });
 
-    // Upgrade subscription mutation
-    const upgradeMutation = useMutation({
-        mutationFn: async ({ subscriptionId, newPlan }: { subscriptionId: string; newPlan: string }) => {
-            return ApiSDK.SubscriptionsService.upgradeSubscriptionApiV1SubscriptionsSubscriptionIdUpgradePost(
-                subscriptionId,
-                {
-                    new_plan: newPlan,
-                    callback_url: callbackUrl
-                }
-            );
-        },
-        onSuccess: (response) => {
-            queryClient.invalidateQueries({ queryKey: [QueryKeys.mysubscription] });
-
-            // Check if payment is required
-            if (response.data.payment_required) {
-                // Show payment modal or redirect to payment
-                addToast({
-                    title: "Payment Required",
-                    description: "Redirecting to payment page...",
-                    color: "default",
-                });
-                // Redirect to payment URL
-                if (response.data.payment_url) {
-                    window.location.href = response.data.payment_url;
-                }
-            } else {
-                // Upgrade successful without additional payment
-                setShowUpgradeModal(false);
-                setSelectedPlan(null);
-                addToast({
-                    title: "Upgrade Successful",
-                    description: `Your subscription has been upgraded to ${selectedPlan?.plan_name}`,
-                    color: "success",
-                });
-                setView("current");
-            }
-        },
-        onError: (error: any) => {
-            const errorMessage = error?.body?.detail || error?.body?.message || error?.message || "Failed to upgrade subscription. Please try again.";
-            addToast({
-                title: "Upgrade Failed",
-                description: errorMessage,
-                color: "danger",
-            });
-        },
-    });
-
     // Pause subscription mutation
     const pauseMutation = useMutation({
         mutationFn: async (subscriptionId: string) => {
@@ -126,11 +73,10 @@ export default function SubscriptionDashboard() {
                 color: "success",
             });
         },
-        onError: (error: any) => {
-            const errorMessage = error?.body?.detail || error?.body?.message || error?.message || "Failed to pause subscription. Please try again.";
+        onError: () => {
             addToast({
                 title: "Error",
-                description: errorMessage,
+                description: "Failed to pause subscription. Please try again.",
                 color: "danger",
             });
         },
@@ -149,11 +95,10 @@ export default function SubscriptionDashboard() {
                 color: "success",
             });
         },
-        onError: (error: any) => {
-            const errorMessage = error?.body?.detail || error?.body?.message || error?.message || "Failed to resume subscription. Please try again.";
+        onError: () => {
             addToast({
                 title: "Error",
-                description: errorMessage,
+                description: "Failed to resume subscription. Please try again.",
                 color: "danger",
             });
         },
@@ -177,45 +122,19 @@ export default function SubscriptionDashboard() {
                 color: "success",
             });
         },
-        onError: (error: any) => {
-            const errorMessage = error?.body?.detail || error?.body?.message || error?.message || "Failed to cancel subscription. Please try again.";
+        onError: () => {
             addToast({
                 title: "Error",
-                description: errorMessage,
+                description: "Failed to cancel subscription. Please try again.",
                 color: "danger",
             });
         },
     });
 
-    const handleNewSubscription = (planCode: string) => {
+    const handleUpgrade = (planCode: string) => {
         const id = planCode.toLowerCase().replace(/\s+/g, "-");
         navigate(PaymentRoutes.checkout.replace(":id", id) +
             `?billing=${billingCycle}`);
-    };
-
-    const handleUpgradeClick = (plan: any) => {
-        // Check if it's the current plan
-        if (plan.plan_code === currentPlanCode) {
-            addToast({
-                title: "Already Subscribed",
-                description: "You are already on this plan.",
-                color: "default",
-            });
-            return;
-        }
-
-        // Show upgrade confirmation modal
-        setSelectedPlan(plan);
-        setShowUpgradeModal(true);
-    };
-
-    const confirmUpgrade = () => {
-        if (!activeSubscription || !selectedPlan) return;
-
-        upgradeMutation.mutate({
-            subscriptionId: activeSubscription.id,
-            newPlan: selectedPlan.plan_code,
-        });
     };
 
     const handlePause = (subscriptionId: string) => {
@@ -257,21 +176,6 @@ export default function SubscriptionDashboard() {
                 return "text-orange-600 bg-orange-50 border-orange-200";
             default:
                 return "text-gray-600 bg-gray-50 border-gray-200";
-        }
-    };
-
-    const currentPrice = parseFloat(String(activeSubscription?.price ?? 0));
-
-    const getPlanComparisonMessage = (plan: any) => {
-        if (!activeSubscription) return null;
-        const newPrice = isYearly ? parseFloat(plan.price_yearly) : parseFloat(plan.price_monthly);
-
-        if (plan.plan_code === currentPlanCode) {
-            return { type: "current", message: "Current Plan" };
-        } else if (newPrice > currentPrice) {
-            return { type: "upgrade", message: "Upgrade" };
-        } else {
-            return { type: "downgrade", message: "Downgrade" };
         }
     };
 
@@ -335,8 +239,7 @@ export default function SubscriptionDashboard() {
                                         isYearly={isYearly}
                                         features={features}
                                         isCurrentPlan={false}
-                                        onSelect={() => handleNewSubscription(plan.plan_code)}
-                                        currentPlanPrice={currentPrice}
+                                        onSelect={() => handleUpgrade(plan.plan_code)}
                                     />
                                 );
                             })}
@@ -485,19 +388,19 @@ export default function SubscriptionDashboard() {
                                 {activeSubscription.status === "active" && (
                                     <>
                                         <Button
-                                            onPress={() => setView("upgrade")}
-                                            className="w-full min-h-[48px] bg-kidemia-primary text-white font-semibold"
-                                        >
-                                            Upgrade Plan
-                                        </Button>
-
-                                        <Button
                                             onPress={() => handlePause(activeSubscription.id)}
                                             isLoading={pauseMutation.isPending}
                                             className="w-full min-h-[48px] bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold"
                                             startContent={<Pause className="w-4 h-4" />}
                                         >
-                                            Pause Subscription
+                                            Cancel Subscription
+                                        </Button>
+
+                                        <Button
+                                            onPress={() => setView("upgrade")}
+                                            className="w-full min-h-[48px] bg-kidemia-primary text-white font-semibold"
+                                        >
+                                            Upgrade Plan
                                         </Button>
                                     </>
                                 )}
@@ -506,7 +409,7 @@ export default function SubscriptionDashboard() {
                                     <Button
                                         onPress={() => handleResume(activeSubscription.id)}
                                         isLoading={resumeMutation.isPending}
-                                        className="w-full min-h-[48px] bg-kidemia-primary text-white font-semibold"
+                                        className="hidden w-full min-h-[48px] bg-kidemia-primary text-white font-semibold"
                                         startContent={<Play className="w-4 h-4" />}
                                     >
                                         Resume Subscription
@@ -517,10 +420,10 @@ export default function SubscriptionDashboard() {
                                     activeSubscription.status === "suspended") && (
                                         <Button
                                             onPress={() => setShowCancelModal(true)}
-                                            className="w-full min-h-[48px] bg-red-50 hover:bg-red-100 text-red-600 font-semibold border border-red-200"
+                                            className="hidden w-full min-h-[48px] bg-red-50 hover:bg-red-100 text-red-600 font-semibold border border-red-200"
                                             startContent={<XCircle className="w-4 h-4" />}
                                         >
-                                            Cancel Subscription
+                                            Cancel Subscription Original
                                         </Button>
                                     )}
                             </div>
@@ -620,6 +523,7 @@ export default function SubscriptionDashboard() {
                     </div>
                 )}
 
+
                 {/* Upgrade View */}
                 {view === "upgrade" && (
                     <>
@@ -637,7 +541,6 @@ export default function SubscriptionDashboard() {
                                     const price = parseFloat(plan.price_monthly);
                                     const yearlyPrice = parseFloat(plan.price_yearly);
                                     const features = plan.benefits_list || [];
-                                    // const comparison = getPlanComparisonMessage(plan);
 
                                     return (
                                         <PricingCardTwo
@@ -650,8 +553,7 @@ export default function SubscriptionDashboard() {
                                             isYearly={isYearly}
                                             features={features}
                                             isCurrentPlan={isCurrentPlan}
-                                            onSelect={() => handleUpgradeClick(plan)}
-                                            currentPlanPrice={currentPrice}
+                                            onSelect={() => handleUpgrade(plan.plan_code)}
                                         />
                                     );
                                 })}
@@ -669,68 +571,6 @@ export default function SubscriptionDashboard() {
                     </>
                 )}
             </div>
-
-            {/* Upgrade Confirmation Modal */}
-            {showUpgradeModal && selectedPlan && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 max-w-md w-full">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                            Confirm {getPlanComparisonMessage(selectedPlan)?.message}
-                        </h3>
-                        <p className="text-gray-600 mb-6">
-                            You are about to {getPlanComparisonMessage(selectedPlan)?.message.toLowerCase()} to{" "}
-                            <span className="font-semibold">{selectedPlan.plan_name}</span>.
-                        </p>
-
-                        <div className="bg-gray-50 rounded-xl p-4 mb-6">
-                            <div className="flex justify-between items-center mb-2">
-                                <span className="text-gray-600">Current Plan:</span>
-                                <span className="font-semibold capitalize">
-                                    {activeSubscription?.plan_code.replace(/_/g, " ")}
-                                </span>
-                            </div>
-                            <div className="flex justify-between items-center mb-2">
-                                <span className="text-gray-600">New Plan:</span>
-                                <span className="font-semibold">{selectedPlan.plan_name}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <span className="text-gray-600">New Price:</span>
-                                <span className="font-semibold text-kidemia-primary">
-                                    {selectedPlan.currency}
-                                    {(isYearly ? parseFloat(selectedPlan.price_yearly) : parseFloat(selectedPlan.price_monthly)).toFixed(2)}
-                                    /{isYearly ? "year" : "month"}
-                                </span>
-                            </div>
-                        </div>
-
-                        <p className="text-sm text-gray-500 mb-6">
-                            {getPlanComparisonMessage(selectedPlan)?.type === "upgrade"
-                                ? "You may be charged a prorated amount for the upgrade."
-                                : "Your new plan will take effect at the next billing cycle."}
-                        </p>
-
-                        <div className="flex gap-3">
-                            <Button
-                                onPress={() => {
-                                    setShowUpgradeModal(false);
-                                    setSelectedPlan(null);
-                                }}
-                                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold"
-                                isDisabled={upgradeMutation.isPending}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                onPress={confirmUpgrade}
-                                isLoading={upgradeMutation.isPending}
-                                className="flex-1 bg-kidemia-primary hover:bg-kidemia-primary/90 text-white font-semibold"
-                            >
-                                Confirm {getPlanComparisonMessage(selectedPlan)?.message}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Cancel Modal */}
             {showCancelModal && (
@@ -757,7 +597,6 @@ export default function SubscriptionDashboard() {
                             <Button
                                 onPress={() => setShowCancelModal(false)}
                                 className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold"
-                                isDisabled={cancelMutation.isPending}
                             >
                                 Keep Subscription
                             </Button>

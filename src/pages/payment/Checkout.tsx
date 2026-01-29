@@ -103,7 +103,7 @@ export default function CheckOutPage() {
     onError: (error: any) => {
       addToast({
         title: "Checkout Failed",
-        description: error?.message || "Failed to initialize payment. Please try again.",
+        description: error?.body?.detail || "Failed to initialize payment. Please try again.",
         color: "danger",
       });
     },
