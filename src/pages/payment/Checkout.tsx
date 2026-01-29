@@ -12,7 +12,7 @@ import PricingCard from "./components/PricingCard";
 import AuthenticatedView from "./components/AuthenticatedView";
 import LoginForm from "./components/LoginForm";
 import SignupFlow from "./components/SignupFlow";
-import { SidebarRoutes } from "../../routes";
+import { getDashboardPathByRole } from "../../utils/navigation";
 
 type Billing = "monthly" | "annual";
 
@@ -30,6 +30,8 @@ export default function CheckOutPage() {
 
   const loggedInUser = useAtomValue(loggedinUserAtom);
   const isAuthenticated = !!loggedInUser && !!ApiSDK.OpenAPI.TOKEN;
+  const roleName = loggedInUser?.user?.roles?.[0]?.name;
+  const targetPath = getDashboardPathByRole(roleName)
 
   const {
     data: planData,
@@ -185,7 +187,7 @@ export default function CheckOutPage() {
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Plan not found</h2>
           <button
-            onClick={() => navigate(SidebarRoutes.dashboard)}
+            onClick={() => navigate(targetPath)}
             className="bg-[#2AA2A0] px-6 py-3 rounded-xl hover:bg-[#2AA2A0]/80 transition"
           >
             Go back home
