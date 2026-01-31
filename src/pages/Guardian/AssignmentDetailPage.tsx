@@ -78,7 +78,6 @@ export default function AssignmentDetailPage() {
         enabled: !!assignmentId,
     });
 
-    // Explicitly casting to our interface for type safety
     const assignment = assignmentData?.data as AssignmentDetail;
 
     if (isLoading || !assignment) {
@@ -95,9 +94,9 @@ export default function AssignmentDetailPage() {
     return (
         <div className="min-h-screen bg-[#F9FAFB] pb-20">
             {/* Nav Bar */}
-            <div className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
+            <div className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-30">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-                    <Button variant="flat" size="sm" startContent={<FiArrowLeft />} onPress={() => navigate(GuardianRoutes.monitor)}>
+                    <Button variant="flat" size="sm" className="bg-kidemia-secondary text-white" startContent={<FiArrowLeft />} onPress={() => navigate(GuardianRoutes.monitor)}>
                         Back to List
                     </Button>
                     <div className="flex items-center gap-3">
