@@ -97,7 +97,7 @@ export default function GuardianMonitoringDashboard() {
                         variant="flat"
                         startContent={<FiUsers />}
                         onPress={() => navigate(GuardianRoutes.createAssessment)}
-                        className="w-full md:w-auto"
+                        className="w-full md:w-auto bg-kidemia-secondary text-white"
                     >
                         New Assessment
                     </Button>

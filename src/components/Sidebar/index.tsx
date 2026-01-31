@@ -9,14 +9,14 @@ import {
 import { NavLink } from "react-router";
 import { motion } from "framer-motion";
 import { PaymentRoutes, SidebarRoutes, GuardianRoutes } from "../../routes";
-import { FiLogOut, FiSettings, FiZap } from "react-icons/fi";
+import { FiBarChart2, FiLogOut, FiSettings, FiZap } from "react-icons/fi";
 import { sidebarLinks } from "./sidebarLink.ts";
 import SidebarLink from "./SidebarLink.tsx";
 import { AppDarkLogo } from "../../assets/images";
 import LogoutModal from "./LogoutModal";
 import { useActiveSubscription } from "../../hooks/useActiveSubscription.ts";
 import { useAtomValue } from "jotai";
-import { userRoleAtom } from "../../store/user.atom";
+import { loggedinUserAtom, userRoleAtom } from "../../store/user.atom";
 import type { UserRole } from "../../utils/enums.ts";
 
 type SidebarProps = {
@@ -36,7 +36,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const logout = useDisclosure();
-
+  const loggedInUser = useAtomValue(loggedinUserAtom);
+  const studentId = loggedInUser?.user?.student?.id;
   const closeSidebar = useCallback(
     () => setSidebarOpen(false),
     [setSidebarOpen],
@@ -70,7 +71,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
 
   // Determine Logo Redirect Path
   const logoPath = userRole === "guardian" ? GuardianRoutes.dashboard : SidebarRoutes.dashboard;
-
+  const isStudent = userRole === "student";
   return (
     <>
       {sidebarOpen && (
@@ -97,7 +98,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
         </div>
 
         <div className="w-full flex flex-col overflow-y-auto duration-300 ease-linear h-full">
-          <ScrollShadow hideScrollBar={true} as={"nav"} className="p-4 flex-grow">
+          <ScrollShadow hideScrollBar={true} as={"nav"} className="py-2 px-4 flex-grow">
             <div
               className="overflow-x-hidden w-full"
               onMouseLeave={() => setFocused("")}
@@ -136,6 +137,18 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
 
           <div className="w-full p-4 space-y-4">
             <ul className="flex flex-col gap-1 mb-2 space-y-2">
+
+              {isStudent && (
+                <li className="group">
+                  <SidebarLink
+                    pathname={SidebarRoutes.analytics.replace(":studentId", studentId!)}
+                    title="Analytics & Reports"
+                    icon={FiBarChart2}
+                    sidebarOpen={sidebarOpen}
+                    setSidebarOpen={closeSidebar}
+                  />
+                </li>
+              )}
 
               <li className="group">
                 <SidebarLink

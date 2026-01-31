@@ -63,6 +63,7 @@ export const SidebarRoutes = {
   settings: "/settings",
 
   takeAssessment: "/assessment",
+  analytics: "/analytics/report/:studentId",
 };
 
 

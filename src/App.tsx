@@ -88,6 +88,7 @@ import AssessmentAttempt from "./pages/Assessment/AssessmentAttempt";
 import AssessmentQuestions from "./pages/Assessment/AssessmentQuestions";
 import AssignmentDetailPage from "./pages/Guardian/AssignmentDetailPage";
 import SubscriptionDashboard from "./pages/payment/PricingUpgrade";
+import StudentAnalyticsDashboard from "./pages/Analytics/StudentAnalyticsDashboard";
 
 export const router = createBrowserRouter([
   {
@@ -180,6 +181,10 @@ export const router = createBrowserRouter([
           // Assessment - PAID - EXAM
           { path: AssessmentRoutes.assesmentAttempt, element: <AssessmentAttempt /> },
           { path: AssessmentRoutes.assessmentQuestion, element: <AssessmentQuestions /> },
+
+
+          // Analytics
+          { path: SidebarRoutes.analytics, element: <StudentAnalyticsDashboard /> },
 
 
 
