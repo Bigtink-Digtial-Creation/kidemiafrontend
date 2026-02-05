@@ -166,7 +166,7 @@ export default function StepOne() {
         <span className="text-kidemia-black text-base font-semibold">OR</span>
       </div>
 
-      <div className="w-full">
+      <div className="hidden w-full">
         <Button
           size="lg"
           radius="sm"

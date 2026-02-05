@@ -238,7 +238,7 @@ export default function QuestionsPage() {
         </p>
       </div>
 
-      <div className="pt-2">
+      <div className="hidden pt-2">
         <h3 className="text-lg font-semibold text-center">
           Topic: {currentQuestion.topic_name}
         </h3>
@@ -277,6 +277,7 @@ export default function QuestionsPage() {
             onPress={safeSubmit}
             isDisabled={!selectedAnswers[currentIndex]}
             color="success"
+            className="bg-kidemia-secondary text-white"
           >
             Submit
           </Button>
@@ -286,6 +287,7 @@ export default function QuestionsPage() {
             isDisabled={!selectedAnswers[currentIndex]}
             endContent={<FaArrowRight />}
             color="primary"
+            className="bg-kidemia-secondary text-white"
           >
             Next
           </Button>
@@ -296,6 +298,12 @@ export default function QuestionsPage() {
         page={currentIndex + 1}
         total={allQuestions.length}
         onChange={(page) => setCurrentIndex(page - 1)}
+        classNames={{
+          item: "text-kidemia-black2",
+          cursor: "bg-kidemia-secondary text-white",
+          prev: "text-kidemia-secondary",
+          next: "text-kidemia-secondary",
+        }}
       />
     </section>
   );

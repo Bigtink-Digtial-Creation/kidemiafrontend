@@ -14,7 +14,7 @@ interface AssessmentCardI {
   timeMins: number;
   questionsNo: number;
   attemptsNo: number;
-  priceNo: string;
+  priceNo?: string;
   avgScore: string;
 }
 
@@ -25,7 +25,7 @@ export default function AssessmentCard({
   timeMins,
   questionsNo,
   attemptsNo,
-  priceNo,
+  // priceNo,
   avgScore,
 }: AssessmentCardI) {
   const navigate = useNavigate();
@@ -103,7 +103,7 @@ export default function AssessmentCard({
         <div className="mt-auto px-4 sm:px-5 pb-4 sm:pb-5">
           <div className="flex items-center justify-between gap-3 pt-3 border-t border-gray-200/50">
             <p className="text-gray-600 font-semibold text-sm sm:text-base whitespace-nowrap">
-              {priceNo} Units
+              {/* {priceNo} Units */}
             </p>
 
             <button

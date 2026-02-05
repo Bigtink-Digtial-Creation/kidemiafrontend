@@ -103,7 +103,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
               className="overflow-x-hidden w-full"
               onMouseLeave={() => setFocused("")}
             >
-              <ul className="flex flex-col space-y-3">
+              <ul className="flex flex-col gap-3 lg:gap-1">
                 {sidebarLinks
                   .filter((link) => link.allowedRoles?.includes(userRole as UserRole) || "")
                   .map((link) => (
@@ -142,7 +142,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
                 <li className="group">
                   <SidebarLink
                     pathname={SidebarRoutes.analytics.replace(":studentId", studentId!)}
-                    title="Analytics & Reports"
+                    title="Report Card"
                     icon={FiBarChart2}
                     sidebarOpen={sidebarOpen}
                     setSidebarOpen={closeSidebar}

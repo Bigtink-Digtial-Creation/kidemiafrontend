@@ -107,7 +107,7 @@ export default function CategoryRequestsPage() {
         onError: (error: any) => {
             addToast({
                 title: "Error",
-                description: error.message || "Failed to process request",
+                description: error?.body?.detail || error?.body?.message || error?.message || "Failed to process request",
                 color: "danger",
             });
         },
@@ -234,7 +234,7 @@ export default function CategoryRequestsPage() {
                                         <FiArrowRight className="text-gray-300 shrink-0" />
                                         <div className="text-center flex-1">
                                             <p className="text-[9px] text-gray-400 uppercase font-bold mb-1">Requested</p>
-                                            <p className="text-xs font-bold text-primary">{request.new_category_name}</p>
+                                            <p className="text-xs font-bold text-kidemia-primary">{request.new_category_name}</p>
                                         </div>
                                     </div>
 
@@ -271,73 +271,73 @@ export default function CategoryRequestsPage() {
                     </div>
 
                     {/* DESKTOP TABLE VIEW (Visible on Medium+ screens) */}
-                    <Card className="hidden md:block">
-                        <CardBody className="p-0">
-                            <Table aria-label="Category change requests" removeWrapper>
-                                <TableHeader>
-                                    <TableColumn className="bg-gray-50/50">WARD NAME</TableColumn>
-                                    <TableColumn className="bg-gray-50/50">CATEGORY CHANGE</TableColumn>
-                                    <TableColumn className="bg-gray-50/50">STATUS</TableColumn>
-                                    <TableColumn className="bg-gray-50/50">REQUESTED ON</TableColumn>
-                                    <TableColumn className="bg-gray-50/50 text-right">ACTIONS</TableColumn>
-                                </TableHeader>
-                                <TableBody>
-                                    {requests.map((request: CategoryChangeRequest) => (
-                                        <TableRow key={request.id} className="border-b last:border-0 hover:bg-gray-50/30 transition-colors">
-                                            <TableCell>
-                                                <div className="flex flex-col">
-                                                    <span className="font-semibold text-gray-700">{request.ward_name}</span>
-                                                    <span className="text-[10px] text-gray-400 uppercase">ID: {request.id.slice(0, 8)}</span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-3">
-                                                    <span className="text-sm text-gray-500">{request.old_category_name || "None"}</span>
-                                                    <FiArrowRight className="text-gray-300" />
-                                                    <span className="text-sm font-bold text-primary">{request.new_category_name}</span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>{getStatusChip(request.status)}</TableCell>
-                                            <TableCell className="text-sm text-gray-500">
-                                                {new Date(request.requested_at).toLocaleDateString()}
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex justify-end gap-2">
-                                                    {request.status?.toUpperCase() === "PENDING" ? (
-                                                        <>
-                                                            <Button
-                                                                size="sm"
-                                                                color="success"
-                                                                variant="flat"
-                                                                className="text-white bg-kidemia-secondary"
-                                                                onPress={() => handleApprovalClick(request, true)}
-                                                                isDisabled={approveMutation.isPending}
-                                                            >
-                                                                Approve
-                                                            </Button>
-                                                            <Button
-                                                                size="sm"
-                                                                color="danger"
-                                                                variant="flat"
-                                                                onPress={() => handleApprovalClick(request, false)}
-                                                                isDisabled={approveMutation.isPending}
-                                                            >
-                                                                Reject
-                                                            </Button>
-                                                        </>
-                                                    ) : (
-                                                        <span className="text-xs text-gray-400 capitalize bg-gray-100 px-2 py-1 rounded">
-                                                            {request.status?.toLowerCase()}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </CardBody>
-                    </Card>
+                    <Table
+                        aria-label="Category change requests"
+                        removeWrapper
+                        className="hidden md:block"
+                    >
+                        <TableHeader>
+                            <TableColumn className="bg-gray-50/50">WARD NAME</TableColumn>
+                            <TableColumn className="bg-gray-50/50">CATEGORY CHANGE</TableColumn>
+                            <TableColumn className="bg-gray-50/50">STATUS</TableColumn>
+                            <TableColumn className="bg-gray-50/50">REQUESTED ON</TableColumn>
+                            <TableColumn className="bg-gray-50/50 text-right">ACTIONS</TableColumn>
+                        </TableHeader>
+                        <TableBody>
+                            {requests.map((request: CategoryChangeRequest) => (
+                                <TableRow key={request.id} className="border-b last:border-0 hover:bg-gray-50/30 transition-colors">
+                                    <TableCell>
+                                        <div className="flex flex-col">
+                                            <span className="font-semibold text-gray-700">{request.ward_name}</span>
+                                            <span className="text-[10px] text-gray-400 uppercase">ID: {request.id.slice(0, 8)}</span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-sm text-gray-500">{request.old_category_name || "None"}</span>
+                                            <FiArrowRight className="text-gray-300" />
+                                            <span className="text-sm font-bold text-kidemia-primary">{request.new_category_name}</span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>{getStatusChip(request.status)}</TableCell>
+                                    <TableCell className="text-sm text-gray-500">
+                                        {new Date(request.requested_at).toLocaleDateString()}
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex justify-end gap-2">
+                                            {request.status?.toUpperCase() === "PENDING" ? (
+                                                <>
+                                                    <Button
+                                                        size="sm"
+                                                        color="success"
+                                                        variant="flat"
+                                                        className="text-white bg-kidemia-secondary"
+                                                        onPress={() => handleApprovalClick(request, true)}
+                                                        isDisabled={approveMutation.isPending}
+                                                    >
+                                                        Approve
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        color="danger"
+                                                        variant="flat"
+                                                        onPress={() => handleApprovalClick(request, false)}
+                                                        isDisabled={approveMutation.isPending}
+                                                    >
+                                                        Reject
+                                                    </Button>
+                                                </>
+                                            ) : (
+                                                <span className="text-xs text-gray-400 capitalize bg-gray-100 px-2 py-1 rounded">
+                                                    {request.status?.toLowerCase()}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
                 </div>
             )}
 

@@ -118,7 +118,7 @@ export default function AssessmentPage() {
                     timeMins={ass.duration_minutes}
                     questionsNo={ass.total_questions}
                     attemptsNo={ass.total_attempts}
-                    priceNo={ass.price}
+                    // priceNo={ass.price}
                     avgScore={ass.average_score}
                   />
                 ))}

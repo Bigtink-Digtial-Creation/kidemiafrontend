@@ -8,8 +8,6 @@ import {
   CardBody,
   CardFooter,
 } from "@heroui/react";
-// import { useAtomValue } from "jotai";
-// import { selectedSubjectIdeAtom } from "../../store/test.atom";
 import {
   BiCalendar,
   BiPlayCircle,
@@ -28,7 +26,7 @@ export default function TestAttempt() {
   const { data: attemptTest, isLoading } = useQuery({
     queryKey: [QueryKeys.testAttempt, assessmentId],
     queryFn: () =>
-      ApiSDK.AttemptsService.startAttemptApiV1AttemptsAssessmentIdStartPost(
+      ApiSDK.AttemptsService.startTestAttemptApiV1AttemptsTestAssessmentIdStartPost(
         assessmentId!,
         {},
       ),

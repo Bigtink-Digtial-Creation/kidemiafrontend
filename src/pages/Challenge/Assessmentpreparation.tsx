@@ -32,6 +32,7 @@ export default function AssessmentPreparation() {
 
     // Core States
     const [webcamEnabled, setWebcamEnabled] = useState(false);
+    const [webcamCheckComplete, setWebcamCheckComplete] = useState(false); // NEW: Track if check is done
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [hasStableConnection, setHasStableConnection] = useState(true);
     const [userAcknowledged, setUserAcknowledged] = useState(false);
@@ -45,14 +46,14 @@ export default function AssessmentPreparation() {
     const config = configData?.data;
 
     const startAttemptMutation = useMutation({
-        mutationFn: () => ApiSDK.AttemptsService.startAttemptApiV1AttemptsAssessmentIdStartPost(id!, {}),
+        mutationFn: () => ApiSDK.AttemptsService.startTestAttemptApiV1AttemptsTestAssessmentIdStartPost(id!, {}),
         onSuccess: (data) => {
             addToast({ title: "Assessment Started", color: "success" });
             navigate(WardRoutes.questions.replace(":assessment_id", id!).replace(":attempt_id", data.attempt_id));
         },
     });
 
-    // Webcam Logic
+    // Webcam Logic - FIXED
     useEffect(() => {
         let stream: MediaStream | null = null;
         if (config?.requires_webcam) {
@@ -60,11 +61,17 @@ export default function AssessmentPreparation() {
                 .then((s) => {
                     stream = s;
                     setWebcamEnabled(true);
+                    setWebcamCheckComplete(true); // Mark as complete
                     if (videoRef.current) videoRef.current.srcObject = s;
                 })
-                .catch(() => setWebcamEnabled(false));
+                .catch(() => {
+                    setWebcamEnabled(false);
+                    setWebcamCheckComplete(true); // Mark as complete even on error
+                });
         } else {
+            // If webcam not required, mark as enabled and complete
             setWebcamEnabled(true);
+            setWebcamCheckComplete(true);
         }
         return () => stream?.getTracks().forEach(track => track.stop());
     }, [config?.requires_webcam]);
@@ -87,7 +94,14 @@ export default function AssessmentPreparation() {
         };
     }, []);
 
-    const allRequirementsMet = webcamEnabled && (config?.requires_fullscreen ? isFullscreen : true) && hasStableConnection && userAcknowledged;
+    // FIXED: Only check requirements that are actually enabled
+    const allRequirementsMet =
+        webcamCheckComplete && // Wait for webcam check to complete
+        (!config?.requires_webcam || webcamEnabled) && // Only check webcam if required
+        (!config?.requires_fullscreen || isFullscreen) && // Only check fullscreen if required
+        hasStableConnection &&
+        userAcknowledged;
+
     const attemptsRemaining = config ? config.max_attempts - config.attempts_used : 0;
 
     if (isLoading || !config) {
@@ -121,7 +135,7 @@ export default function AssessmentPreparation() {
                         <p className="text-lg text-slate-500 font-medium">Pre-assessment verification</p>
                     </div>
 
-                    {/* Live Webcam Preview Section */}
+                    {/* Live Webcam Preview Section - ONLY SHOW IF REQUIRED */}
                     {config.requires_webcam && (
                         <div className="relative aspect-video max-w-2xl bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
                             {webcamEnabled ? (
@@ -143,14 +157,16 @@ export default function AssessmentPreparation() {
                         </div>
                     )}
 
-                    {/* System Checks Grid */}
+                    {/* System Checks Grid - CONDITIONAL RENDERING */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <StatusCard
-                            icon={<FiVideo />}
-                            label="Video Feed"
-                            status={webcamEnabled}
-                            description={webcamEnabled ? "Verified" : "Action required"}
-                        />
+                        {config.requires_webcam && (
+                            <StatusCard
+                                icon={<FiVideo />}
+                                label="Video Feed"
+                                status={webcamEnabled}
+                                description={webcamEnabled ? "Verified" : "Action required"}
+                            />
+                        )}
                         <StatusCard
                             icon={<FiWifi />}
                             label="Connection"
@@ -166,12 +182,15 @@ export default function AssessmentPreparation() {
                                 action={!isFullscreen && <Button size="sm" color="primary" variant="flat" onPress={() => document.documentElement.requestFullscreen()}>Enable</Button>}
                             />
                         )}
-                        <StatusCard
-                            icon={<FiUser />}
-                            label="Proctoring"
-                            status={true}
-                            description="AI monitoring active"
-                        />
+                        {/* FIXED: Only show if ANY proctoring feature is enabled */}
+                        {(config.requires_webcam || config.requires_fullscreen || config.detect_tab_switching) && (
+                            <StatusCard
+                                icon={<FiUser />}
+                                label="Proctoring"
+                                status={true}
+                                description="AI monitoring active"
+                            />
+                        )}
                     </div>
 
                     <div className="bg-white rounded-3xl p-8 border border-slate-200">
@@ -199,7 +218,10 @@ export default function AssessmentPreparation() {
 
                             <div className="space-y-6">
                                 <Checkbox isSelected={userAcknowledged} onValueChange={setUserAcknowledged} className="items-start">
-                                    <span className="text-sm text-slate-500 font-medium leading-tight">I certify that I am the authorized user and agree to proctoring terms.</span>
+                                    <span className="text-sm text-slate-500 font-medium leading-tight">
+                                        I certify that I am the authorized user and agree to the terms
+                                        {(config.requires_webcam || config.requires_fullscreen || config.detect_tab_switching) && " and proctoring"}.
+                                    </span>
                                 </Checkbox>
 
                                 <Button

@@ -46,10 +46,10 @@ export const GuardianRoutes = {
 };
 
 export const SidebarRoutes = {
-  dashboard: "/dashboard",
+  dashboard: "/dashboard/",
 
-  performance: "/performance",
-  history: "/history",
+  performance: "/user/performance",
+  history: "/user/history",
   leaderboard: "/leaderboard",
 
   community: "/community",
@@ -59,8 +59,8 @@ export const SidebarRoutes = {
   subjectPage: "/community/subject/:subjectId",
   notificationPage: "/community/notification",
   communityGuideLines: "/community/guidelines",
-  profile: "/profile",
-  settings: "/settings",
+  profile: "/account/profile",
+  settings: "/account/settings",
 
   takeAssessment: "/assessment",
   analytics: "/analytics/report/:studentId",

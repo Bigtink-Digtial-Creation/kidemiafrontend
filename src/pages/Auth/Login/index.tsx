@@ -42,12 +42,13 @@ export default function LoginPage() {
       ApiSDK.AuthenticationService.loginApiV1AuthLoginPost(formData),
     onSuccess(data) {
       if (data) {
+        const roleName = data.user?.roles?.[0]?.name;
+        setRole(roleName ?? null);
+        localStorage.setItem('userRole', roleName!);
         const token = data.access_token;
         ApiSDK.OpenAPI.TOKEN = token;
         setStoredToken(token);
         setLoggedInUser(data);
-        const roleName = data.user?.roles?.[0]?.name;
-        setRole(roleName ?? null);
         const targetPath = getDashboardPathByRole(roleName)
         addToast({
           title: "Login Successful",
@@ -56,7 +57,7 @@ export default function LoginPage() {
         });
         setTimeout(() => {
           navigate(targetPath, { replace: true });
-        }, 700);
+        }, 900);
 
       }
     },
@@ -174,7 +175,7 @@ export default function LoginPage() {
         <span className="text-kidemia-black text-base font-semibold">OR</span>
       </div>
 
-      <div className="w-full">
+      <div className="hidden w-full">
         <Button
           size="lg"
           radius="sm"

@@ -1,34 +1,88 @@
-import { useState } from 'react';
-
+import { useState, useEffect } from 'react';
 import {
   Award,
-  Star, Flame, AlertCircle, LayoutDashboard, Map, Compass
+  Star, Flame, LayoutDashboard, Map, Compass
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'react-router';
+import { useDisclosure } from '@heroui/react'; // Added
+
 import { ApiSDK } from '../../sdk';
 import GamificationBadge from './components/GamificationBadge';
 import TabButton from './components/TabButton';
 import OverviewSection from './components/OverviewSection';
 import TopicSection from './components/TopicSection';
 import StudyPlanSection from './components/StudyPlanSection';
-import { useParams } from 'react-router';
-
+import { getApiErrorMessage } from "../../utils/errorParser";
+import { AccessDeniedModal } from "../../components/AccessDeniedModal"; // Added
 
 export default function StudentAnalyticsDashboard() {
   const { studentId } = useParams<{ studentId: string }>();
   const [activeView, setActiveView] = useState<'overview' | 'topics' | 'study-plan'>('overview');
 
-  const { data, isLoading, isError } = useQuery({
+  // --- Modal State ---
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [modalConfig, setModalConfig] = useState<{
+    type: "subscription" | "token" | "general";
+    message: string;
+  }>({ type: "general", message: "" });
+
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ['studentAnalytics', studentId],
     queryFn: () =>
       ApiSDK.AnalyticsService.getStudentDashboardApiV1AnalyticsReportStudentStudentIdGet(studentId!),
+    retry: false,
+    enabled: !!studentId,
   });
 
+  // --- Handle Analytics Errors ---
+  useEffect(() => {
+    if (isError && error) {
+      const err = error as any;
+      const is402 = err?.status === 402;
+      // const detail = err?.body?.detail;
+
+      const displayMessage = is402
+        ? ("You need a subscription to view detailed analytics and Study Recommendation.")
+        : (getApiErrorMessage(err) || "Failed to load analytics report.");
+
+      setModalConfig({
+        type: is402 ? "subscription" : "general",
+        message: displayMessage,
+      });
+      onOpen();
+    }
+  }, [isError, error, onOpen]);
+
+  // If loading, show pulse
   if (isLoading) return <LoadingState />;
-  if (isError || !data) return <ErrorState />;
+
+  // If error, we show the loading state background while the Modal is open 
+  // to prevent the "header" from crashing due to missing 'data'
+  if (isError || !data) {
+    return (
+      <>
+        <AccessDeniedModal
+          isOpen={isOpen}
+          onClose={onClose}
+          type={modalConfig.type}
+          message={modalConfig.message}
+        />
+        <LoadingState />
+      </>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+
+      {/* Access Control Modal */}
+      <AccessDeniedModal
+        isOpen={isOpen}
+        onClose={onClose}
+        type={modalConfig.type}
+        message={modalConfig.message}
+      />
 
       {/* 1. Brand Hero Header */}
       <header className="relative overflow-hidden rounded-2xl bg-kidemia-secondary/5 p-6 md:p-10 text-white shadow-xl">
@@ -38,7 +92,9 @@ export default function StudentAnalyticsDashboard() {
               Hello, Scholar!
             </h1>
             <p className="text-slate-900 text-base md:text-lg max-w-md">
-              You've mastered <span className="text-kidemia-primary font-semibold">{data.topic_breakdown?.filter(t => t.mastery_level === 'MASTERED').length} topics</span> this month. Keep up the momentum!
+              You've mastered <span className="text-kidemia-primary font-semibold">
+                {data.topic_breakdown?.filter(t => t.mastery_level === 'MASTERED').length || 0} topics
+              </span> this month. Keep up the momentum!
             </p>
           </div>
 
@@ -83,41 +139,11 @@ export default function StudentAnalyticsDashboard() {
   );
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function LoadingState() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[500px] animate-pulse">
       <div className="w-12 h-12 border-4 border-kidemia-primary/20 border-t-kidemia-primary rounded-full animate-spin mb-4" />
-      <p className="text-slate-400 font-medium">Preparing your personalized dashboard...</p>
-    </div>
-  );
-}
-
-function ErrorState() {
-  return (
-    <div className="text-center p-20 bg-rose-50 rounded-2xl border border-rose-100 text-rose-600">
-      <AlertCircle className="mx-auto mb-4" size={48} />
-      <h3 className="text-xl font-bold">Failed to load analytics</h3>
-      <p>Please check your connection or try again later.</p>
+      <p className="text-slate-400 font-medium">Preparing your personalized Analytics and Study Recommendation...</p>
     </div>
   );
 }
