@@ -21,7 +21,7 @@ export default function AssessmentAttempt_old() {
   const { data: assessmentAttemptData, isLoading, error } = useQuery({
     queryKey: [QueryKeys.assesstmentAttempt, assessmentId],
     queryFn: () =>
-      ApiSDK.AttemptsService.startAttemptApiV1AttemptsAssessmentIdStartPost(
+      ApiSDK.AttemptsService.startExamAttemptApiV1AttemptsExamAssessmentIdStartPost(
         assessmentId!,
         {}
       ),

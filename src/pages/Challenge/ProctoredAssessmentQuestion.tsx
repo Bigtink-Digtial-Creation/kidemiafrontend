@@ -46,7 +46,7 @@ export default function ProctoredAssessmentQuestions() {
 
     // Refs & State
     const videoRef = useRef<HTMLVideoElement>(null);
-    const hasAutoSubmitted = useRef<boolean>(false); // CRITICAL: Prevents double submission/restart logic
+    const hasAutoSubmitted = useRef<boolean>(false);
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [isTimeUp, setIsTimeUp] = useState<boolean>(false);
@@ -95,13 +95,12 @@ export default function ProctoredAssessmentQuestions() {
         mutationFn: (id: string) => ApiSDK.AttemptsService.submitAttemptApiV1AttemptsAttemptIdSubmitPost(id),
         onMutate: () => {
             setIsSubmitting(true);
-            hasAutoSubmitted.current = true; // Block any further auto-logic
+            hasAutoSubmitted.current = true;
         },
         onSuccess: async (data) => {
             setAttemptResult(data);
             resetAns();
             await notifyGuardian(data.id);
-            // use replace: true so they can't go back to the test
             navigate(AssessmentRoutes.assessmentResult.replace(":assessment_id", assessment_id!), { replace: true });
         },
         onError: () => {
@@ -193,7 +192,7 @@ export default function ProctoredAssessmentQuestions() {
 
             return () => clearInterval(timer);
         }
-    }, [isLoading, asstQuestions?.duration_minutes]); // Removed isSubmitting from deps to prevent re-run during submission
+    }, [isLoading, asstQuestions?.duration_minutes]);
 
     const handleNext = async () => {
         if (selectedAnswers[currentIndex]) {
@@ -234,7 +233,7 @@ export default function ProctoredAssessmentQuestions() {
                         variant="ghost"
                         size="sm"
                         className="font-bold border-2"
-                        onPress={() => handleViolation("User attempted to manual exit")}
+                        onPress={() => submitAttemptMutation.mutate(attempt_id!)}
                     >
                         Finish Early
                     </Button>

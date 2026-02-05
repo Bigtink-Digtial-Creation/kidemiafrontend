@@ -62,7 +62,7 @@ export default function CreateChallengeAssessment() {
     const [allowReview, setAllowReview] = useState(true);
 
     // Result Display
-    const [resultDisplayMode, setResultDisplayMode] = useState("after_due_date");
+    const [resultDisplayMode, setResultDisplayMode] = useState("immediate");
     const [showCorrectAnswers, setShowCorrectAnswers] = useState(false);
     const [showExplanations, setShowExplanations] = useState(false);
 
@@ -128,7 +128,7 @@ export default function CreateChallengeAssessment() {
         onError: (error: any) => {
             addToast({
                 title: "Failed",
-                description: error.message || "Failed to create challenge",
+                description: error.body?.detail || error?.body?.message || error.message || "Failed to create challenge",
                 color: "danger",
             });
         },

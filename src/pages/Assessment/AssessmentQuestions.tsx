@@ -223,7 +223,7 @@ export default function AssessmentQuestions() {
                         variant="ghost"
                         size="sm"
                         className="font-bold border-2"
-                        onPress={() => handleViolation("User attempted to manual exit")}
+                        onPress={() => submitAttemptMutation.mutate(attempt_id!)}
                     >
                         Finish Early
                     </Button>

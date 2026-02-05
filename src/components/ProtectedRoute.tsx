@@ -26,7 +26,7 @@ export function ProtectedRoute({
     const userRole = useAtomValue(userRoleAtom);
     const isEmailVerified = useAtomValue(emailVerifiedAtom);
 
-    if (isValidating) {
+    if (isValidating || (loggedInUser && !userRole)) {
         return (
             <div className="h-screen flex justify-center items-center">
                 <SpinnerCircle />

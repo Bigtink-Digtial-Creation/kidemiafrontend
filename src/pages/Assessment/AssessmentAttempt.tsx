@@ -7,6 +7,7 @@ import {
     Divider,
     Spinner,
     Chip,
+    useDisclosure,
 } from "@heroui/react";
 import {
     FiCheck,
@@ -24,11 +25,19 @@ import { ApiSDK } from "../../sdk";
 import { QueryKeys } from "../../utils/queryKeys";
 import { addToast } from "@heroui/react";
 import { AssessmentRoutes } from "../../routes";
+import { getApiErrorMessage } from "../../utils/errorParser";
+import { AccessDeniedModal } from "../../components/AccessDeniedModal";
 
 export default function AssessmentAttempt() {
     const { assessment_id } = useParams<{ assessment_id: string }>();
     const navigate = useNavigate();
     const videoRef = useRef<HTMLVideoElement>(null);
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [modalConfig, setModalConfig] = useState<{
+        type: "subscription" | "token" | "general";
+        message: string;
+    }>({ type: "general", message: "" });
 
     // Core States
     const [webcamEnabled, setWebcamEnabled] = useState(false);
@@ -45,10 +54,24 @@ export default function AssessmentAttempt() {
     const config = configData?.data;
 
     const startAttemptMutation = useMutation({
-        mutationFn: () => ApiSDK.AttemptsService.startAttemptApiV1AttemptsAssessmentIdStartPost(assessment_id!, {}),
+        mutationFn: () => ApiSDK.AttemptsService.startExamAttemptApiV1AttemptsExamAssessmentIdStartPost(assessment_id!, {}),
         onSuccess: (data) => {
             addToast({ title: "Assessment Started", color: "success" });
             navigate(AssessmentRoutes.assessmentQuestion.replace(":assessment_id", assessment_id!).replace(":attempt_id", data.attempt_id));
+        },
+        onError: (err: any) => {
+            const detail = err.body?.detail;
+            const is402 = err?.status === 402 || detail?.allowed === false;
+
+            if (is402) {
+                setModalConfig({
+                    type: detail?.wallet_cost ? "token" : "subscription",
+                    message: detail?.upgrade_suggestion || detail?.reason || "Access restricted."
+                });
+                onOpen();
+            } else {
+                addToast({ title: "Error", description: getApiErrorMessage(err), color: "danger" });
+            }
         },
     });
 
@@ -100,6 +123,13 @@ export default function AssessmentAttempt() {
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans antialiased">
+
+            <AccessDeniedModal
+                isOpen={isOpen}
+                onClose={onClose}
+                type={modalConfig.type}
+                message={modalConfig.message}
+            />
             {/* Minimal Header */}
             <header className="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-50 flex items-center px-8 justify-between">
                 <div className="flex items-center gap-2 font-bold text-xl tracking-tight">

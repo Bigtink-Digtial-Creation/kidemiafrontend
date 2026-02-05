@@ -2,8 +2,9 @@
 import { AxiosError } from "axios";
 
 export const getApiErrorMessage = (error: any): string => {
-  if (error?.body?.message) {
-    return error.body.message;
+  const message = error?.body?.message || error?.body?.detail || error?.body?.detail?.upgrade_suggestion
+  if (message) {
+    return message;
   }
   if (typeof error?.body === 'string') return error.body;
   return error?.message || "An unexpected error occurred";
@@ -43,6 +44,15 @@ export const apiErrorParser = (
   }
 
   return { name: err.name, message: err.message };
+};
+
+
+export const getPaymentErrorMessage = (error: any): string => {
+  const detail = error?.body?.detail;
+  if (typeof detail === 'object' && detail !== null) {
+    return detail.upgrade_suggestion || detail.reason || detail.message || "An error occurred";
+  }
+  return detail || error?.message || "An unexpected error occurred";
 };
 
 export type ApiRequestOptions = {

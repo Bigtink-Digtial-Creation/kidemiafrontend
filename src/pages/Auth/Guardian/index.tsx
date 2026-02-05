@@ -70,9 +70,7 @@ export default function GuardianSignup() {
   return (
     <section className="py-4 w-full md:w-2xl space-y-6">
       <div className="space-y-3">
-        <h2 className="text-2xl text-kidemia-black font-semibold text-center">
-          Guardian Registration
-        </h2>
+
         <p className="text-lg text-kidemia-black2 text-center font-medium">
           Create your password to complete your registration as a Guardian
         </p>

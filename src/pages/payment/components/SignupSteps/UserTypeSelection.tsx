@@ -56,7 +56,7 @@ export default function UserTypeSelection({
 
       <button
         onClick={onGoogleSignup}
-        className="w-full bg-white text-black hover:bg-gray-100 py-4 rounded-xl flex items-center justify-center gap-3 text-base font-semibold transition shadow-lg"
+        className="hidden w-full bg-white text-black hover:bg-gray-100 py-4 rounded-xl flex items-center justify-center gap-3 text-base font-semibold transition shadow-lg"
       >
         <FcGoogle size={24} /> Continue with Google
       </button>

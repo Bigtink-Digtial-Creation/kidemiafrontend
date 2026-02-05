@@ -41,7 +41,9 @@ export const loggedinUserAtom = atomWithStorage(
 
 export const userAtom = atomWithStorage<UserT | null>("userDetail", null);
 
-export const userRoleAtom = atom<string | null>(null);
+// export const userRoleAtom = atom<string | null>(null);
+export const userRoleAtom = atomWithStorage<string | null>('userRole', null);
+
 
 export const emailVerifiedAtom = atom<boolean>((get) => {
   const user = get(loggedinUserAtom);
