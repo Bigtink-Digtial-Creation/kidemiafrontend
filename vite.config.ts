@@ -49,9 +49,7 @@ export default defineConfig({
         ]
       },
       workbox: {
-        // Increase cache size limit to 3MB
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
-        // Cache strategies
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -60,21 +58,7 @@ export default defineConfig({
               cacheName: 'google-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'gstatic-fonts-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+                maxAgeSeconds: 60 * 60 * 24 * 365
               },
               cacheableResponse: {
                 statuses: [0, 200]
@@ -88,22 +72,7 @@ export default defineConfig({
               cacheName: 'images-cache',
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
-              }
-            }
-          },
-          {
-            urlPattern: /\/api\/.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-cache',
-              networkTimeoutSeconds: 10,
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 5 // 5 minutes
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
+                maxAgeSeconds: 60 * 60 * 24 * 30
               }
             }
           }
@@ -114,37 +83,12 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
-    // Adjust chunk size warning limit
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          // Core React libraries
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'vendor-react';
-            }
-            // Split large third-party libraries into separate chunks
-            if (id.includes('axios') || id.includes('ky')) {
-              return 'vendor-http';
-            }
-            if (id.includes('zustand') || id.includes('redux') || id.includes('jotai')) {
-              return 'vendor-state';
-            }
-            if (id.includes('recharts') || id.includes('chart.js') || id.includes('d3')) {
-              return 'vendor-charts';
-            }
-            if (id.includes('date-fns') || id.includes('dayjs') || id.includes('moment')) {
-              return 'vendor-date';
-            }
-            if (id.includes('lucide-react') || id.includes('@heroicons')) {
-              return 'vendor-icons';
-            }
-            if (id.includes('framer-motion') || id.includes('gsap')) {
-              return 'vendor-animation';
-            }
-            return 'vendor-others';
-          }
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router'],
+          'vendor-ui': ['@heroui/react', '@tanstack/react-query', 'jotai'],
         }
       }
     }
