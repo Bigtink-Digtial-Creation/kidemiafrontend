@@ -2,13 +2,17 @@ import { useState } from "react";
 import { Outlet } from "react-router";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
-import { useAuthRedirect } from "../hooks/use-auth-redirect";
 import SpinnerCircle from "../components/Spinner/Circle";
+import { loggedinUserAtom, storedAuthTokenAtom } from "../store/user.atom";
+import { useAtomValue } from "jotai";
 
 export default function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   // useAuthRedirect should handle verifying the session
-  const { loggedInUser, authToken } = useAuthRedirect(true);
+  // const { loggedInUser, authToken } = useAuthRedirect(true);
+  const loggedInUser = useAtomValue(loggedinUserAtom);
+  const authToken = useAtomValue(storedAuthTokenAtom)
+
 
   if (!loggedInUser || !authToken) {
     return (
