@@ -33,6 +33,7 @@ import {
 import { ApiSDK } from "../../sdk";
 import { QueryKeys } from "../../utils/queryKeys";
 import { GuardianRoutes } from "../../routes";
+import { AccessDeniedModal } from "../../components/AccessDeniedModal";
 
 interface Topic {
     id: string;
@@ -44,6 +45,12 @@ export default function CreateChallengeAssessment() {
     const navigate = useNavigate();
 
     // Basic Form State
+
+    const [paymentModal, setPaymentModal] = useState<{
+        isOpen: boolean;
+        type: "subscription" | "token" | "general";
+        message?: string;
+    }>({ isOpen: false, type: "subscription" });
     const [selectedSubject, setSelectedSubject] = useState<string>("");
     const [selectedTopics, setSelectedTopics] = useState<Set<string>>(new Set());
     const [numberOfQuestions, setNumberOfQuestions] = useState("10");
@@ -126,9 +133,33 @@ export default function CreateChallengeAssessment() {
             navigate(GuardianRoutes.dashboard);
         },
         onError: (error: any) => {
+            const body = error.body;
+
+            if (error.status === 402 && body?.detail && typeof body.detail === "object") {
+                const detail = body.detail;
+                const message =
+                    detail.reason ||
+                    detail.upgrade_suggestion ||
+                    "You don't have access to perform this action.";
+
+                // Determine modal type based on the method field or reason
+                const type =
+                    detail.method === "token" ? "token" : "subscription";
+
+                setPaymentModal({ isOpen: true, type, message });
+                return;
+            }
+
+            // Non-402 errors fall back to toast
+            const description =
+                (typeof body?.detail === "string" && body.detail) ||
+                body?.message ||
+                error.message ||
+                "Failed to create challenge";
+
             addToast({
                 title: "Failed",
-                description: error.body?.detail || error?.body?.message || error.message || "Failed to create challenge",
+                description,
                 color: "danger",
             });
         },
@@ -1011,6 +1042,13 @@ export default function CreateChallengeAssessment() {
                     </div>
                 </div>
             </div>
+
+            <AccessDeniedModal
+                isOpen={paymentModal.isOpen}
+                onClose={() => setPaymentModal((prev) => ({ ...prev, isOpen: false }))}
+                type={paymentModal.type}
+                message={paymentModal.message}
+            />
         </div>
     );
 }

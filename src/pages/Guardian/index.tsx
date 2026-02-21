@@ -22,6 +22,7 @@ import { GuardianRoutes } from "../../routes";
 import { ApiSDK } from "../../sdk";
 import { QueryKeys } from "../../utils/queryKeys";
 import SpinnerCircle from "../../components/Spinner/Circle";
+import { AccessDeniedModal } from "../../components/AccessDeniedModal";
 
 interface Ward {
     id: string;
@@ -38,6 +39,11 @@ export default function GuardianDashboard() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
+    const [paymentModal, setPaymentModal] = useState<{
+        isOpen: boolean;
+        type: "subscription" | "token" | "general";
+        message?: string;
+    }>({ isOpen: false, type: "subscription" });
     const { isOpen: isAddOpen, onOpen: onAddOpen, onClose: onAddClose } = useDisclosure();
     const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
@@ -98,9 +104,33 @@ export default function GuardianDashboard() {
             queryClient.invalidateQueries({ queryKey: [QueryKeys.guardianProfile] });
         },
         onError: (error: any) => {
+            const body = error.body;
+
+            if (error.status === 402 && body?.detail && typeof body.detail === "object") {
+                const detail = body.detail;
+                const message =
+                    detail.reason ||
+                    detail.upgrade_suggestion ||
+                    "You don't have access to perform this action.";
+
+                // Determine modal type based on the method field or reason
+                const type =
+                    detail.method === "token" ? "token" : "subscription";
+
+                setPaymentModal({ isOpen: true, type, message });
+                return;
+            }
+
+            // Non-402 errors fall back to toast
+            const description =
+                (typeof body?.detail === "string" && body.detail) ||
+                body?.message ||
+                error.message ||
+                "Failed to Invite Ward";
+
             addToast({
-                title: "Fail",
-                description: error?.body?.detail || "Failed to add ward",
+                title: "Failed",
+                description,
                 color: "danger",
             });
         },
@@ -307,6 +337,13 @@ export default function GuardianDashboard() {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
+
+            <AccessDeniedModal
+                isOpen={paymentModal.isOpen}
+                onClose={() => setPaymentModal((prev) => ({ ...prev, isOpen: false }))}
+                type={paymentModal.type}
+                message={paymentModal.message}
+            />
         </div>
     );
 }
