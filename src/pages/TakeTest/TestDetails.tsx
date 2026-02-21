@@ -76,7 +76,7 @@ export default function TestDetails() {
     },
   });
 
-  if (isLoading) return <LoadingSequence lines={[{ text: "Creating your Assessment..." }]} />;
+  if (isLoading) return <LoadingSequence lines={[{ text: "Creating your Test..." }]} />;
 
   return (
     <section className="max-w-4xl mx-auto mt-10 px-4">
