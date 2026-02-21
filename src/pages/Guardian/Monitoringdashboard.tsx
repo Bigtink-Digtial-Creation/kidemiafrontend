@@ -61,8 +61,6 @@ export default function GuardianMonitoringDashboard() {
 
     const assignments: AssignmentMonitor[] = assignmentsData?.data || [];
 
-    console.log(assignmentsData?.data)
-
     const filteredAssignments = assignments.filter((assignment) => {
         const matchesSearch =
             assignment.assessment_title.toLowerCase().includes(searchQuery.toLowerCase()) ||

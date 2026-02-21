@@ -79,7 +79,6 @@ export function useTagFeed(tagId: string, pageSize = 20) {
       const res =
         await ApiSDK.ForumFeedService
           .getTagFeedApiV1FeedTagTagIdGet(tagId, pageParam, pageSize);
-      console.log(res)
       return FeedResponseSchema.parse(res);
     },
     getNextPageParam: (lastPage) =>

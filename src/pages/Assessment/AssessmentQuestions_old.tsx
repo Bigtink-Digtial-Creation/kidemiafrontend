@@ -86,8 +86,8 @@ export default function AssessmentQuestions_old() {
         requestBody,
       );
     },
-    onSuccess: (data) => {
-      console.log("Answer saved:", data);
+    onSuccess: () => {
+      console.log("Answer saved:");
     },
     onError: () => {
       console.error(
