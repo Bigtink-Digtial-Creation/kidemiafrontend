@@ -29,7 +29,12 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const { currentPlanCode } = useActiveSubscription();
 
   const formattedPlanCode = currentPlanCode
-    ? currentPlanCode.toLowerCase().replace(/\s+/g, "-")
+    ? currentPlanCode
+      .toLowerCase()
+      .replace(/[_-]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .replace(/\b\w/g, (char: string): string => char.toUpperCase())
     : "No Active Plan";
 
   const [focused, setFocused] = useState<string | null>(null);

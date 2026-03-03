@@ -28,6 +28,7 @@ export default function BuyUnitsPage() {
     const [selectedPackage, setSelectedPackage] = useState<number | null>(1);
     const [customUnits, setCustomUnits] = useState<string>("");
     const [paymentMethod, setPaymentMethod] = useState<"paystack" | "flutterwave">("paystack");
+
     const [_, setPaymentSuccess] = useState(false);
 
     const initiateMutation = useMutation({
@@ -372,6 +373,7 @@ export default function BuyUnitsPage() {
                                         isDisabled={initiateMutation.isPending}
                                         startContent={<Wallet className="w-4 h-4" />}
                                         size="sm"
+                                        className="hidden"
                                     >
                                         Flutterwave
                                     </Button>
