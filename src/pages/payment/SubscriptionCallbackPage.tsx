@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiSDK } from "../../sdk";
 import { Image, Button } from "@heroui/react";
 import { AppLogo } from "../../assets/images";
@@ -9,14 +9,19 @@ import { PaymentRoutes } from "../../routes";
 import { useAtomValue } from "jotai";
 import { userRoleAtom } from "../../store/user.atom";
 import { getDashboardPathByRole } from "../../utils/navigation";
+import { QueryKeys } from "../../utils/queryKeys";
 
 type VerificationStatus = "verifying" | "success" | "failed";
 
 export default function SubscriptionCallbackPage() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+    const hasVerified = useRef(false);
+    const queryClient = useQueryClient();
+
     const [status, setStatus] = useState<VerificationStatus>("verifying");
     const [subscriptionDetails, setSubscriptionDetails] = useState<any>(null);
+
 
     const userRole = useAtomValue(userRoleAtom);
     const targetPath = getDashboardPathByRole(userRole)
@@ -32,6 +37,10 @@ export default function SubscriptionCallbackPage() {
                 setStatus("success");
                 setSubscriptionDetails(response.data);
 
+                queryClient.invalidateQueries({
+                    queryKey: [QueryKeys.mysubscription],
+                });
+
                 // Redirect to dashboard after 3 seconds
                 setTimeout(() => {
                     navigate(PaymentRoutes.subscriptionUpgrade);
@@ -46,10 +55,9 @@ export default function SubscriptionCallbackPage() {
     });
 
     useEffect(() => {
-        if (reference) {
+        if (reference && !hasVerified.current) {
+            hasVerified.current = true;
             verifyMutation.mutate(reference);
-        } else {
-            setStatus("failed");
         }
     }, [reference]);
 
