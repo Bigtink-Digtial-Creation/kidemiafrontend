@@ -5,7 +5,6 @@ import AppLogo from "../../assets/images/logo/appDarkLogo.png";
 import { attemptResultAtom } from "../../store/test.atom";
 import { useAtomValue } from "jotai";
 import { SidebarRoutes } from "../../routes";
-// import { useResetAtom } from "jotai/utils";
 
 const gradeRemarkMap: Record<string, string> = {
   A: "Excellent work!",
@@ -96,7 +95,7 @@ export default function AssessmentResult() {
             <Button
               size="lg"
               className="w-full sm:w-auto bg-[#D2691E] hover:bg-[#C85A3C] text-white font-semibold px-8 sm:px-12 py-5 sm:py-6 text-base sm:text-lg rounded-xl sm:rounded-2xl shadow-lg transition-colors"
-              onClick={() => navigate(`/assessment/${result.id}/corrections`)}
+              onPress={() => navigate(`/assessment/${result.id}/corrections`)}
             >
               View Corrections
             </Button>

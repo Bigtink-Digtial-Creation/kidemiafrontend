@@ -51,6 +51,9 @@ export default function AssessmentPreparation() {
             addToast({ title: "Assessment Started", color: "success" });
             navigate(WardRoutes.questions.replace(":assessment_id", id!).replace(":attempt_id", data.attempt_id));
         },
+        onError: (error: any) => {
+            addToast({ title: error.body?.message || error.body?.detail || "Failed to start assessment", color: "danger" });
+        },
     });
 
     // Webcam Logic - FIXED
@@ -115,7 +118,7 @@ export default function AssessmentPreparation() {
     return (
         <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans antialiased">
             {/* Minimal Header */}
-            <header className="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-50 flex items-center px-8 justify-between">
+            <header className="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-30 flex items-center px-8 justify-between">
                 <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
                     <div className="w-8 h-8 bg-kidemia-primary rounded flex items-center justify-center text-white">C</div>
                     <span>Challenge</span>

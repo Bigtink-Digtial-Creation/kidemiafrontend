@@ -80,6 +80,9 @@ export function CorrectionPage() {
     const videoUrl = currentAnswer.question.video_url;
     const youtubeEmbedUrl = videoUrl ? getYouTubeEmbedUrl(videoUrl) : null;
 
+    console.log("Total answers from API:", data?.answers?.length);
+    console.log("Answer IDs:", data?.answers?.map(a => a.answer_id));
+
     return (
         <div className="min-h-screen bg-kidemia-primary">
             <CorrectionHeader attempt={attempt!} />

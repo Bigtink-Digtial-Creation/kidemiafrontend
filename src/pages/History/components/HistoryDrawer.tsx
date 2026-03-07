@@ -109,11 +109,6 @@ export default function HistoryDrawer({ isOpen, onOpenChange, id }: DrawerI) {
                         className={`p-4 rounded-xl text-white shadow-md bg-kidemia-secondary`}
                       >
                         <p className="font-bold text-lg">{topic.name}</p>
-                        <p className="text-sm">
-                          Questions:{" "}
-                          <span className="font-semibold">{topic.questions_count}</span>
-                        </p>
-
                       </div>
                     ))}
                   </div>
