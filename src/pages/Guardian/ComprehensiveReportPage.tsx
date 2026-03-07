@@ -99,7 +99,7 @@ export default function ComprehensiveReportPage() {
                     </div>
                 </div>
                 <Button
-                    className="bg-kidemia-secondary text-white rounded-lg px-6 font-bold text-xs h-11"
+                    className="hidden bg-kidemia-secondary text-white rounded-lg px-6 font-bold text-xs h-11"
                     onPress={() => addToast({ title: "Generation in progress", color: "primary" })}
                     startContent={<FiDownload className="text-sm" />}
                 >
