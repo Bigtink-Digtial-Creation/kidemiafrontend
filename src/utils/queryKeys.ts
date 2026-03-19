@@ -27,4 +27,6 @@ export const QueryKeys = {
   assignments: "assignments",
   wardAssignments: "wardAssignments",
   assignmentDetail: "assignmentDetail",
+
+  institutionAssignments: "institutionAssignments",
 } as const;

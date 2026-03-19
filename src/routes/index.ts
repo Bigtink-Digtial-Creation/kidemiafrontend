@@ -93,7 +93,9 @@ export const WardRoutes = {
   assessmentResult: "/challenges/result/:id",
   assessmentInstructions: "/challenges/instructions/:id",
   precheck: "/challenge/:id/precheck",
-  questions: "/challenge/:assessment_id/exam/:attempt_id"
+  questions: "/challenge/:assessment_id/exam/:attempt_id",
+
+  assignment: "challenge/assignment"
 
 }
 
