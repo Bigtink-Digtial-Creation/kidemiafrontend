@@ -89,6 +89,7 @@ import AssessmentQuestions from "./pages/Assessment/AssessmentQuestions";
 import AssignmentDetailPage from "./pages/Guardian/AssignmentDetailPage";
 import SubscriptionDashboard from "./pages/payment/PricingUpgrade";
 import StudentAnalyticsDashboard from "./pages/Analytics/StudentAnalyticsDashboard";
+import InstitutionAssignmentList from "./pages/Challenge/InstitutionAssignmentList";
 
 export const router = createBrowserRouter([
   {
@@ -177,6 +178,8 @@ export const router = createBrowserRouter([
           { path: WardRoutes.challenges, element: <WardChallengeList /> },
           { path: WardRoutes.assessmentInstructions, element: <AssessmentPreparation /> },
           { path: WardRoutes.questions, element: <ProctoredAssessmentQuestions /> },
+          { path: WardRoutes.assignment, element: <InstitutionAssignmentList /> },
+
 
           // Assessment - PAID - EXAM
           { path: AssessmentRoutes.assesmentAttempt, element: <AssessmentAttempt /> },
