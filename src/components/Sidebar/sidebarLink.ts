@@ -1,6 +1,6 @@
 import type { IconType } from "react-icons";
 import { UserRole } from "../../utils/enums";
-import { GuardianRoutes, PaymentRoutes, SidebarRoutes } from "../../routes";
+import { GuardianRoutes, PaymentRoutes, SidebarRoutes, WardRoutes } from "../../routes";
 import {
   MdManageHistory,
   MdOutlineDashboard,
@@ -11,6 +11,7 @@ import {
 import { CgPerformance } from "react-icons/cg";
 import { FiBarChart2, FiHome } from "react-icons/fi";
 import { FaCircleQuestion, FaSignsPost } from "react-icons/fa6";
+import { SchoolIcon } from "lucide-react";
 
 
 export type SidebarLinkT = {
@@ -58,6 +59,12 @@ export const sidebarLinks: SidebarLinkT[] = [
     icon: MdWallet,
     allowedRoles: [UserRole.STUDENT],
     pathname: PaymentRoutes.buytoken,
+  },
+  {
+    title: "School Assignment",
+    icon: SchoolIcon,
+    allowedRoles: [UserRole.STUDENT],
+    pathname: WardRoutes.assignment,
   },
 
 
