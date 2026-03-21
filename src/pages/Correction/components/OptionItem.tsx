@@ -1,3 +1,4 @@
+import QuestionRenderer from "../../../components/editor/QuestionRenderer";
 import type { OptionCorrectionResponse } from "../../../sdk/generated";
 
 export default function OptionItem({ option, letter }: { option: OptionCorrectionResponse; letter: string }) {
@@ -15,8 +16,17 @@ export default function OptionItem({ option, letter }: { option: OptionCorrectio
                 {isSelected || isCorrect ? "●" : "○"}
             </div>
             <div className="flex-1 text-gray-700">
-                <span className="font-medium">{letter}.</span> {option.option_text}
+                <span className="font-medium">{letter}.</span>
+                <QuestionRenderer
+                    key={option.id}
+                    question_content={(option).option_content ?? null}
+                    question_text={option.option_text}
+                    className="text-sm font-medium"
+                />
+
             </div>
+
+
         </li>
     );
 }

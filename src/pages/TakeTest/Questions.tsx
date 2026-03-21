@@ -40,6 +40,7 @@ import { apiErrorParser } from "../../utils/errorParser";
 import { useResetAtom } from "jotai/utils";
 import LoadingSequence from "../../components/Loading/LoadingSequence";
 import { useInvalidateQueries } from "../../hooks/use-invalidate-queries";
+import QuestionRenderer from "../../components/editor/QuestionRenderer";
 
 type AnswerOption = string;
 
@@ -329,7 +330,12 @@ export default function QuestionsPage() {
                   {/* Question Text */}
                   <div className="order-2 md:order-1 space-y-8">
                     <h2 className="text-xl md:text-2xl font-bold text-slate-800 leading-snug">
-                      {currentQuestion.question_text}
+                      <QuestionRenderer
+                        key={currentQuestion.id}
+                        question_content={currentQuestion.question_content ?? null}
+                        question_text={currentQuestion.question_text}
+                        className="text-xl md:text-2xl font-bold text-slate-800 leading-snug"
+                      />
                     </h2>
 
                     <RadioGroup
@@ -348,10 +354,14 @@ export default function QuestionsPage() {
                         >
                           <Radio value={option.id} />
                           <div className="flex flex-1 justify-between items-center ml-2">
-                            <span className={`text-base md:text-lg font-medium ${selectedAnswers[currentIndex] === option.id ? "text-kidemia-secondary" : "text-slate-700"
-                              }`}>
-                              {option.option_text}
-                            </span>
+                            <div className={selectedAnswers[currentIndex] === option.id ? "text-kidemia-secondary" : "text-slate-700"}>
+                              <QuestionRenderer
+                                key={option.id}
+                                question_content={option.option_content ?? null}
+                                question_text={option.option_text}
+                                className="text-base md:text-lg font-medium"
+                              />
+                            </div>
                             <span className="text-[10px] font-black text-slate-300 group-hover:text-slate-400 uppercase tracking-widest ml-4">
                               Option {String.fromCharCode(65 + idx)}
                             </span>

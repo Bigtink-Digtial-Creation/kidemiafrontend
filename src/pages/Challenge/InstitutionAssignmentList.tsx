@@ -220,7 +220,7 @@ export default function InstitutionAssignmentList() {
         <div className="max-w-4xl mx-auto px-4 py-8">
             <header className="mb-6">
                 <h1 className="text-xl md:text-2xl font-bold text-gray-900">
-                    Institution Assignments
+                    School Assignments
                 </h1>
                 <p className="text-sm text-gray-500 mt-1">
                     Assessments assigned to you by your school
@@ -278,7 +278,7 @@ export default function InstitutionAssignmentList() {
                     <div className="py-20 text-center border-2 border-dashed rounded-2xl border-gray-200">
                         <FiCheckCircle className="mx-auto text-4xl text-gray-300 mb-3" />
                         <p className="text-gray-400">
-                            No {activeTab} assignments from your institution.
+                            No {activeTab} assignments from your school.
                         </p>
                     </div>
                 ) : (

@@ -37,6 +37,7 @@ import { formatTime } from "../../utils";
 import SpinnerCircle from "../../components/Spinner/Circle";
 import LoadingSequence from "../../components/Loading/LoadingSequence";
 import { AssessmentRoutes } from "../../routes";
+import QuestionRenderer from "../../components/editor/QuestionRenderer";
 
 export default function ProctoredAssessmentQuestions() {
     const resetAns = useResetAtom(selectedAssesmentAnswersAtom);
@@ -257,7 +258,12 @@ export default function ProctoredAssessmentQuestions() {
                             </div>
 
                             <h2 className="text-xl md:text-2xl font-semibold text-slate-800 leading-snug mb-10">
-                                {currentQuestion.question_text}
+                                <QuestionRenderer
+                                    key={currentQuestion.id}
+                                    question_content={currentQuestion.question_content ?? null}
+                                    question_text={currentQuestion.question_text}
+                                    className="text-xl md:text-2xl font-semibold text-slate-800 leading-snug"
+                                />
                             </h2>
 
                             <RadioGroup
@@ -274,7 +280,14 @@ export default function ProctoredAssessmentQuestions() {
                                             }`}
                                     >
                                         <Radio value={opt.id} className="mr-2">
-                                            <span className="text-slate-700 font-medium md:text-lg pl-2">{opt.option_text}</span>
+                                            <div className="ml-2">
+                                                <QuestionRenderer
+                                                    key={opt.id}
+                                                    question_content={opt.option_content ?? null}
+                                                    question_text={opt.option_text}
+                                                    className="text-slate-700 font-medium md:text-lg"
+                                                />
+                                            </div>
                                         </Radio>
                                         <span className="absolute right-4 text-slate-300 font-black group-hover:text-slate-400 transition-colors uppercase">
                                             Option {String.fromCharCode(65 + i)}
