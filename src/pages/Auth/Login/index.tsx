@@ -61,12 +61,12 @@ export default function LoginPage() {
 
       }
     },
-    onError() {
+    onError(error: any) {
       // const parsedError = apiErrorParser(error);
       // description: parsedError.message || "Login Error",
       addToast({
-        title: "An Error Occured",
-        description: "Unable to login Check your network and try again",
+        title: "Login Failed",
+        description: error?.body?.message || "Unable to login. Check your network and try again.",
         color: "danger",
       });
     },
