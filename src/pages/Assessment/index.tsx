@@ -27,7 +27,6 @@ export enum AssessmentStatus {
   SUSPENDED = "suspended",
 }
 
-
 export default function AssessmentPage() {
   const navigate = useNavigate();
   const { data: wallet } = useUserWallet();
@@ -40,19 +39,19 @@ export default function AssessmentPage() {
     userAssessmentCategory
       ? (userAssessmentCategory.toLowerCase() as AssessmentCategory)
       : null;
+
   const { data: assessmentData, isLoading } = useQuery({
     queryKey: [QueryKeys.allAssessment],
     queryFn: () =>
-      ApiSDK.AssessmentsService.getAssessmentsApiV1AssessmentsGet(AssessmentType.EXAM,
+      ApiSDK.AssessmentsService.getAssessmentsApiV1AssessmentsGet(
+        AssessmentType.EXAM,
         category,
         undefined,
-        AssessmentStatus.PUBLISHED),
+        AssessmentStatus.PUBLISHED,
+      ),
   });
 
-  const assessment = useMemo(
-    () => assessmentData?.items || [],
-    [assessmentData],
-  );
+  const assessment = useMemo(() => assessmentData?.items || [], [assessmentData]);
 
   const totalPages = Math.ceil(assessment.length / pageSize);
 
@@ -73,7 +72,7 @@ export default function AssessmentPage() {
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
-        <div className="flex justify-between items-center space-x-6">
+        <div className="flex flex-wrap items-center gap-3">
           <Chip
             variant="flat"
             color="primary"
@@ -81,22 +80,33 @@ export default function AssessmentPage() {
           >
             Unit bal : ({wallet?.symbol}) {formatBalance(wallet?.balance)}
           </Chip>
+
           <Button
-            className="bg-kidemia-secondary text-kidemia-white font-medium w-full px-8"
+            className="bg-kidemia-secondary text-kidemia-white font-medium px-8"
             size="sm"
             radius="sm"
             type="button"
-
             onPress={() => navigate(PaymentRoutes.buytoken)}
           >
             Buy Unit
           </Button>
+
+          <div className="flex items-center gap-2">
+            <span className="text-kidemia-grey text-sm">or</span>
+            <button
+              type="button"
+              onClick={() => navigate(PaymentRoutes.subscriptionUpgrade)}
+              className="text-sm font-medium text-kidemia-primary underline-offset-2 hover:underline transition-all"
+            >
+              Subscribe
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="space-y-3">
         <div>
-          <p className="text-kidemia-grey text-lg">Explore Past Assessements</p>
+          <p className="text-kidemia-grey text-lg">Explore Past Assessments</p>
         </div>
 
         <div className="py-4">
@@ -118,7 +128,6 @@ export default function AssessmentPage() {
                     timeMins={ass.duration_minutes}
                     questionsNo={ass.total_questions}
                     attemptsNo={ass.total_attempts}
-                    // priceNo={ass.price}
                     avgScore={ass.average_score}
                   />
                 ))}
