@@ -98,7 +98,7 @@ export default function AssessmentPage() {
               onClick={() => navigate(PaymentRoutes.subscriptionUpgrade)}
               className="text-sm font-medium text-kidemia-primary underline-offset-2 hover:underline transition-all"
             >
-              Subscribe
+              Subscribe to access all assessments
             </button>
           </div>
         </div>
