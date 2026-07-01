@@ -46,16 +46,28 @@ export default function NavBar() {
               </Link>
             ))}
           </div>
-          <div className="flex items-center gap-3">
-            <Link to={AuthRoutes.signup}>
+          <div className="flex items-center gap-4">
+            {/* Secondary Action: Login */}
+            <Link to={AuthRoutes.login}>
               <Button
-                className="bg-transparent font-semibold text-white
-                                 hover:bg-white hover:text-kidemia-primary shadow-sm px-4 py-2"
-                variant="bordered"
+                className="bg-transparent font-semibold text-white hover:text-white/80 px-4 py-2 transition-colors"
+                variant="light"
                 size="sm"
                 radius="sm"
               >
-                Sign Up
+                Login
+              </Button>
+            </Link>
+
+            {/* Primary Action: Create Account */}
+            <Link to={AuthRoutes.signup}>
+              <Button
+                className="bg-white font-semibold text-kidemia-primary hover:bg-white/90 shadow-md px-5 py-2 transition-all duration-200"
+                variant="solid"
+                size="sm"
+                radius="sm"
+              >
+                Create Account
               </Button>
             </Link>
           </div>
