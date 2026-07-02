@@ -5,9 +5,9 @@ import { ApiSDK } from "../../sdk";
 import AssessmentCard from "../../components/Cards/AssessmentCard";
 import { useMemo, useState } from "react";
 import SpinnerCircle from "../../components/Spinner/Circle";
-import { useAtomValue } from "jotai";
-import { loggedinUserAtom } from "../../store/user.atom";
-import type { AssessmentCategory } from "../../sdk/generated";
+// import { useAtomValue } from "jotai";
+// import { loggedinUserAtom } from "../../store/user.atom";
+// import type { AssessmentCategory } from "../../sdk/generated";
 import { useNavigate } from "react-router";
 import { PaymentRoutes } from "../../routes";
 import { useUserWallet } from "../../hooks/useUserWallet";
@@ -30,15 +30,15 @@ export enum AssessmentStatus {
 export default function AssessmentPage() {
   const navigate = useNavigate();
   const { data: wallet } = useUserWallet();
-  const loggedInUser = useAtomValue(loggedinUserAtom);
+  // const loggedInUser = useAtomValue(loggedinUserAtom);
   const [page, setPage] = useState<number>(1);
   const pageSize = 10;
 
-  const userAssessmentCategory = loggedInUser?.user?.student?.category?.category_name;
-  const category: AssessmentCategory | null =
-    userAssessmentCategory
-      ? (userAssessmentCategory.toLowerCase() as AssessmentCategory)
-      : null;
+  // const userAssessmentCategory = loggedInUser?.user?.student?.category?.category_name;
+  // const category: AssessmentCategory | null =
+  //   userAssessmentCategory
+  //     ? (userAssessmentCategory.toLowerCase() as AssessmentCategory)
+  //     : null;
 
   const { data: assessmentData, isLoading } = useQuery({
     queryKey: [QueryKeys.allAssessment],
