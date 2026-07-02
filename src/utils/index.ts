@@ -165,7 +165,7 @@ export const formatBalance = (balance: number | string | undefined): string => {
 export const CATEGORY_LABELS: Record<AssessmentCategory, string> = {
   common_entrance: "Common Entrance",
   primary_school: "Primary School",
-  junior_waec: "Innovation Challenge",
+  junior_waec: "Innovation Challenge(FOR JSS)",
   bece: "BECE",
   senior_waec: "Senior WAEC",
   neco: "NECO",
