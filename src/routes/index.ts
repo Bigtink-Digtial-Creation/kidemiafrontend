@@ -84,6 +84,7 @@ export const AssessmentRoutes = {
   assesmentAttempt: "/assessment/:assessment_id/start",
   assessmentQuestion: "/assessment/:assessment_id/:attempt_id/questions",
   assessmentResult: "/assessment/result/:assessment_id",
+  assessmentPendingReview: "/assessment/:assessment_id/pending-review",
   assessmentCorrection: "/assessment/:attemptId/corrections",
 };
 
