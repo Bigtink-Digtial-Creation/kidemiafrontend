@@ -45,7 +45,7 @@ export default function AssessmentPage() {
     queryFn: () =>
       ApiSDK.AssessmentsService.getAssessmentsApiV1AssessmentsGet(
         AssessmentType.EXAM,
-        category,
+        undefined,
         undefined,
         AssessmentStatus.PUBLISHED,
       ),
@@ -129,6 +129,7 @@ export default function AssessmentPage() {
                     questionsNo={ass.total_questions}
                     attemptsNo={ass.total_attempts}
                     avgScore={ass.average_score}
+                    category={ass.category}
                   />
                 ))}
               </div>

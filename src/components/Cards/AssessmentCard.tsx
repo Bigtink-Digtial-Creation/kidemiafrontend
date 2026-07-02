@@ -6,6 +6,8 @@ import { IoTimeOutline } from "react-icons/io5";
 import { MdCreditScore } from "react-icons/md";
 import { assessmentAtom } from "../../store/test.atom";
 import { AssessmentRoutes } from "../../routes";
+import type { AssessmentCategory } from "../../sdk/generated";
+import { CATEGORY_CTA, CATEGORY_LABELS } from "../../utils";
 
 interface AssessmentCardI {
   id: string;
@@ -16,6 +18,7 @@ interface AssessmentCardI {
   attemptsNo: number;
   priceNo?: string;
   avgScore: string;
+  category?: AssessmentCategory;
 }
 
 export default function AssessmentCard({
@@ -27,9 +30,14 @@ export default function AssessmentCard({
   attemptsNo,
   // priceNo,
   avgScore,
+  category
 }: AssessmentCardI) {
   const navigate = useNavigate();
   const setAssessment = useSetAtom(assessmentAtom);
+
+  const categoryLabel = category ? CATEGORY_LABELS[category] : null;
+  const ctaLabel = (category && CATEGORY_CTA[category]) || "Start Exam";
+
 
   const handlePracticeClick = () => {
     setAssessment({
@@ -44,23 +52,13 @@ export default function AssessmentCard({
 
   return (
     <div className="w-full max-w-sm mx-auto">
-      <div
-        className="
-          bg-amber-50/40
-          border border-gray-300/40
-          rounded-xl
-          overflow-hidden
-          shadow-sm
-          hover:shadow-md
-          transition-shadow
-          duration-200
-          flex
-          flex-col
-          h-full
-        "
-      >
-        {/* Header Section */}
+      <div className="bg-amber-50/40 border border-gray-300/40 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col h-full">
         <div className="p-4 sm:p-5 space-y-1.5">
+          {categoryLabel && (
+            <span className="inline-block text-[10px] font-bold tracking-wide uppercase text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full mb-1">
+              {categoryLabel}
+            </span>
+          )}
           <h3 className="text-gray-900 font-semibold text-base sm:text-lg leading-snug line-clamp-2 min-h-[2.5rem]">
             {title}
           </h3>
@@ -128,7 +126,7 @@ export default function AssessmentCard({
                 whitespace-nowrap
               "
             >
-              Start
+              {ctaLabel}
               <FaArrowRight className="text-xs" />
             </button>
           </div>

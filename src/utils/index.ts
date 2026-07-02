@@ -1,3 +1,4 @@
+import type { AssessmentCategory } from "../sdk/generated";
 import type { TableRowI } from "../staticData";
 
 export const statusTheme: Record<
@@ -158,4 +159,28 @@ export const formatBalance = (balance: number | string | undefined): string => {
   }
 
   return num.toLocaleString();
+};
+
+
+export const CATEGORY_LABELS: Record<AssessmentCategory, string> = {
+  common_entrance: "Common Entrance",
+  primary_school: "Primary School",
+  junior_waec: "Innovation Challenge",
+  bece: "BECE",
+  senior_waec: "Senior WAEC",
+  neco: "NECO",
+  nabteb: "NABTEB",
+  gce: "GCE",
+  jamb: "JAMB",
+  post_utme: "Post UTME",
+  professional: "Professional",
+  scholarship: "Scholarship",
+  aptitude: "Aptitude",
+  mock: "Mock Exam",
+  custom: "Custom",
+  general: "General",
+};
+
+export const CATEGORY_CTA: Partial<Record<AssessmentCategory, string>> = {
+  junior_waec: "Submit Entry",
 };
