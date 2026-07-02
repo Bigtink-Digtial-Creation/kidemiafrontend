@@ -90,6 +90,7 @@ import AssignmentDetailPage from "./pages/Guardian/AssignmentDetailPage";
 import SubscriptionDashboard from "./pages/payment/PricingUpgrade";
 import StudentAnalyticsDashboard from "./pages/Analytics/StudentAnalyticsDashboard";
 import InstitutionAssignmentList from "./pages/Challenge/InstitutionAssignmentList";
+import AssessmentPendingReview from "./pages/Assessment/AssessmentPendingReview";
 
 export const router = createBrowserRouter([
   {
@@ -218,6 +219,10 @@ export const router = createBrowserRouter([
       {
         path: AssessmentRoutes.assessmentResult,
         element: <AssessmentResult />,
+      },
+      {
+        path: AssessmentRoutes.assessmentPendingReview,
+        element: <AssessmentPendingReview />,
       },
       {
         path: AssessmentRoutes.assessmentCorrection,

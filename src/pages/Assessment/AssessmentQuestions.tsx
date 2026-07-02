@@ -77,8 +77,13 @@ export default function AssessmentQuestions() {
         onSuccess: (data) => {
             setAttemptResult(data);
             resetAns();
+            const needsManualReview =
+                data?.status === "submitted"
+
             navigate(
-                AssessmentRoutes.assessmentResult.replace(":assessment_id", assessment_id!),
+                needsManualReview
+                    ? AssessmentRoutes.assessmentPendingReview.replace(":assessment_id", assessment_id!)
+                    : AssessmentRoutes.assessmentResult.replace(":assessment_id", assessment_id!),
                 { replace: true }
             );
         },
@@ -87,6 +92,13 @@ export default function AssessmentQuestions() {
             hasSubmitted.current = false;
         },
     });
+
+    const handleFinalSubmit = async () => {
+        if (selectedAnswers[currentIndex]) {
+            await saveAnsMutation.mutateAsync(buildAnswerPayload());
+        }
+        submitAttemptMutation.mutate(attempt_id!);
+    };
 
     useEffect(() => {
         if (asstQuestions?.require_webcam && !hasSubmitted.current) {
@@ -111,7 +123,12 @@ export default function AssessmentQuestions() {
                     const nextCount = tabSwitchCount + 1;
                     setTabSwitchCount(nextCount);
                     handleViolation(`Tab switch detected (${nextCount}/${maxTabSwitches})`);
-                    if (nextCount >= maxTabSwitches) submitAttemptMutation.mutate(attempt_id!);
+                    if (nextCount >= maxTabSwitches) {
+                        if (selectedAnswers[currentIndex]) {
+                            saveAnsMutation.mutate(buildAnswerPayload());
+                        }
+                        submitAttemptMutation.mutate(attempt_id!);
+                    }
                 }
             };
             document.addEventListener("visibilitychange", handleVisibility);
@@ -163,12 +180,25 @@ export default function AssessmentQuestions() {
         }
     }, [isLoading, asstQuestions?.duration_minutes]);
 
+    const buildAnswerPayload = (): SaveAnswerRequest =>
+        currentQuestion.question_type === 'essay'
+            ? { question_id: currentQuestion.id, text_answer: selectedAnswers[currentIndex] }
+            : { question_id: currentQuestion.id, selected_option_ids: [selectedAnswers[currentIndex]] };
+
+    // Old
+    // const handleNext = async () => {
+    //     if (selectedAnswers[currentIndex]) {
+    //         await saveAnsMutation.mutateAsync({
+    //             question_id: currentQuestion.id,
+    //             selected_option_ids: [selectedAnswers[currentIndex]],
+    //         });
+    //     }
+    //     if (currentIndex < allQuestions.length - 1) setCurrentIndex((prev) => prev + 1);
+    // };
+
     const handleNext = async () => {
         if (selectedAnswers[currentIndex]) {
-            await saveAnsMutation.mutateAsync({
-                question_id: currentQuestion.id,
-                selected_option_ids: [selectedAnswers[currentIndex]],
-            });
+            await saveAnsMutation.mutateAsync(buildAnswerPayload());
         }
         if (currentIndex < allQuestions.length - 1) setCurrentIndex((prev) => prev + 1);
     };
@@ -228,7 +258,7 @@ export default function AssessmentQuestions() {
                         variant="flat"
                         size="sm"
                         className="font-bold rounded-xl"
-                        onPress={() => submitAttemptMutation.mutate(attempt_id!)}
+                        onPress={handleFinalSubmit}
                     >
                         Finish
                     </Button>
@@ -282,45 +312,61 @@ export default function AssessmentQuestions() {
                                             className="text-xl md:text-3xl font-bold text-slate-800 leading-tight"
                                         />
                                     </div>
-
-                                    <RadioGroup
-                                        value={selectedAnswers[currentIndex] || ""}
-                                        onValueChange={(val) =>
-                                            setSelectedAnswers({ ...selectedAnswers, [currentIndex]: val })
-                                        }
-                                        className="gap-4"
-                                    >
-                                        {currentQuestion.options.map((opt: any, i: number) => (
-                                            <div
-                                                key={opt.id}
-                                                className={`group relative flex items-center p-5 rounded-2xl border-2 transition-all cursor-pointer ${selectedAnswers[currentIndex] === opt.id
-                                                    ? "border-kidemia-secondary bg-blue-50/30 ring-1 ring-kidemia-secondary/20"
-                                                    : "border-slate-100 hover:border-slate-200 bg-white"
-                                                    }`}
-                                            >
-                                                <Radio
-                                                    value={opt.id}
-                                                    classNames={{
-                                                        wrapper:
-                                                            "group-data-[selected=true]:border-kidemia-secondary group-data-[selected=true]:bg-kidemia-secondary",
-                                                    }}
+                                    {currentQuestion.question_type === 'essay' ? (
+                                        <div className="space-y-3">
+                                            <textarea
+                                                value={selectedAnswers[currentIndex] || ""}
+                                                onChange={(e) =>
+                                                    setSelectedAnswers({ ...selectedAnswers, [currentIndex]: e.target.value })
+                                                }
+                                                placeholder="Type your answer here…"
+                                                rows={10}
+                                                className="w-full p-5 rounded-2xl border-2 border-slate-100 focus:border-kidemia-secondary focus:ring-1 focus:ring-kidemia-secondary/20 outline-none text-base md:text-lg text-slate-700 resize-y transition-all"
+                                            />
+                                            <p className="text-xs text-slate-400 text-right">
+                                                {(selectedAnswers[currentIndex] || "").trim().split(/\s+/).filter(Boolean).length} words
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <RadioGroup
+                                            value={selectedAnswers[currentIndex] || ""}
+                                            onValueChange={(val) =>
+                                                setSelectedAnswers({ ...selectedAnswers, [currentIndex]: val })
+                                            }
+                                            className="gap-4"
+                                        >
+                                            {currentQuestion.options.map((opt: any, i: number) => (
+                                                <div
+                                                    key={opt.id}
+                                                    className={`group relative flex items-center p-5 rounded-2xl border-2 transition-all cursor-pointer ${selectedAnswers[currentIndex] === opt.id
+                                                        ? "border-kidemia-secondary bg-blue-50/30 ring-1 ring-kidemia-secondary/20"
+                                                        : "border-slate-100 hover:border-slate-200 bg-white"
+                                                        }`}
                                                 >
-                                                    {/* ── Option text — renderer replaces the span ── */}
-                                                    <div className="ml-2">
-                                                        <QuestionRenderer
-                                                            key={opt.id}
-                                                            question_content={opt.option_content ?? null}
-                                                            question_text={opt.option_text}
-                                                            className="text-slate-700 font-semibold text-base md:text-lg"
-                                                        />
-                                                    </div>
-                                                </Radio>
-                                                <span className="absolute right-6 text-slate-100 font-black text-3xl italic pointer-events-none group-hover:text-slate-200 transition-colors uppercase select-none">
-                                                    {String.fromCharCode(65 + i)}
-                                                </span>
-                                            </div>
-                                        ))}
-                                    </RadioGroup>
+                                                    <Radio
+                                                        value={opt.id}
+                                                        classNames={{
+                                                            wrapper:
+                                                                "group-data-[selected=true]:border-kidemia-secondary group-data-[selected=true]:bg-kidemia-secondary",
+                                                        }}
+                                                    >
+                                                        {/* ── Option text — renderer replaces the span ── */}
+                                                        <div className="ml-2">
+                                                            <QuestionRenderer
+                                                                key={opt.id}
+                                                                question_content={opt.option_content ?? null}
+                                                                question_text={opt.option_text}
+                                                                className="text-slate-700 font-semibold text-base md:text-lg"
+                                                            />
+                                                        </div>
+                                                    </Radio>
+                                                    <span className="absolute right-6 text-slate-100 font-black text-3xl italic pointer-events-none group-hover:text-slate-200 transition-colors uppercase select-none">
+                                                        {String.fromCharCode(65 + i)}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </RadioGroup>
+                                    )}
                                 </div>
                             </div>
                         </CardBody>
@@ -355,7 +401,7 @@ export default function AssessmentQuestions() {
                                 color="success"
                                 className="text-white font-bold rounded-2xl px-12 shadow-lg shadow-green-200/50"
                                 startContent={<FiSend />}
-                                onPress={() => submitAttemptMutation.mutate(attempt_id!)}
+                                onPress={handleFinalSubmit}
                                 isLoading={submitAttemptMutation.isPending}
                             >
                                 Submit Final Result
@@ -441,7 +487,7 @@ export default function AssessmentQuestions() {
                         size="lg"
                         color="success"
                         className="text-white font-bold rounded-2xl"
-                        onPress={() => submitAttemptMutation.mutate(attempt_id!)}
+                        onPress={handleFinalSubmit}
                         isLoading={submitAttemptMutation.isPending}
                     >
                         Submit
